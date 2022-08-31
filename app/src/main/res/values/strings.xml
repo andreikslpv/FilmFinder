@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FilmFinder</string>
+
+    <!-- main -->
+    <string name="main.button_menu">Меню</string>
+    <string name="main.button_favourites">Избранное</string>
+    <string name="main.button_see_later">Посмотреть позднее</string>
+    <string name="main.button_collections">Подборки</string>
+    <string name="main.button_settings">Настройки</string>
+    <string name="main.copyright">Постеры предоставлены https://www.kinopoisk.ru/</string>
+    <string name="content_description">Постер</string>
 </resources>
