@@ -6,58 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.cardview.widget.CardView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_of_top_bar"
         android:layout_margin="@dimen/margin_of_menu"
-        android:elevation="@dimen/elevation_of_card"
         android:orientation="horizontal"
-        app:cardCornerRadius="@dimen/corner_radius"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/content_description"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/poster_dexter" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/content_description"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/poster_breaking_bad" />
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1 "
-                android:contentDescription="@string/content_description"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/poster_most" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/content_description"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/poster_rick_and_morty" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/copyright"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/copyright"
