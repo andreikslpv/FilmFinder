@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FilmFinder</string>
+
+    <!-- main -->
+    <string name="main.button_menu">Menu</string>
+    <string name="main.button_favourites">Favourites</string>
+    <string name="main.button_see_later">See later</string>
+    <string name="main.button_collections">Collections</string>
+    <string name="main.button_settings">Settings</string>
+    <string name="main.copyright">Posters provided by https://www.kinopoisk.ru/</string>
+    <string name="content_description">Poster</string>
+</resources>
