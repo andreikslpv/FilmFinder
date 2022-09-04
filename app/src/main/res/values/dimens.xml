@@ -3,8 +3,8 @@
 
     <!-- main -->
     <dimen name="height_of_menu">70dp</dimen>
-    <dimen name="height_of_top_bar">200dp</dimen>
-    <dimen name="margin_of_menu">10dp</dimen>
+    <dimen name="height_of_top_bar">150dp</dimen>
+    <dimen name="margin_of_menu">5dp</dimen>
     <dimen name="null_space">0dp</dimen>
     <dimen name="angle_of_CM_shape">45</dimen>
     <dimen name="corner_radius">15dp</dimen>

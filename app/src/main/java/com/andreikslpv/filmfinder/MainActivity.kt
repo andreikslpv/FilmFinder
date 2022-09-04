@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = CustomRecyclerAdapter(getImagesIdentifiers())
 
-        initMenuButtons()
+        initMenus()
     }
 
     private fun getImagesIdentifiers(): ArrayList<Int> {
@@ -48,21 +48,25 @@ class MainActivity : AppCompatActivity() {
         recyclerView.scrollToPosition(i)
     }
 
-    private fun initMenuButtons() {
-        button_menu.setOnClickListener {
-            changePosterAndToast(button_menu.text)
+    private fun initMenus() {
+        topAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.settings -> {
+                    changePosterAndToast(it.title)
+                    true
+                }
+                else -> false
+            }
         }
-        button_collections.setOnClickListener {
-            changePosterAndToast(button_collections.text)
-        }
-        button_favourites.setOnClickListener {
-            changePosterAndToast(button_favourites.text)
-        }
-        button_see_later.setOnClickListener {
-            changePosterAndToast(button_see_later.text)
-        }
-        button_settings.setOnClickListener {
-            changePosterAndToast(button_settings.text)
+
+        bottom_navigation.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.favorites, R.id.watch_later, R.id.selections -> {
+                    changePosterAndToast(it.title)
+                    true
+                }
+                else -> false
+            }
         }
     }
 }
