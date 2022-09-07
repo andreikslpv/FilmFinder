@@ -3,10 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable-night/ic_baseline_settings.xml" value="0.108" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.108" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/central_menu_shape.xml" value="0.108" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.108" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_baseline_settings.xml" value="0.1" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_launcher_background.xml" value="0.108" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/navigation_menu.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/xml/recyclerview_item.xml" value="0.25416666666666665" />
       </map>
     </option>
