@@ -27,8 +27,8 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : It
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder, target: ViewHolder): Boolean {
         val items = adapter.items
-        val fromPosition = viewHolder.absoluteAdapterPosition
-        val toPosition = target.absoluteAdapterPosition
+        val fromPosition = viewHolder.adapterPosition
+        val toPosition = target.adapterPosition
         //Меняем элементы местами с помощью метода swap
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
@@ -39,21 +39,19 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : It
                 Collections.swap(items, i, i - 1)
             }
         }
-        //adapter.notifyItemMoved(fromPosition, toPosition)
-        adapter.changeItems(items)
-        //Сообщаем об изменениях адаптеру
-        //Or DiffUtil
-        //
+        //Сообщаем об изменениях адаптеру Or DiffUtil
+        adapter.notifyDataSetChanged()
         return true
     }
 
+    override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+
+    }
+
     override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-        val items = adapter.items
-        items.removeAt(viewHolder.absoluteAdapterPosition)
-        adapter.changeItems(items)
-        //Удаляем элемент из списка после жеста swipe
-        //adapter.items.removeAt(viewHolder.absoluteAdapterPosition)
-        //Or DiffUtil
-        //adapter.notifyItemRemoved(viewHolder.absoluteAdapterPosition)
+        adapter.items.removeAt(viewHolder.adapterPosition)
+        adapter.notifyDataSetChanged()
+        //adapter.notifyItemRemoved(viewHolder.adapterPosition)
     }
 }
