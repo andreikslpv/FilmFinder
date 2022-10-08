@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/central_menu_shape"
-    android:fitsSystemWindows="true"
-    tools:context=".DetailsActivity">
+    android:fitsSystemWindows="false"
+    tools:context=".presentation.DetailsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -48,31 +48,6 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/details_fab_video_library"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_of_FAB"
-        app:backgroundTint="?attr/colorPrimary"
-        app:tint="?attr/itemIconTint"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="top|end"
-        app:srcCompat="@drawable/ic_baseline_favorite"
-        android:contentDescription="@string/details.FAB_add_to_favourites_title" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/details_fab_watch_later"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_of_FAB"
-        app:backgroundTint="?attr/colorPrimary"
-        app:tint="?attr/itemIconTint"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="center|end"
-        app:srcCompat="@drawable/ic_baseline_watch_later"
-        android:contentDescription="@string/main.menu_watch_later_title"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/details_fab_share"

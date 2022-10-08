@@ -1,22 +1,22 @@
-package com.andreikslpv.filmfinder
+package com.andreikslpv.filmfinder.presentation
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.model.Film
 import com.andreikslpv.filmfinder.presentation.adRecycler.AdRecyclerAdapter
-import com.andreikslpv.filmfinder.presentation.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.filmListRecycler.FilmListRecyclerAdapter
+import com.andreikslpv.filmfinder.presentation.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.touchHelper.FilmTouchHelperCallback
-import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
-    private var posterCount: Int = 0
-    val filmsDataBase = listOf(
+class HomeFragment : Fragment() {
+    private val filmsDataBase = listOf(
         Film(
             "Во все тяжкие",
             R.drawable.poster_1,
@@ -71,45 +71,60 @@ class MainActivity : AppCompatActivity() {
         ),
     )
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private var posterCount: Int = 0
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val recyclerView: RecyclerView = findViewById(R.id.ad_recycler)
-        recyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = AdRecyclerAdapter(getImagesIdentifiers())
-
-        initMainRecycler()
-        initMenus()
+        initAdRecycler()
+        initFilmListRecycler()
     }
 
-    private fun initMainRecycler() {
-        val filmListRecycler = findViewById<RecyclerView>(R.id.film_list_recycler)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
+    private fun initAdRecycler() {
+        val adRecycler: RecyclerView = requireView().findViewById(R.id.ad_recycler)
+        adRecycler.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        adRecycler.adapter = AdRecyclerAdapter(getImagesIdentifiers())
+    }
+
+    private fun getImagesIdentifiers(): ArrayList<Int> {
+        var resID: Int
+        var imageNumber = 1
+        val images = ArrayList<Int>()
+        do {
+            resID = resources.getIdentifier(
+                "poster_$imageNumber",
+                "drawable",
+                requireContext().packageName
+            )
+            if (resID != 0) images.add(resID)
+            imageNumber++
+        } while (resID != 0)
+        posterCount = images.size
+        return images
+    }
+
+    private fun initFilmListRecycler() {
+        val filmListRecycler = requireView().findViewById<RecyclerView>(R.id.film_list_recycler)
         filmListRecycler.apply {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                     override fun click(film: Film) {
-                        //Создаем бандл и кладем туда объект с данными фильма
-                        val bundle = Bundle()
-                        //Первым параметром указывается ключ, по которому потом будем искать, вторым сам
-                        //передаваемый объект
-                        bundle.putParcelable("film", film)
-                        //Запускаем наше активити
-                        val intent = Intent(this@MainActivity, DetailsActivity::class.java)
-                        //Прикрепляем бандл к интенту
-                        intent.putExtras(bundle)
-                        //Запускаем активити через интент
-                        startActivity(intent)
+                        (requireActivity() as MainActivity).launchDetailsFragment(film)
                     }
                 })
             //Присваиваем адаптер
             adapter = filmsAdapter
             //Присвои layoutManager
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             //Применяем декоратор для отступов
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
@@ -121,51 +136,4 @@ class MainActivity : AppCompatActivity() {
         filmsAdapter.changeItems(filmsDataBase)
     }
 
-    private fun getImagesIdentifiers(): ArrayList<Int> {
-        var resID: Int
-        var imageNumber = 1
-        val images = ArrayList<Int>()
-        do {
-            resID = resources.getIdentifier(
-                "poster_$imageNumber",
-                "drawable",
-                packageName
-            )
-            if (resID != 0) images.add(resID)
-            imageNumber++
-        } while (resID != 0)
-        posterCount = images.size
-        return images
-    }
-
-    private fun changePosterAndToast(text: CharSequence) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
-        val recyclerView: RecyclerView = findViewById(R.id.ad_recycler)
-        var i = recyclerView.getChildAdapterPosition(recyclerView.getChildAt(2))
-        i++
-        if (i >= posterCount) i = 0
-        recyclerView.scrollToPosition(i)
-    }
-
-    private fun initMenus() {
-        topAppBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.settings -> {
-                    changePosterAndToast(it.title!!)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        bottom_navigation.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.favorites, R.id.watch_later, R.id.selections -> {
-                    changePosterAndToast(it.title!!)
-                    true
-                }
-                else -> false
-            }
-        }
-    }
 }
