@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.model.Film
+import com.andreikslpv.filmfinder.domain.model.Film
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 

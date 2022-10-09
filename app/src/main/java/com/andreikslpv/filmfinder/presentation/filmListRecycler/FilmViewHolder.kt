@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.model.Film
+import com.andreikslpv.filmfinder.domain.model.Film
 
 //В конструктор класса передается layout, который мы создали(film_item.xml)
 class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

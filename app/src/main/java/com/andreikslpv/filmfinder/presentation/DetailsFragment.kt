@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.model.Film
+import com.andreikslpv.filmfinder.domain.model.Film
 
 class DetailsFragment : Fragment() {
     private lateinit var film: Film

@@ -1,22 +1,21 @@
 package com.andreikslpv.filmfinder.presentation.adRecycler
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.presentation.filmListRecycler.FilmDiff
 import kotlin.math.roundToInt
 
 
-class AdRecyclerAdapter(private val images: ArrayList<Int>) :
-    RecyclerView.Adapter<AdRecyclerAdapter.MyViewHolder>() {
+class AdRecyclerAdapter :
+    RecyclerView.Adapter<AdViewHolder>() {
 
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val posterImage: ImageView = itemView.findViewById(R.id.ad_poster)
-    }
+    private val items = mutableListOf<Film>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdViewHolder {
         val itemView =
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.ad_item, parent, false)
@@ -24,12 +23,23 @@ class AdRecyclerAdapter(private val images: ArrayList<Int>) :
         layoutParams.width = (parent.width * 0.335).roundToInt()
         itemView.layoutParams = layoutParams
 
-        return MyViewHolder(itemView)
+        return AdViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.posterImage.setImageResource(images[position])
+    override fun onBindViewHolder(holder: AdViewHolder, position: Int) {
+        holder.bind(items[position])
     }
 
-    override fun getItemCount() = images.size
+    override fun getItemCount() = items.size
+
+    //Метод для добавления объектов в наш список
+    fun changeItems(list: List<Film>) {
+        val diff = FilmDiff(items, list)
+        val diffResult = DiffUtil.calculateDiff(diff)
+        //Сначала очищаем
+        items.clear()
+        //Добавляем
+        items.addAll(list)
+        diffResult.dispatchUpdatesTo(this)
+    }
 }
