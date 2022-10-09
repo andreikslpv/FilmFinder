@@ -3,12 +3,19 @@ package com.andreikslpv.filmfinder.presentation
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.model.Film
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
-    private var posterCount: Int = 0
+    private var backPressed = 0L
+
+    companion object {
+        const val TIME_INTERVAL = 2000
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,10 +26,28 @@ class MainActivity : AppCompatActivity() {
         //Запускаем фрагмент Home при старте
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.fragment_placeholder, HomeFragment())
+            .add(R.id.fragment_placeholder, HomeFragment(), "home")
             .addToBackStack(null)
             .commit()
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        // double tap for exit
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            if (backPressed + TIME_INTERVAL > System.currentTimeMillis()) {
+                super.onBackPressed()
+                finish()
+            } else {
+                Toast.makeText(this, R.string.main_backpress_message, Toast.LENGTH_SHORT).show()
+            }
+            backPressed = System.currentTimeMillis()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+
 
     fun launchDetailsFragment(film: Film) {
         //Создаем "посылку"
@@ -42,20 +67,24 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun changePosterAndToast(text: CharSequence) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
-        /*val recyclerView: RecyclerView = findViewById(R.id.ad_recycler)
-        var i = recyclerView.getChildAdapterPosition(recyclerView.getChildAt(2))
-        i++
-        if (i >= posterCount) i = 0
-        recyclerView.scrollToPosition(i)*/
+    private fun makeSnackbar(text: CharSequence) {
+        val snackbar = Snackbar.make(findViewById(R.id.main_layout), text, Snackbar.LENGTH_SHORT)
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            snackbar.setAction(R.string.main_change_ad) {
+                val fragment: HomeFragment =
+                    supportFragmentManager.findFragmentByTag("home") as HomeFragment
+                fragment.changeAd()
+            }
+            snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.red))
+        }
+        snackbar.show()
     }
 
     private fun initMenus() {
         topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.settings -> {
-                    changePosterAndToast(it.title!!)
+                    Toast.makeText(this, it.title!!, Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false
@@ -65,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         bottom_navigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.favorites, R.id.watch_later, R.id.selections -> {
-                    changePosterAndToast(it.title!!)
+                    makeSnackbar(it.title!!)
                     true
                 }
                 else -> false

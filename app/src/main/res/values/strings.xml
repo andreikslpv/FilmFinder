@@ -9,8 +9,9 @@
     <string name="main.menu_settings_title">Настройки</string>
     <string name="main.copyright">Постеры предоставлены https://www.kinopoisk.ru/</string>
     <string name="main.page_title">Search it!</string>
+    <string name="main_backpress_message">Нажмите дважды для выхода</string>
+    <string name="main_change_ad">Сменить рекламу</string>
     <string name="content_description">Постер</string>
-
     <string name="details.FAB_share_title">Поделиться</string>
-    <string name="details.FAB_add_to_favourites_title">Добавить в избранное</string>
+
 </resources>

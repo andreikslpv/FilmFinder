@@ -136,4 +136,12 @@ class HomeFragment : Fragment() {
         filmsAdapter.changeItems(filmsDataBase)
     }
 
+    fun changeAd() {
+        val adRecycler: RecyclerView = requireView().findViewById(R.id.ad_recycler)
+        var i = adRecycler.getChildAdapterPosition(adRecycler.getChildAt(2))
+        i++
+        if (i >= posterCount) i = 0
+        adRecycler.scrollToPosition(i)
+    }
+
 }

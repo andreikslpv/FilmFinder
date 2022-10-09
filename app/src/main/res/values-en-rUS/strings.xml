@@ -11,6 +11,7 @@
     <string name="main.copyright">Posters provided by https://www.kinopoisk.ru/</string>
     <string name="content_description">Poster</string>
     <string name="main.page_title">Search it!</string>
-    <string name="details.FAB_share_title">Share</string>
-    <string name="details.FAB_add_to_favourites_title">Add to favourites</string>
+    <string name="main_change_ad">Change ad</string>
+    <string name="details.FAB_share_title">Share it</string>
+    <string name="main_backpress_message">Double tap for exit</string>
 </resources>
