@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/central_menu_shape"
     android:fitsSystemWindows="false"
-    tools:context=".presentation.DetailsFragment">
+    tools:context=".presentation.fragments.DetailsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"

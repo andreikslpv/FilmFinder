@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation
+package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

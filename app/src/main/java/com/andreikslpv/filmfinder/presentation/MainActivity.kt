@@ -6,16 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.presentation.fragments.DetailsFragment
+import com.andreikslpv.filmfinder.presentation.fragments.HomeFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
+const val TIME_INTERVAL = 2000
+const val NUMBER_OF_HOME_FRAGMENT = 1
 
 class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
-
-    companion object {
-        const val TIME_INTERVAL = 2000
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // double tap for exit
-        if (supportFragmentManager.backStackEntryCount == 1) {
+        if (supportFragmentManager.backStackEntryCount == NUMBER_OF_HOME_FRAGMENT) {
             if (backPressed + TIME_INTERVAL > System.currentTimeMillis()) {
                 super.onBackPressed()
                 finish()
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun makeSnackbar(text: CharSequence) {
         val snackbar = Snackbar.make(findViewById(R.id.main_layout), text, Snackbar.LENGTH_SHORT)
-        if (supportFragmentManager.backStackEntryCount == 1) {
+        if (supportFragmentManager.backStackEntryCount == NUMBER_OF_HOME_FRAGMENT) {
             snackbar.setAction(R.string.main_change_ad) {
                 val fragment: HomeFragment =
                     supportFragmentManager.findFragmentByTag("home") as HomeFragment

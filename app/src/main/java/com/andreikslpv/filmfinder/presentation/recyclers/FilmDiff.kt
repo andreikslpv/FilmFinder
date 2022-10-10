@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation.filmListRecycler
+package com.andreikslpv.filmfinder.presentation.recyclers
 
 import androidx.recyclerview.widget.DiffUtil
 import com.andreikslpv.filmfinder.domain.model.Film

@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation.filmListRecycler
+package com.andreikslpv.filmfinder.presentation.recyclers
 
 import android.view.View
 import android.widget.ImageView

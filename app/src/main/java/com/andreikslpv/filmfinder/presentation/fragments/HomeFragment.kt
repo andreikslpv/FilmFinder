@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation
+package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.domain.model.Film
-import com.andreikslpv.filmfinder.presentation.adRecycler.AdRecyclerAdapter
-import com.andreikslpv.filmfinder.presentation.filmListRecycler.FilmListRecyclerAdapter
-import com.andreikslpv.filmfinder.presentation.itemDecoration.TopSpacingItemDecoration
-import com.andreikslpv.filmfinder.presentation.touchHelper.FilmTouchHelperCallback
+import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.recyclers.AdRecyclerAdapter
+import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
+import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
+import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
 
 class HomeFragment : Fragment() {

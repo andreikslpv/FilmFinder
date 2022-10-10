@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation.adRecycler
+package com.andreikslpv.filmfinder.presentation.recyclers
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.domain.model.Film
-import com.andreikslpv.filmfinder.presentation.filmListRecycler.FilmDiff
 import kotlin.math.roundToInt
 
+const val DIVIDER_INTO_PARTS = 0.335
 
 class AdRecyclerAdapter :
     RecyclerView.Adapter<AdViewHolder>() {
@@ -20,7 +20,7 @@ class AdRecyclerAdapter :
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.ad_item, parent, false)
         val layoutParams = itemView.layoutParams
-        layoutParams.width = (parent.width * 0.335).roundToInt()
+        layoutParams.width = (parent.width * DIVIDER_INTO_PARTS).roundToInt()
         itemView.layoutParams = layoutParams
 
         return AdViewHolder(itemView)
