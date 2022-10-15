@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 
 //В конструктор класса передается layout, который мы создали(film_item.xml)
 class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -15,7 +15,7 @@ class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val description = itemView.findViewById<TextView>(R.id.description)
 
     //В этом методе кладем данные из Film в наши View
-    fun bind(film: Film) {
+    fun bind(film: FilmsLocalModel) {
         //Устанавливаем заголовок
         title.text = film.title
         //Устанавливаем постер

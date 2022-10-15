@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.DetailsFragment
 import com.andreikslpv.filmfinder.presentation.fragments.HomeFragment
 import com.google.android.material.snackbar.Snackbar
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun launchDetailsFragment(film: Film) {
+    fun launchDetailsFragment(film: FilmsLocalModel) {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем наш фильм в "посылку"

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import kotlin.math.roundToInt
 
 const val DIVIDER_INTO_PARTS = 0.335
@@ -13,7 +13,7 @@ const val DIVIDER_INTO_PARTS = 0.335
 class AdRecyclerAdapter :
     RecyclerView.Adapter<AdViewHolder>() {
 
-    private val items = mutableListOf<Film>()
+    private val items = mutableListOf<FilmsLocalModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdViewHolder {
         val itemView =
@@ -33,7 +33,7 @@ class AdRecyclerAdapter :
     override fun getItemCount() = items.size
 
     //Метод для добавления объектов в наш список
-    fun changeItems(list: List<Film>) {
+    fun changeItems(list: List<FilmsLocalModel>) {
         val diff = FilmDiff(items, list)
         val diffResult = DiffUtil.calculateDiff(diff)
         //Сначала очищаем

@@ -9,18 +9,26 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.AdRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
+import com.google.gson.Gson
+import java.io.File
 
 class HomeFragment : Fragment() {
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private val filmsRepositoryImpl = FilmsRepositoryImpl(FilmsCacheDataSource())
+    private val filmsRepositoryImpl = FilmsRepositoryImpl(
+        FilmsCacheDataSource(),
+        FilmsApiDataSource(),
+        FilmsLocalDataSource(File("local.json"), Gson())
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,7 +50,7 @@ class HomeFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         val adAdapter = AdRecyclerAdapter()
         adRecycler.adapter = adAdapter
-        adAdapter.changeItems(filmsRepositoryImpl.getRandomFilms(5))
+        adAdapter.changeItems(filmsRepositoryImpl.getAd())
     }
 
     private fun initFilmListRecycler() {
@@ -51,7 +59,7 @@ class HomeFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: Film) {
+                    override fun click(film: FilmsLocalModel) {
                         (requireActivity() as MainActivity).launchDetailsFragment(film)
                     }
                 })

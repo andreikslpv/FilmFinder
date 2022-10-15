@@ -1,36 +1,27 @@
 package com.andreikslpv.filmfinder.repository
 
+import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.domain.FilmsRepository
-import com.andreikslpv.filmfinder.domain.model.Film
-import kotlin.random.Random
 
-class FilmsRepositoryImpl(private val cacheDataSource: FilmsCacheDataSource) : FilmsRepository {
-    override fun getAllFilms(): List<Film> {
-        return cacheDataSource.filmsDataBase.ifEmpty { emptyList() }
+class FilmsRepositoryImpl(
+    private val cacheDataSource: FilmsCacheDataSource,
+    private val apiDataSource: FilmsApiDataSource,
+    private val localDataSource: FilmsLocalDataSource
+) : FilmsRepository {
+
+    override fun getAllFilms(): List<FilmsLocalModel> {
+        val allFilms: List<FilmsLocalModel> = cacheDataSource.films
+        // если в кэш уже загружен список фильмов, то возвращаем его
+        if (allFilms.isNotEmpty()) return allFilms
+        // иначе получаем из сети
+        cacheDataSource.films = ApiToLocalMapper.map(apiDataSource.getAllFilms())
+        return cacheDataSource.films.ifEmpty { emptyList() }
     }
 
-    override fun getRandomFilms(count: Int): List<Film> {
-        val randomList = mutableListOf<Film>()
-        lateinit var film: Film
-        var i = 0
-        var index: Int
-        if (cacheDataSource.filmsDataBase.isNotEmpty() && cacheDataSource.filmsDataBase.size >= count) {
-            while (i < count) {
-                println(i)
-                index = Random.nextInt(0, cacheDataSource.filmsDataBase.size - 1)
-                film = cacheDataSource.filmsDataBase[index]
-                if (!randomList.contains(film)) {
-                    randomList.add(film)
-                    i++
-                }
-            }
-        } else
-            return emptyList()
-        return randomList
-    }
-
-    override fun getFilmById(id: Int): Film? {
-        TODO("Not yet implemented")
+    override fun getAd(): List<FilmsLocalModel> {
+        return ApiToLocalMapper.map(apiDataSource.getAdFilms())
     }
 }

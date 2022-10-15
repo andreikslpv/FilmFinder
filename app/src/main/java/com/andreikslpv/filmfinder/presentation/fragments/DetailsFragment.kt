@@ -9,17 +9,17 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 
 class DetailsFragment : Fragment() {
-    private lateinit var film: Film
+    private lateinit var film: FilmsLocalModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         //Получаем наш фильм из переданного бандла
-        film = arguments?.get("film") as Film
+        film = arguments?.get("film") as FilmsLocalModel
 
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
@@ -30,7 +30,7 @@ class DetailsFragment : Fragment() {
         initView(film)
     }
 
-    private fun initView(film: Film) {
+    private fun initView(film: FilmsLocalModel) {
         //Устанавливаем заголовок
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title
