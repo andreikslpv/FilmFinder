@@ -5,17 +5,29 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
+import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.DetailsFragment
 import com.andreikslpv.filmfinder.presentation.fragments.HomeFragment
+import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 const val TIME_INTERVAL = 2000
 const val NUMBER_OF_HOME_FRAGMENT = 1
 
 class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
+
+    val filmsRepository = FilmsRepositoryImpl(
+        FilmsCacheDataSource(),
+        FilmsApiDataSource(),
+        FilmsLocalDataSource(File("local.json"), Gson())
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

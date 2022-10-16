@@ -24,4 +24,24 @@ class FilmsRepositoryImpl(
     override fun getAd(): List<FilmsLocalModel> {
         return ApiToLocalMapper.map(apiDataSource.getAdFilms())
     }
+
+    override fun saveFilm(film: FilmsLocalModel): Boolean {
+        return localDataSource.saveItem(film)
+    }
+
+    override fun removeFilm(id: Int): Boolean {
+        return localDataSource.removeItem(id)
+    }
+
+    override fun getFavoriteFilms(): List<FilmsLocalModel> {
+        return localDataSource.getItems().filter {
+            it.isFavorite
+        }
+    }
+
+    override fun getWatchLaterFilms(): List<FilmsLocalModel> {
+        return localDataSource.getItems().filter {
+            it.isWatchLater
+        }
+    }
 }

@@ -54,12 +54,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_of_FAB"
+        android:contentDescription="@string/details.FAB_share_title"
         app:backgroundTint="?attr/colorPrimary"
-        app:tint="?attr/itemIconTint"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_baseline_share"
-        android:contentDescription="@string/details.FAB_share_title"/>
+        app:tint="?attr/itemIconTint" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/details_fab_favorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_of_FAB"
+        android:contentDescription="@string/main.menu_favourites_title"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="left|bottom"
+        app:srcCompat="@drawable/ic_baseline_favorite_border"
+        app:tint="?attr/itemIconTint" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/details_fab_watch_later"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_of_FAB"
+        android:contentDescription="@string/main.menu_watch_later_title"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|center_horizontal"
+        app:srcCompat="@drawable/ic_baseline_watch_later_border"
+        app:tint="?attr/itemIconTint" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

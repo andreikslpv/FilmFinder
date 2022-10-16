@@ -11,6 +11,6 @@ data class FilmsLocalModel(
     val poster: Int,
     val description: String,
     val descriptionFull: String,
-    val isFavorite: Boolean = false,
-    val isWatchLater: Boolean = false
+    var isFavorite: Boolean = false,
+    var isWatchLater: Boolean = false
 ) : Parcelable

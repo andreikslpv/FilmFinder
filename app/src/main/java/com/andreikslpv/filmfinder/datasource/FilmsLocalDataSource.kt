@@ -28,8 +28,8 @@ class FilmsLocalDataSource(private val file: File, private val gson: Gson) {
         return isObjectSaved(objectToSave)
     }
 
-    private fun isObjectSaved(beer: FilmsLocalModel): Boolean {
-        return getItems().any { beer.id == it.id }
+    private fun isObjectSaved(film: FilmsLocalModel): Boolean {
+        return getItems().any { film.id == it.id }
     }
 
     fun removeItem(itemId: Int): Boolean {

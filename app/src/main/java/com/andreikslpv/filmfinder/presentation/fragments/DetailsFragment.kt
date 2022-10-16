@@ -1,5 +1,6 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
     private lateinit var film: FilmsLocalModel
@@ -31,6 +33,10 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initView(film: FilmsLocalModel) {
+        initIconFavorites()
+        initIconWatchLater()
+        initIconShare()
+
         //Устанавливаем заголовок
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title
@@ -40,5 +46,61 @@ class DetailsFragment : Fragment() {
         //Устанавливаем описание
         val detailsDescription = requireView().findViewById<TextView>(R.id.details_description)
         detailsDescription.text = film.descriptionFull
+    }
+
+    private fun initIconFavorites() {
+        val iconFavorites =
+            requireView().findViewById<FloatingActionButton>(R.id.details_fab_favorites)
+        iconFavorites.setImageResource(
+            if (film.isFavorite) R.drawable.ic_baseline_favorite
+            else R.drawable.ic_baseline_favorite_border
+        )
+        iconFavorites.setOnClickListener {
+            if (!film.isFavorite) {
+                iconFavorites.setImageResource(R.drawable.ic_baseline_favorite)
+                film.isFavorite = true
+            } else {
+                iconFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
+                film.isFavorite = false
+            }
+        }
+    }
+
+    private fun initIconWatchLater() {
+        val iconWatchLater =
+            requireView().findViewById<FloatingActionButton>(R.id.details_fab_watch_later)
+        iconWatchLater.setImageResource(
+            if (film.isFavorite) R.drawable.ic_baseline_watch_later
+            else R.drawable.ic_baseline_watch_later_border
+        )
+        iconWatchLater.setOnClickListener {
+            if (!film.isFavorite) {
+                iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later)
+                film.isFavorite = true
+            } else {
+                iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
+                film.isFavorite = false
+            }
+        }
+    }
+
+    private fun initIconShare() {
+        val iconShare =
+            requireView().findViewById<FloatingActionButton>(R.id.details_fab_share)
+        iconShare.setOnClickListener {
+            //Создаем интент
+            val intent = Intent()
+            //Указываем action с которым он запускается
+            intent.action = Intent.ACTION_SEND
+            //Кладем данные о нашем фильме
+            intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this film: ${film.title} \n\n ${film.description}"
+            )
+            //Указываем MIME тип, чтобы система знала, какое приложения предложить
+            intent.type = "text/plain"
+            //Запускаем наше активити
+            startActivity(Intent.createChooser(intent, "Share To:"))
+        }
     }
 }
