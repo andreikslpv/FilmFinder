@@ -26,6 +26,11 @@ class HomeFragment : Fragment() {
         initFilmListRecycler()
     }
 
+    override fun onResume() {
+        super.onResume()
+        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilmsWithFavoritesChecked())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

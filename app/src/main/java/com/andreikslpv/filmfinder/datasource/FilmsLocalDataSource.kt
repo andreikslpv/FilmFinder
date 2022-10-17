@@ -14,32 +14,27 @@ class FilmsLocalDataSource(private val file: File, private val gson: Gson) {
             ?: emptyList()
     }
 
-    fun changeItem(item: FilmsLocalModel): Boolean {
-        var isCanRemove = false
+    fun changeItem(item: FilmsLocalModel) {
         val listToSave = if (file.isFile) {
             val mutableItems: MutableList<FilmsLocalModel> = getItems().toMutableList()
             val existItem = mutableItems.any { it.id == item.id }
             if (existItem) {
-                val itemToRemove = mutableItems.filter { it.id == item.id }[0].apply {
+                mutableItems.filter { it.id == item.id }[0].apply {
                     isFavorite = item.isFavorite
                     isWatchLater = item.isWatchLater
-                    if (!isFavorite && !isWatchLater)
-                        isCanRemove = true
                 }
-                if (isCanRemove)
-                    mutableItems.remove(itemToRemove)
+            } else
+                mutableItems.add(item)
+            mutableItems.removeAll {
+                !it.isFavorite && !it.isWatchLater
             }
             mutableItems
         } else {
             val firstItemWhenFileIsEmpty = listOf(item)
             firstItemWhenFileIsEmpty
         }
-        if (!isCanRemove)
-            file.writeText(gson.toJson(listToSave))
-
-        return true
+        file.writeText(gson.toJson(listToSave))
     }
-
 
     fun saveItem(objectToSave: FilmsLocalModel): Boolean {
         val listToSave = if (file.isFile) {
@@ -83,14 +78,6 @@ class FilmsLocalDataSource(private val file: File, private val gson: Gson) {
                     mutableItems.remove(itemToRemove)
                 file.writeText(gson.toJson(mutableItems.toList()))
             }
-
-
-            /*val existItem = mutableItems.any { it.id == itemId }
-                if (existItem) {
-                    val itemToRemove = mutableItems.filter { it.id == itemId }[0]
-                    mutableItems.remove(itemToRemove)
-                    file.writeText(gson.toJson(mutableItems.toList()))
-                }*/
         }
 
         return isItemRemoved(objectToRemove.id)

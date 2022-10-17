@@ -12,6 +12,7 @@ import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.DetailsFragment
 import com.andreikslpv.filmfinder.presentation.fragments.FavoritesFragment
 import com.andreikslpv.filmfinder.presentation.fragments.HomeFragment
+import com.andreikslpv.filmfinder.presentation.fragments.WatchLaterFragment
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -46,9 +47,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchHomeFragment() {
-        bottomNavigation.menu.findItem(R.id.selections).setIcon(R.drawable.ic_baseline_video_library)
-        bottomNavigation.menu.findItem(R.id.favorites).setIcon(R.drawable.ic_baseline_favorite_border)
-        bottomNavigation.menu.findItem(R.id.watch_later).setIcon(R.drawable.ic_baseline_watch_later_border)
+        bottomNavigation.menu.findItem(R.id.selections)
+            .setIcon(R.drawable.ic_baseline_video_library)
+        bottomNavigation.menu.findItem(R.id.favorites)
+            .setIcon(R.drawable.ic_baseline_favorite_border)
+        bottomNavigation.menu.findItem(R.id.watch_later)
+            .setIcon(R.drawable.ic_baseline_watch_later_border)
 
         supportFragmentManager
             .beginTransaction()
@@ -57,18 +61,13 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun launchFavoritesFragment(type: Int) {
-        bottomNavigation.menu.findItem(R.id.selections).setIcon(R.drawable.ic_baseline_video_library_border)
-        when (type) {
-            FAVORITES -> {
-                bottomNavigation.menu.findItem(R.id.favorites).setIcon(R.drawable.ic_baseline_favorite)
-                bottomNavigation.menu.findItem(R.id.watch_later).setIcon(R.drawable.ic_baseline_watch_later_border)
-            }
-            WATCH_LATER -> {
-                bottomNavigation.menu.findItem(R.id.favorites).setIcon(R.drawable.ic_baseline_favorite_border)
-                bottomNavigation.menu.findItem(R.id.watch_later).setIcon(R.drawable.ic_baseline_watch_later)
-            }
-        }
+    private fun launchFavoritesFragment() {
+        bottomNavigation.menu.findItem(R.id.selections)
+            .setIcon(R.drawable.ic_baseline_video_library_border)
+        bottomNavigation.menu.findItem(R.id.favorites).setIcon(R.drawable.ic_baseline_favorite)
+        bottomNavigation.menu.findItem(R.id.watch_later)
+            .setIcon(R.drawable.ic_baseline_watch_later_border)
+
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_placeholder, FavoritesFragment(), "favorites")
@@ -76,10 +75,27 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    fun launchDetailsFragment(film: FilmsLocalModel) {
-        bottomNavigation.menu.findItem(R.id.selections).setIcon(R.drawable.ic_baseline_video_library_border)
+    private fun launchWatchLaterFragment() {
+        bottomNavigation.menu.findItem(R.id.selections)
+            .setIcon(R.drawable.ic_baseline_video_library_border)
         bottomNavigation.menu.findItem(R.id.favorites).setIcon(R.drawable.ic_baseline_favorite_border)
-        bottomNavigation.menu.findItem(R.id.watch_later).setIcon(R.drawable.ic_baseline_watch_later_border)
+        bottomNavigation.menu.findItem(R.id.watch_later)
+            .setIcon(R.drawable.ic_baseline_watch_later)
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_placeholder, WatchLaterFragment(), "watch_later")
+            .addToBackStack(null)
+            .commit()
+    }
+
+    fun launchDetailsFragment(film: FilmsLocalModel) {
+        bottomNavigation.menu.findItem(R.id.selections)
+            .setIcon(R.drawable.ic_baseline_video_library_border)
+        bottomNavigation.menu.findItem(R.id.favorites)
+            .setIcon(R.drawable.ic_baseline_favorite_border)
+        bottomNavigation.menu.findItem(R.id.watch_later)
+            .setIcon(R.drawable.ic_baseline_watch_later_border)
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем наш фильм в "посылку"
@@ -147,12 +163,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.favorites -> {
                     //Запускаем фрагмент Favorites
-                    launchFavoritesFragment(FAVORITES)
+                    launchFavoritesFragment()
                     true
                 }
                 R.id.watch_later -> {
-                    //Запускаем фрагмент Favorites
-                    launchFavoritesFragment(WATCH_LATER)
+                    //Запускаем фрагмент WatchLater
+                    launchWatchLaterFragment()
                     true
                 }
                 else -> false

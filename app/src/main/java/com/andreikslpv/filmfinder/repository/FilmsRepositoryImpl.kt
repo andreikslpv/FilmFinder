@@ -25,7 +25,7 @@ class FilmsRepositoryImpl(
         return ApiToLocalMapper.map(apiDataSource.getAdFilms())
     }
 
-    override fun changeFilmsState(film: FilmsLocalModel): Boolean {
+    override fun changeFilmsState(film: FilmsLocalModel) {
         return localDataSource.changeItem(film)
     }
 
@@ -48,10 +48,6 @@ class FilmsRepositoryImpl(
             it.isWatchLater
         }
     }
-
-    /*override fun getFavoritesAndWatchLaterFilms(): List<FilmsLocalModel> {
-        return localDataSource.getItems()
-    }*/
 
     override fun getAllFilmsWithFavoritesChecked(): List<FilmsLocalModel> {
         val favoritesFilms = localDataSource.getItems()
