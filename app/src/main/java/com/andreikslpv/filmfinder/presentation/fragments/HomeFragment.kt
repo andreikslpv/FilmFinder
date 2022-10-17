@@ -9,24 +9,26 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.AdRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
-import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
 
 class HomeFragment : Fragment() {
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private val filmsRepositoryImpl = FilmsRepositoryImpl(FilmsCacheDataSource())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initAdRecycler()
         initFilmListRecycler()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilmsWithFavoritesChecked())
     }
 
     override fun onCreateView(
@@ -42,7 +44,7 @@ class HomeFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         val adAdapter = AdRecyclerAdapter()
         adRecycler.adapter = adAdapter
-        adAdapter.changeItems(filmsRepositoryImpl.getRandomFilms(5))
+        adAdapter.changeItems((activity as MainActivity).filmsRepository.getAd())
     }
 
     private fun initFilmListRecycler() {
@@ -51,7 +53,7 @@ class HomeFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: Film) {
+                    override fun click(film: FilmsLocalModel) {
                         (requireActivity() as MainActivity).launchDetailsFragment(film)
                     }
                 })
@@ -67,7 +69,7 @@ class HomeFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems(filmsRepositoryImpl.getAllFilms())
+        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilmsWithFavoritesChecked())
     }
 
     fun changeAd() {

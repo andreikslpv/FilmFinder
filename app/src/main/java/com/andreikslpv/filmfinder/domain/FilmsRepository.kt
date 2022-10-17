@@ -1,9 +1,21 @@
 package com.andreikslpv.filmfinder.domain
 
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 
 interface FilmsRepository {
-    fun getAllFilms(): List<Film>
-    fun getRandomFilms(count: Int): List<Film>
-    fun getFilmById(id: Int): Film?
+    fun getAllFilms(): List<FilmsLocalModel>
+
+    fun getAd(): List<FilmsLocalModel>
+
+    fun changeFilmsState(film: FilmsLocalModel)
+
+    fun saveFilm(film: FilmsLocalModel): Boolean
+
+    fun removeFilm(film: FilmsLocalModel): Boolean
+
+    fun getFavoriteFilms(): List<FilmsLocalModel>
+
+    fun getWatchLaterFilms(): List<FilmsLocalModel>
+
+    fun getAllFilmsWithFavoritesChecked(): List<FilmsLocalModel>
 }

@@ -6,12 +6,12 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.domain.model.Film
+import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //Здесь у нас хранится список элементов для RV
-    val items = mutableListOf<Film>()
+    val items = mutableListOf<FilmsLocalModel>()
 
     //Этот метод нужно переопределить на возврат количества элементов в списке RV
     override fun getItemCount() = items.size
@@ -41,7 +41,7 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) : 
     }
 
     //Метод для добавления объектов в наш список
-    fun changeItems(list: List<Film>) {
+    fun changeItems(list: List<FilmsLocalModel>) {
         val diff = FilmDiff(items, list)
         val diffResult = DiffUtil.calculateDiff(diff)
         //Сначала очищаем
@@ -54,6 +54,6 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) : 
 
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
-        fun click(film: Film)
+        fun click(film: FilmsLocalModel)
     }
 }
