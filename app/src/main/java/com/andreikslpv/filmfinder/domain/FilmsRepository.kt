@@ -7,11 +7,17 @@ interface FilmsRepository {
 
     fun getAd(): List<FilmsLocalModel>
 
+    fun changeFilmsState(film: FilmsLocalModel): Boolean
+
     fun saveFilm(film: FilmsLocalModel): Boolean
 
-    fun removeFilm(id: Int): Boolean
+    fun removeFilm(film: FilmsLocalModel): Boolean
 
     fun getFavoriteFilms(): List<FilmsLocalModel>
 
     fun getWatchLaterFilms(): List<FilmsLocalModel>
+
+    //fun getFavoritesAndWatchLaterFilms(): List<FilmsLocalModel>
+
+    fun getAllFilmsWithFavoritesChecked(): List<FilmsLocalModel>
 }

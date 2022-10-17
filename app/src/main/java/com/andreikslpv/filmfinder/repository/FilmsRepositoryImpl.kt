@@ -25,12 +25,16 @@ class FilmsRepositoryImpl(
         return ApiToLocalMapper.map(apiDataSource.getAdFilms())
     }
 
+    override fun changeFilmsState(film: FilmsLocalModel): Boolean {
+        return localDataSource.changeItem(film)
+    }
+
     override fun saveFilm(film: FilmsLocalModel): Boolean {
         return localDataSource.saveItem(film)
     }
 
-    override fun removeFilm(id: Int): Boolean {
-        return localDataSource.removeItem(id)
+    override fun removeFilm(film: FilmsLocalModel): Boolean {
+        return localDataSource.removeItem(film)
     }
 
     override fun getFavoriteFilms(): List<FilmsLocalModel> {
@@ -43,5 +47,27 @@ class FilmsRepositoryImpl(
         return localDataSource.getItems().filter {
             it.isWatchLater
         }
+    }
+
+    /*override fun getFavoritesAndWatchLaterFilms(): List<FilmsLocalModel> {
+        return localDataSource.getItems()
+    }*/
+
+    override fun getAllFilmsWithFavoritesChecked(): List<FilmsLocalModel> {
+        val favoritesFilms = localDataSource.getItems()
+        val allFilms = getAllFilms()
+
+        allFilms.map { allFilm ->
+            val equalsId = favoritesFilms.filter { favFilm ->
+                allFilm.id == favFilm.id
+            }
+
+            if (equalsId.isNotEmpty()) {
+                allFilm.isFavorite = equalsId[0].isFavorite
+                allFilm.isWatchLater = equalsId[0].isWatchLater
+            }
+        }
+
+        return allFilms
     }
 }

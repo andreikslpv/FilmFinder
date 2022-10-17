@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
@@ -30,13 +31,12 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initView(film)
-    }
-
-    private fun initView(film: FilmsLocalModel) {
         initIconFavorites()
         initIconWatchLater()
         initIconShare()
+    }
 
+    private fun initView(film: FilmsLocalModel) {
         //Устанавливаем заголовок
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title
@@ -59,10 +59,13 @@ class DetailsFragment : Fragment() {
             if (!film.isFavorite) {
                 iconFavorites.setImageResource(R.drawable.ic_baseline_favorite)
                 film.isFavorite = true
+                //(activity as MainActivity).filmsRepository.saveFilm(film)
             } else {
                 iconFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
                 film.isFavorite = false
+                //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
+            (activity as MainActivity).filmsRepository.changeFilmsState(film)
         }
     }
 
@@ -70,17 +73,20 @@ class DetailsFragment : Fragment() {
         val iconWatchLater =
             requireView().findViewById<FloatingActionButton>(R.id.details_fab_watch_later)
         iconWatchLater.setImageResource(
-            if (film.isFavorite) R.drawable.ic_baseline_watch_later
+            if (film.isWatchLater) R.drawable.ic_baseline_watch_later
             else R.drawable.ic_baseline_watch_later_border
         )
         iconWatchLater.setOnClickListener {
-            if (!film.isFavorite) {
+            if (!film.isWatchLater) {
                 iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later)
-                film.isFavorite = true
+                film.isWatchLater = true
+                //(activity as MainActivity).filmsRepository.saveFilm(film)
             } else {
                 iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
-                film.isFavorite = false
+                film.isWatchLater = false
+                //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
+            (activity as MainActivity).filmsRepository.changeFilmsState(film)
         }
     }
 

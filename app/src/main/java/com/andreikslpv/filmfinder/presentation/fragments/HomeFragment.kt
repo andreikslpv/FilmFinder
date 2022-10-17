@@ -64,7 +64,7 @@ class HomeFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilms())
+        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilmsWithFavoritesChecked())
     }
 
     fun changeAd() {

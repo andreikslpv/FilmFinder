@@ -1,11 +1,10 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
@@ -13,7 +12,6 @@ import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
-import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
 
 
 class FavoritesFragment : Fragment() {
@@ -50,9 +48,9 @@ class FavoritesFragment : Fragment() {
             //Применяем декоратор для отступов
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
-            val callback = FilmTouchHelperCallback(adapter as FilmListRecyclerAdapter)
+            /*val callback = FilmTouchHelperCallback(adapter as FilmListRecyclerAdapter)
             val touchHelper = ItemTouchHelper(callback)
-            touchHelper.attachToRecyclerView(this)
+            touchHelper.attachToRecyclerView(this)*/
         }
         //Кладем нашу БД в RV
         filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getFavoriteFilms())
