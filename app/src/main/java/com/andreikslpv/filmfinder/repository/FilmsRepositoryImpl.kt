@@ -21,8 +21,17 @@ class FilmsRepositoryImpl(
         return cacheDataSource.films.ifEmpty { emptyList() }
     }
 
-    override fun changeFilmsState(film: FilmsLocalModel) {
+    override fun changeFilmLocalState(film: FilmsLocalModel) {
         return localDataSource.changeItem(film)
+    }
+
+    override fun getFilmLocalState(film: FilmsLocalModel): FilmsLocalModel {
+        val localFilm = localDataSource.getItemById(film.id)
+        if (localFilm != null) {
+            film.isFavorite = localFilm.isFavorite
+            film.isWatchLater = localFilm.isWatchLater
+        }
+        return film
     }
 
     override fun getFavoriteFilms(): List<FilmsLocalModel> {
@@ -37,21 +46,4 @@ class FilmsRepositoryImpl(
         }
     }
 
-    override fun getAllFilmsWithFavoritesChecked(): List<FilmsLocalModel> {
-        val favoritesFilms = localDataSource.getItems()
-        val allFilms = getAllFilms()
-
-        allFilms.map { allFilm ->
-            val equalsId = favoritesFilms.filter { favFilm ->
-                allFilm.id == favFilm.id
-            }
-
-            if (equalsId.isNotEmpty()) {
-                allFilm.isFavorite = equalsId[0].isFavorite
-                allFilm.isWatchLater = equalsId[0].isWatchLater
-            }
-        }
-
-        return allFilms
-    }
 }

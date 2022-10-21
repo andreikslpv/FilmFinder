@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import java.util.*
 
-class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : ItemTouchHelper.Callback() {
+class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :
+    ItemTouchHelper.Callback() {
 
     override fun isLongPressDragEnabled(): Boolean {
         //Drag & drop не поддерживается
@@ -14,8 +15,8 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : It
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {
-        //Swipe поддерживается
-        return true
+        //Swipe не поддерживается
+        return false
     }
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: ViewHolder): Int {
@@ -25,7 +26,11 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : It
         return makeMovementFlags(dragFlags, swipeFlags)
     }
 
-    override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder, target: ViewHolder): Boolean {
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: ViewHolder,
+        target: ViewHolder
+    ): Boolean {
         val items = adapter.items
         val fromPosition = viewHolder.adapterPosition
         val toPosition = target.adapterPosition

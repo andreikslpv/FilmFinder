@@ -65,7 +65,7 @@ class DetailsFragment : Fragment() {
                 film.isFavorite = false
                 //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
-            (activity as MainActivity).filmsRepository.changeFilmsState(film)
+            (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
         }
     }
 
@@ -86,7 +86,7 @@ class DetailsFragment : Fragment() {
                 film.isWatchLater = false
                 //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
-            (activity as MainActivity).filmsRepository.changeFilmsState(film)
+            (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
         }
     }
 

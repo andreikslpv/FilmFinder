@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.Pages
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
@@ -27,16 +28,25 @@ class HomeFragment : Fragment() {
         initSearchView()
     }
 
-    override fun onResume() {
-        super.onResume()
-        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilmsWithFavoritesChecked())
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
+    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
+        return when ((activity as MainActivity).currentPage) {
+            Pages.HOME -> {
+                (activity as MainActivity).filmsRepository.getAllFilms()
+            }
+            Pages.FAVORITES -> {
+                (activity as MainActivity).filmsRepository.getFavoriteFilms()
+            }
+            Pages.WATCH_LATER -> {
+                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
+            }
+        }
     }
 
     private fun initFilmListRecycler() {
@@ -46,7 +56,11 @@ class HomeFragment : Fragment() {
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                     override fun click(film: FilmsLocalModel) {
-                        (requireActivity() as MainActivity).launchDetailsFragment(film)
+                        (requireActivity() as MainActivity).launchDetailsFragment(
+                            (activity as MainActivity).filmsRepository.getFilmLocalState(
+                                film
+                            )
+                        )
                     }
                 })
             //Присваиваем адаптер
@@ -61,7 +75,7 @@ class HomeFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilmsWithFavoritesChecked())
+        filmsAdapter.changeItems(getCurrentFilmsList())
     }
 
     private fun initSearchView() {
@@ -70,22 +84,24 @@ class HomeFragment : Fragment() {
             searchView.isIconified = false
         }
         //Подключаем слушателя изменений введенного текста в поиска
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
-                    filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilms())
+                    filmsAdapter.changeItems(getCurrentFilmsList())
                     return true
                 }
                 //Фильтруем список на поиск подходящих сочетаний
-                val result = (activity as MainActivity).filmsRepository.getAllFilms().filter {
+                val result = getCurrentFilmsList().filter {
                     //Чтобы все работало правильно, нужно и запрос, и имя фильма приводить к нижнему регистру
-                    it.title.lowercase(Locale.getDefault()).contains(newText.lowercase(Locale.getDefault()))
+                    it.title.lowercase(Locale.getDefault())
+                        .contains(newText.lowercase(Locale.getDefault()))
                 }
                 //Добавляем в адаптер
                 filmsAdapter.changeItems(result)
