@@ -44,11 +44,6 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : It
         return true
     }
 
-    override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
-        super.clearView(recyclerView, viewHolder)
-
-    }
-
     override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
         adapter.items.removeAt(viewHolder.adapterPosition)
         adapter.notifyDataSetChanged()

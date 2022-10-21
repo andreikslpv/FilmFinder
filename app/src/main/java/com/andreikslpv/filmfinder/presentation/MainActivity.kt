@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeSnackbar(text: CharSequence) {
+    /*private fun makeSnackbar(text: CharSequence) {
         val snackbar = Snackbar.make(findViewById(R.id.main_layout), text, Snackbar.LENGTH_SHORT)
         if (supportFragmentManager.backStackEntryCount == NUMBER_OF_HOME_FRAGMENT) {
             snackbar.setAction(R.string.main_change_ad) {
@@ -140,19 +140,19 @@ class MainActivity : AppCompatActivity() {
             snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.red))
         }
         snackbar.show()
-    }
+    }*/
 
     private fun initMenus() {
-        val topAppBar = findViewById<MaterialToolbar>(R.id.top_app_bar)
+        /*val topAppBar = findViewById<MaterialToolbar>(R.id.home_toolbar)
         topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.settings -> {
-                    makeSnackbar(it.title!!)
+                    //makeSnackbar(it.title!!)
                     true
                 }
                 else -> false
             }
-        }
+        }*/
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {

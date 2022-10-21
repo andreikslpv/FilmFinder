@@ -4,5 +4,4 @@
         android:angle="@dimen/angle_of_CM_shape"
         android:endColor="?attr/colorPrimary"
         android:startColor="?attr/colorOnPrimary" />
-    <corners android:radius="@dimen/corner_radius" />
 </shape>
