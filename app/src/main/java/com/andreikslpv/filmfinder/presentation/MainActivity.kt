@@ -3,7 +3,6 @@ package com.andreikslpv.filmfinder.presentation
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
@@ -14,16 +13,12 @@ import com.andreikslpv.filmfinder.presentation.fragments.FavoritesFragment
 import com.andreikslpv.filmfinder.presentation.fragments.HomeFragment
 import com.andreikslpv.filmfinder.presentation.fragments.WatchLaterFragment
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import java.io.File
 
 const val TIME_INTERVAL = 2000
 const val NUMBER_OF_HOME_FRAGMENT = 1
-const val FAVORITES = 1
-const val WATCH_LATER = 2
 
 class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
@@ -129,25 +124,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /*private fun makeSnackbar(text: CharSequence) {
-        val snackbar = Snackbar.make(findViewById(R.id.main_layout), text, Snackbar.LENGTH_SHORT)
-        if (supportFragmentManager.backStackEntryCount == NUMBER_OF_HOME_FRAGMENT) {
-            snackbar.setAction(R.string.main_change_ad) {
-                val fragment: HomeFragment =
-                    supportFragmentManager.findFragmentByTag("home") as HomeFragment
-                fragment.changeAd()
-            }
-            snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.red))
-        }
-        snackbar.show()
-    }*/
-
     private fun initMenus() {
         /*val topAppBar = findViewById<MaterialToolbar>(R.id.home_toolbar)
         topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.settings -> {
-                    //makeSnackbar(it.title!!)
                     true
                 }
                 else -> false

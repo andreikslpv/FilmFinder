@@ -21,20 +21,8 @@ class FilmsRepositoryImpl(
         return cacheDataSource.films.ifEmpty { emptyList() }
     }
 
-    override fun getAd(): List<FilmsLocalModel> {
-        return ApiToLocalMapper.map(apiDataSource.getAdFilms())
-    }
-
     override fun changeFilmsState(film: FilmsLocalModel) {
         return localDataSource.changeItem(film)
-    }
-
-    override fun saveFilm(film: FilmsLocalModel): Boolean {
-        return localDataSource.saveItem(film)
-    }
-
-    override fun removeFilm(film: FilmsLocalModel): Boolean {
-        return localDataSource.removeItem(film)
     }
 
     override fun getFavoriteFilms(): List<FilmsLocalModel> {

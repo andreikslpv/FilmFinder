@@ -3,15 +3,11 @@
     <string name="app_name">FilmFinder</string>
 
     <!-- main -->
-    <string name="main.menu_title">Menu</string>
     <string name="main.menu_favourites_title">Favourites</string>
     <string name="main.menu_watch_later_title">See later</string>
     <string name="main.menu_video_library_title">Collections</string>
     <string name="main.menu_settings_title">Settings</string>
-    <string name="main.copyright">Posters provided by https://www.kinopoisk.ru/</string>
     <string name="content_description">Poster</string>
-    <string name="main.page_title">Search it!</string>
-    <string name="main_change_ad">Change ad</string>
     <string name="details.FAB_share_title">Share it</string>
     <string name="main_backpress_message">Double tap for exit</string>
 </resources>

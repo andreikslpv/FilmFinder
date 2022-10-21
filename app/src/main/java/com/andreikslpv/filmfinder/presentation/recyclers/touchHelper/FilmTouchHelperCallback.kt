@@ -9,8 +9,8 @@ import java.util.*
 class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) : ItemTouchHelper.Callback() {
 
     override fun isLongPressDragEnabled(): Boolean {
-        //Drag & drop поддерживается
-        return true
+        //Drag & drop не поддерживается
+        return false
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
-import com.andreikslpv.filmfinder.presentation.recyclers.AdRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
@@ -24,7 +23,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //initAdRecycler()
         initFilmListRecycler()
         initSearchView()
     }
@@ -40,15 +38,6 @@ class HomeFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
-
-    /*private fun initAdRecycler() {
-        val adRecycler: RecyclerView = requireView().findViewById(R.id.ad_recycler)
-        adRecycler.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val adAdapter = AdRecyclerAdapter()
-        adRecycler.adapter = adAdapter
-        adAdapter.changeItems((activity as MainActivity).filmsRepository.getAd())
-    }*/
 
     private fun initFilmListRecycler() {
         val filmListRecycler = requireView().findViewById<RecyclerView>(R.id.film_list_recycler)
@@ -104,15 +93,5 @@ class HomeFragment : Fragment() {
             }
         })
     }
-    /*fun changeAd() {
-        val adRecycler: RecyclerView = requireView().findViewById(R.id.ad_recycler)
-        var i = adRecycler.getChildAdapterPosition(adRecycler.getChildAt(2))
-        i++
-        val adsCount = adRecycler.adapter?.itemCount
-        if (adsCount != null) {
-            if (i >= adsCount) i = 0
-            adRecycler.scrollToPosition(i)
-        }
-    }*/
 
 }
