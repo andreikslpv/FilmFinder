@@ -2,9 +2,7 @@ package com.andreikslpv.filmfinder.datasource
 
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsApiModel
-import kotlin.random.Random
 
-const val AD_COUNT = 5
 class FilmsApiDataSource {
     // подмена данных из сети
     private val filmsMutableList = mutableListOf(
@@ -75,24 +73,4 @@ class FilmsApiDataSource {
         return filmsMutableList
     }
 
-    // получение фильмов для их рекламы
-    fun getAdFilms(): List<FilmsApiModel> {
-        val adList = mutableListOf<FilmsApiModel>()
-        lateinit var film: FilmsApiModel
-        var i = 0
-        var index: Int
-        if (filmsMutableList.isNotEmpty() && filmsMutableList.size >= AD_COUNT) {
-            while (i < AD_COUNT) {
-                println(i)
-                index = Random.nextInt(0, filmsMutableList.size - 1)
-                film = filmsMutableList[index]
-                if (!adList.contains(film)) {
-                    adList.add(film)
-                    i++
-                }
-            }
-        } else
-            return emptyList()
-        return adList
-    }
 }

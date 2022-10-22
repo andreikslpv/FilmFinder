@@ -9,7 +9,7 @@
     tools:context=".presentation.fragments.DetailsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/details_app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_of_appbar"
         android:fitsSystemWindows="false"
@@ -56,7 +56,7 @@
         android:layout_margin="@dimen/margin_of_FAB"
         android:contentDescription="@string/details.FAB_share_title"
         app:backgroundTint="?attr/colorPrimary"
-        app:layout_anchor="@id/app_bar"
+        app:layout_anchor="@id/details_app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_baseline_share"
         app:tint="?attr/itemIconTint" />
@@ -68,7 +68,7 @@
         android:layout_margin="@dimen/margin_of_FAB"
         android:contentDescription="@string/main.menu_favourites_title"
         app:backgroundTint="?attr/colorPrimary"
-        app:layout_anchor="@id/app_bar"
+        app:layout_anchor="@id/details_app_bar"
         app:layout_anchorGravity="left|bottom"
         app:srcCompat="@drawable/ic_baseline_favorite_border"
         app:tint="?attr/itemIconTint" />
@@ -80,7 +80,7 @@
         android:layout_margin="@dimen/margin_of_FAB"
         android:contentDescription="@string/main.menu_watch_later_title"
         app:backgroundTint="?attr/colorPrimary"
-        app:layout_anchor="@id/app_bar"
+        app:layout_anchor="@id/details_app_bar"
         app:layout_anchorGravity="bottom|center_horizontal"
         app:srcCompat="@drawable/ic_baseline_watch_later_border"
         app:tint="?attr/itemIconTint" />

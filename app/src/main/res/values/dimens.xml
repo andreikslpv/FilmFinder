@@ -4,11 +4,10 @@
     <!-- main -->
     <dimen name="height_of_card">150dp</dimen>
     <dimen name="margin_of_RV">5dp</dimen>
-    <dimen name="margin_of_GL">16dp</dimen>
-    <dimen name="null_space">0dp</dimen>
+    <dimen name="margin_of_search">8dp</dimen>
     <dimen name="angle_of_CM_shape">45</dimen>
     <dimen name="corner_radius">10dp</dimen>
-    <dimen name="elevation_of_card">5dp</dimen>
+    <dimen name="border">1dp</dimen>
 
     <!-- details -->
     <dimen name="height_of_appbar">200dp</dimen>
