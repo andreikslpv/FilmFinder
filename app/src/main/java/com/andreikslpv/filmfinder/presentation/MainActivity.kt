@@ -24,6 +24,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
     lateinit var filmsRepository: FilmsRepositoryImpl
     var currentPage: Pages = Pages.HOME
+        set(value) {
+            if (field == value) return
+            field = value
+            launchHomeFragment()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,31 +124,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMenus() {
-        /*val topAppBar = findViewById<MaterialToolbar>(R.id.home_toolbar)
-        topAppBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.settings -> {
-                    true
-                }
-                else -> false
-            }
-        }*/
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.selections -> {
                     currentPage = Pages.HOME
-                    launchHomeFragment()
                     true
                 }
                 R.id.favorites -> {
                     currentPage = Pages.FAVORITES
-                    launchHomeFragment()
                     true
                 }
                 R.id.watch_later -> {
                     currentPage = Pages.WATCH_LATER
-                    launchHomeFragment()
                     true
                 }
                 else -> false
