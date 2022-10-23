@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
@@ -42,6 +43,15 @@ class DetailsFragment : Fragment() {
         detailsToolbar.title = film.title
         //Устанавливаем картинку
         val detailsPoster = requireView().findViewById<AppCompatImageView>(R.id.details_poster)
+        //Указываем контейнер, в котором будет "жить" наша картинка
+        Glide.with(requireView())
+            //Загружаем сам ресурс
+            .load(film.poster)
+            //Центруем изображение
+            .centerCrop()
+            //Указываем ImageView, куда будем загружать изображение
+            .into(detailsPoster)
+
         detailsPoster.setImageResource(film.poster)
         //Устанавливаем описание
         val detailsDescription = requireView().findViewById<TextView>(R.id.details_description)

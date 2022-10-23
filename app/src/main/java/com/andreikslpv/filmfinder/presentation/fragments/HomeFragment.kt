@@ -1,10 +1,16 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
+import android.transition.Scene
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.transition.TransitionSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,13 +27,6 @@ import java.util.*
 class HomeFragment : Fragment() {
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initFilmListRecycler()
-        initSearchView()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,18 +34,32 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
-        return when ((activity as MainActivity).currentPage) {
-            Pages.HOME -> {
-                (activity as MainActivity).filmsRepository.getAllFilms()
-            }
-            Pages.FAVORITES -> {
-                (activity as MainActivity).filmsRepository.getFavoriteFilms()
-            }
-            Pages.WATCH_LATER -> {
-                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setFragmentAnimation()
+        initFilmListRecycler()
+        initSearchView()
+    }
+
+    private fun setFragmentAnimation() {
+        val root = requireView().findViewById<ConstraintLayout>(R.id.home_fragment_root)
+        val scene =
+            Scene.getSceneForLayout(root, R.layout.merge_home_screen_content, requireContext())
+        //Создаем анимацию выезда поля поиска сверху
+        val searchSlide = Slide(Gravity.TOP).addTarget(R.id.home_app_bar)
+        //Создаем анимацию выезда RV снизу
+        val recyclerSlide = Slide(Gravity.BOTTOM).addTarget(R.id.film_list_recycler)
+        //Создаем экземпляр TransitionSet, который объединит все наши анимации
+        val customTransition = TransitionSet().apply {
+            //Устанавливаем время, за которое будет проходить анимация
+            duration = 500
+            //Добавляем сами анимации
+            addTransition(recyclerSlide)
+            addTransition(searchSlide)
         }
+        // запускаем через TransitionManager, вторым параметром передаем нашу кастомную анимацию
+        TransitionManager.go(scene, customTransition)
     }
 
     private fun initFilmListRecycler() {
@@ -57,9 +70,7 @@ class HomeFragment : Fragment() {
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                     override fun click(film: FilmsLocalModel) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            (activity as MainActivity).filmsRepository.getFilmLocalState(
-                                film
-                            )
+                            (activity as MainActivity).filmsRepository.getFilmLocalState(film)
                         )
                     }
                 })
@@ -76,6 +87,20 @@ class HomeFragment : Fragment() {
         }
         //Кладем нашу БД в RV
         filmsAdapter.changeItems(getCurrentFilmsList())
+    }
+
+    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
+        return when ((activity as MainActivity).currentPage) {
+            Pages.HOME -> {
+                (activity as MainActivity).filmsRepository.getAllFilms()
+            }
+            Pages.FAVORITES -> {
+                (activity as MainActivity).filmsRepository.getFavoriteFilms()
+            }
+            Pages.WATCH_LATER -> {
+                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
+            }
+        }
     }
 
     private fun initSearchView() {
