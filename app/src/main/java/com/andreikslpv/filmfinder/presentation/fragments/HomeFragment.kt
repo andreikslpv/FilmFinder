@@ -86,21 +86,7 @@ class HomeFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems(getCurrentFilmsList())
-    }
-
-    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
-        return when ((activity as MainActivity).currentPage) {
-            Pages.HOME -> {
-                (activity as MainActivity).filmsRepository.getAllFilms()
-            }
-            Pages.FAVORITES -> {
-                (activity as MainActivity).filmsRepository.getFavoriteFilms()
-            }
-            Pages.WATCH_LATER -> {
-                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
-            }
-        }
+        refreshFilmsList()
     }
 
     private fun initSearchView() {
@@ -119,7 +105,7 @@ class HomeFragment : Fragment() {
             override fun onQueryTextChange(newText: String): Boolean {
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
-                    filmsAdapter.changeItems(getCurrentFilmsList())
+                    refreshFilmsList()
                     return true
                 }
                 //Фильтруем список на поиск подходящих сочетаний
@@ -135,4 +121,21 @@ class HomeFragment : Fragment() {
         })
     }
 
+    fun refreshFilmsList() {
+        filmsAdapter.changeItems(getCurrentFilmsList())
+    }
+
+    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
+        return when ((activity as MainActivity).currentPage) {
+            Pages.HOME -> {
+                (activity as MainActivity).filmsRepository.getAllFilms()
+            }
+            Pages.FAVORITES -> {
+                (activity as MainActivity).filmsRepository.getFavoriteFilms()
+            }
+            Pages.WATCH_LATER -> {
+                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
+            }
+        }
+    }
 }

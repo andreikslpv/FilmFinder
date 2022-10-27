@@ -75,12 +75,17 @@ class MainActivity : AppCompatActivity() {
                     .setIcon(R.drawable.ic_baseline_watch_later)
             }
         }
-
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_placeholder, HomeFragment(), "home")
-            .addToBackStack(null)
-            .commit()
+        // проверяем, если активен HomeFragment, то обновляем список фильмов
+        // иначе запускаем HomeFragment
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_placeholder)
+        if (currentFragment is HomeFragment) {
+            currentFragment.refreshFilmsList()
+        } else
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_placeholder, HomeFragment(), "home")
+                .addToBackStack(null)
+                .commit()
     }
 
     fun launchDetailsFragment(film: FilmsLocalModel) {
