@@ -12,12 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/poster"
             android:layout_width="@dimen/height_of_card"
             android:layout_height="match_parent"
             android:contentDescription="@string/content_description"
             android:scaleType="centerCrop"
+            android:transitionName="image_name"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />

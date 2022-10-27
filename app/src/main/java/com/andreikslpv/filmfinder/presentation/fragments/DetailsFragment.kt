@@ -38,6 +38,8 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initView(film: FilmsLocalModel) {
+        //Приостанавливаем воспроизведение Transition до загрузки данных
+        postponeEnterTransition()
         //Устанавливаем заголовок
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title
@@ -51,11 +53,11 @@ class DetailsFragment : Fragment() {
             .centerCrop()
             //Указываем ImageView, куда будем загружать изображение
             .into(detailsPoster)
-
-        detailsPoster.setImageResource(film.poster)
         //Устанавливаем описание
         val detailsDescription = requireView().findViewById<TextView>(R.id.details_description)
         detailsDescription.text = film.descriptionFull
+        //Данные загружены, запускаем анимацию перехода
+        startPostponedEnterTransition()
     }
 
     private fun initIconFavorites() {
@@ -69,11 +71,9 @@ class DetailsFragment : Fragment() {
             if (!film.isFavorite) {
                 iconFavorites.setImageResource(R.drawable.ic_baseline_favorite)
                 film.isFavorite = true
-                //(activity as MainActivity).filmsRepository.saveFilm(film)
             } else {
                 iconFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
                 film.isFavorite = false
-                //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
             (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
         }
@@ -90,11 +90,9 @@ class DetailsFragment : Fragment() {
             if (!film.isWatchLater) {
                 iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later)
                 film.isWatchLater = true
-                //(activity as MainActivity).filmsRepository.saveFilm(film)
             } else {
                 iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
                 film.isWatchLater = false
-                //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
             (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
         }

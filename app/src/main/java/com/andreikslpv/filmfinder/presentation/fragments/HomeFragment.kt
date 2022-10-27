@@ -9,6 +9,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -68,9 +70,10 @@ class HomeFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: FilmsLocalModel) {
+                    override fun click(film: FilmsLocalModel, image: AppCompatImageView) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            (activity as MainActivity).filmsRepository.getFilmLocalState(film)
+                            (activity as MainActivity).filmsRepository.getFilmLocalState(film),
+                            image
                         )
                     }
                 })

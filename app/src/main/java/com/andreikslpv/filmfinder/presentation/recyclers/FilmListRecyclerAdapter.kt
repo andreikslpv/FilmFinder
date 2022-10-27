@@ -2,6 +2,7 @@ package com.andreikslpv.filmfinder.presentation.recyclers
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +38,8 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
                 //конструктора адаптера
                 val itemContainer = holder.itemView.findViewById<CardView>(R.id.item_container)
                 itemContainer.setOnClickListener {
-                    clickListener.click(items[position])
+                    val image = holder.itemView.findViewById<AppCompatImageView>(R.id.poster)
+                    clickListener.click(items[position], image)
                 }
             }
         }
@@ -57,6 +59,6 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
 
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
-        fun click(film: FilmsLocalModel)
+        fun click(film: FilmsLocalModel, image: AppCompatImageView)
     }
 }

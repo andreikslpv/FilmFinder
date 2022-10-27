@@ -1,8 +1,11 @@
 package com.andreikslpv.filmfinder.presentation
 
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
@@ -18,6 +21,7 @@ import java.io.File
 
 const val TIME_INTERVAL = 2000
 const val NUMBER_OF_HOME_FRAGMENT = 1
+const val TRANSITION_NAME = "image_name"
 
 class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
@@ -29,6 +33,12 @@ class MainActivity : AppCompatActivity() {
             field = value
             launchHomeFragment()
         }
+
+    val detailsFragment = DetailsFragment()
+
+    init {
+        detailsFragment.sharedElementEnterTransition = AutoTransition().setDuration(800L)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 .commit()
     }
 
-    fun launchDetailsFragment(film: FilmsLocalModel) {
+    fun launchDetailsFragment(film: FilmsLocalModel, image: AppCompatImageView) {
         bottomNavigation.menu.findItem(R.id.selections)
             .setIcon(R.drawable.ic_baseline_video_library_border)
         bottomNavigation.menu.findItem(R.id.favorites)
@@ -99,15 +109,17 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
         //Кладем наш фильм в "посылку"
         bundle.putParcelable("film", film)
-        //Кладем фрагмент с деталями в перменную
-        val fragment = DetailsFragment()
         //Прикрепляем нашу "посылку" к фрагменту
-        fragment.arguments = bundle
+        detailsFragment.arguments = bundle
+
+        //image.transitionName = TRANSITION_NAME
 
         //Запускаем фрагмент Details
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_placeholder, fragment)
+            .setReorderingAllowed(true)
+            .addSharedElement(image, TRANSITION_NAME)
+            .replace(R.id.fragment_placeholder, detailsFragment)
             .addToBackStack(null)
             .commit()
     }
