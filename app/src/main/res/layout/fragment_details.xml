@@ -29,15 +29,15 @@
             <!--при сворачивании View при скролле будет применён эффект parallax. При parallax  создаётся эффект многоплановости-->
 
             <!--при сворачивании View при скролле будет применён эффект pin. pin просто сворачивает с той же скоростью, что и скролл-->
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/details_poster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/teal_200"
                 android:fitsSystemWindows="true"
-                android:transitionName="image_name"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_foreground"
+                android:transitionName="image_name"
                 app:layout_collapseMode="parallax" />
 
             <androidx.appcompat.widget.Toolbar
@@ -96,9 +96,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_of_text"
+            android:layout_marginTop="@dimen/margin_of_text_top"
             android:layout_marginEnd="@dimen/margin_of_text"
             android:layout_marginBottom="@dimen/margin_of_text"
-            android:layout_marginTop="@dimen/margin_of_text_top"
             tools:text="@tools:sample/lorem/random" />
 
     </androidx.core.widget.NestedScrollView>

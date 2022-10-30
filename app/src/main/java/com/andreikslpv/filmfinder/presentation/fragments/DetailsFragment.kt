@@ -2,21 +2,28 @@ package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Fade
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
     private lateinit var film: FilmsLocalModel
+
+    init {
+        enterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
+        returnTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +51,7 @@ class DetailsFragment : Fragment() {
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title
         //Устанавливаем картинку
-        val detailsPoster = requireView().findViewById<AppCompatImageView>(R.id.details_poster)
+        val detailsPoster = requireView().findViewById<ImageView>(R.id.details_poster)
         //Указываем контейнер, в котором будет "жить" наша картинка
         Glide.with(requireView())
             //Загружаем сам ресурс

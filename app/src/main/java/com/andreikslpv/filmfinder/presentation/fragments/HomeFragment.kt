@@ -1,15 +1,12 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
-import android.transition.Scene
-import android.transition.Slide
-import android.transition.TransitionManager
-import android.transition.TransitionSet
+import android.transition.*
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -18,8 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
-import com.andreikslpv.filmfinder.presentation.Pages
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.Pages
+import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
@@ -27,6 +25,11 @@ import java.util.*
 
 class HomeFragment : Fragment() {
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+
+    init {
+        exitTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
+        reenterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,7 +72,7 @@ class HomeFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: FilmsLocalModel, image: AppCompatImageView) {
+                    override fun click(film: FilmsLocalModel, image: ImageView) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
                             (activity as MainActivity).filmsRepository.getFilmLocalState(film),
                             image

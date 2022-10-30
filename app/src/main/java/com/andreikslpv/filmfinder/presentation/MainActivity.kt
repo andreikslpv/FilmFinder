@@ -1,10 +1,13 @@
 package com.andreikslpv.filmfinder.presentation
 
 import android.os.Bundle
-import android.transition.*
+import android.transition.ChangeBounds
+import android.transition.ChangeImageTransform
+import android.transition.ChangeTransform
+import android.transition.TransitionSet
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentManager
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
@@ -20,6 +23,7 @@ import java.io.File
 
 const val TIME_INTERVAL = 2000
 const val TRANSITION_NAME = "image_name"
+const val TRANSITION_DURATION = 800L
 
 class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
@@ -30,7 +34,8 @@ class MainActivity : AppCompatActivity() {
             if (field == value) return
             field = value
             setBottomNavigationIcon(field)
-            launchHomeFragment()
+            if (field == Pages.HOME || field == Pages.FAVORITES || field == Pages.WATCH_LATER)
+                launchHomeFragment()
         }
 
     private val detailsFragment = DetailsFragment()
@@ -39,13 +44,13 @@ class MainActivity : AppCompatActivity() {
         // задание анимации для shared element - imageview с постером
         val detailsTransition = TransitionSet()
         detailsTransition.apply {
-            addTransition(Fade())
             addTransition(ChangeBounds())
             addTransition(ChangeTransform())
             addTransition(ChangeImageTransform())
             ordering = TransitionSet.ORDERING_TOGETHER
         }
-        detailsFragment.sharedElementEnterTransition = detailsTransition.setDuration(800L)
+        detailsFragment.sharedElementEnterTransition =
+            detailsTransition.setDuration(TRANSITION_DURATION)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun launchDetailsFragment(film: FilmsLocalModel, image: AppCompatImageView) {
+    fun launchDetailsFragment(film: FilmsLocalModel, image: ImageView) {
         setBottomNavigationIcon(Pages.DETAILS)
         //Создаем "посылку"
         val bundle = Bundle()
