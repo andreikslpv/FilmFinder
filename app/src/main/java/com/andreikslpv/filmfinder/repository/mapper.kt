@@ -12,7 +12,6 @@ object ApiToLocalMapper : BaseMapper<List<FilmsApiModel>, List<FilmsLocalModel>>
                 title = it.title ?: "",
                 poster = it.poster ?: -1,
                 description = it.description ?: "",
-                descriptionFull = it.descriptionFull ?: "",
                 isFavorite = false,
                 isWatchLater = false
             )

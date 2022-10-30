@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable-night/ic_baseline_settings.xml" value="0.108" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.108" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_home.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_search_view.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/central_menu_shape.xml" value="0.108" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_baseline_favorite.xml" value="0.1105" />
@@ -22,6 +23,7 @@
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_favorites.xml" value="0.253125" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_watch_later.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/merge_home_screen_content.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/navigation_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar_menu.xml" value="0.25416666666666665" />

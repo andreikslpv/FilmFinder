@@ -1,18 +1,24 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
+import android.transition.*
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
-import com.andreikslpv.filmfinder.domain.Pages
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.Pages
+import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
@@ -21,11 +27,9 @@ import java.util.*
 class HomeFragment : Fragment() {
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initFilmListRecycler()
-        initSearchView()
+    init {
+        exitTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
+        reenterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
     }
 
     override fun onCreateView(
@@ -35,18 +39,32 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
-        return when ((activity as MainActivity).currentPage) {
-            Pages.HOME -> {
-                (activity as MainActivity).filmsRepository.getAllFilms()
-            }
-            Pages.FAVORITES -> {
-                (activity as MainActivity).filmsRepository.getFavoriteFilms()
-            }
-            Pages.WATCH_LATER -> {
-                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setFragmentAnimation()
+        initFilmListRecycler()
+        initSearchView()
+    }
+
+    private fun setFragmentAnimation() {
+        val root = requireView().findViewById<ConstraintLayout>(R.id.home_fragment_root)
+        val scene =
+            Scene.getSceneForLayout(root, R.layout.merge_home_screen_content, requireContext())
+        //Создаем анимацию выезда поля поиска сверху
+        val searchSlide = Slide(Gravity.TOP).addTarget(R.id.home_app_bar)
+        //Создаем анимацию выезда RV снизу
+        val recyclerSlide = Slide(Gravity.BOTTOM).addTarget(R.id.film_list_recycler)
+        //Создаем экземпляр TransitionSet, который объединит все наши анимации
+        val customTransition = TransitionSet().apply {
+            //Устанавливаем время, за которое будет проходить анимация
+            duration = 500
+            //Добавляем сами анимации
+            addTransition(recyclerSlide)
+            addTransition(searchSlide)
         }
+        // запускаем через TransitionManager, вторым параметром передаем нашу кастомную анимацию
+        TransitionManager.go(scene, customTransition)
     }
 
     private fun initFilmListRecycler() {
@@ -55,11 +73,11 @@ class HomeFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: FilmsLocalModel) {
+                    override fun click(film: FilmsLocalModel, image: ImageView, text: TextView) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            (activity as MainActivity).filmsRepository.getFilmLocalState(
-                                film
-                            )
+                            (activity as MainActivity).filmsRepository.getFilmLocalState(film),
+                            image,
+                            text
                         )
                     }
                 })
@@ -75,7 +93,7 @@ class HomeFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems(getCurrentFilmsList())
+        refreshFilmsList()
     }
 
     private fun initSearchView() {
@@ -94,7 +112,7 @@ class HomeFragment : Fragment() {
             override fun onQueryTextChange(newText: String): Boolean {
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
-                    filmsAdapter.changeItems(getCurrentFilmsList())
+                    refreshFilmsList()
                     return true
                 }
                 //Фильтруем список на поиск подходящих сочетаний
@@ -110,4 +128,22 @@ class HomeFragment : Fragment() {
         })
     }
 
+    fun refreshFilmsList() {
+        filmsAdapter.changeItems(getCurrentFilmsList())
+    }
+
+    private fun getCurrentFilmsList(): List<FilmsLocalModel> {
+        return when ((activity as MainActivity).currentPage) {
+            Pages.HOME -> {
+                (activity as MainActivity).filmsRepository.getAllFilms()
+            }
+            Pages.FAVORITES -> {
+                (activity as MainActivity).filmsRepository.getFavoriteFilms()
+            }
+            Pages.WATCH_LATER -> {
+                (activity as MainActivity).filmsRepository.getWatchLaterFilms()
+            }
+            Pages.DETAILS -> emptyList()
+        }
+    }
 }

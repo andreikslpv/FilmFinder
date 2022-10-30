@@ -8,6 +8,5 @@ data class FilmsApiModel(
     val id: Int,
     val title: String,
     val poster: Int,
-    val description: String,
-    val descriptionFull: String
+    val description: String
 ) : Parcelable

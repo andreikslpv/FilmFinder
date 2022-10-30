@@ -2,20 +2,28 @@ package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Fade
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
     private lateinit var film: FilmsLocalModel
+
+    init {
+        enterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
+        returnTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,15 +45,26 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initView(film: FilmsLocalModel) {
+        //Приостанавливаем воспроизведение Transition до загрузки данных
+        postponeEnterTransition()
         //Устанавливаем заголовок
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title
         //Устанавливаем картинку
-        val detailsPoster = requireView().findViewById<AppCompatImageView>(R.id.details_poster)
-        detailsPoster.setImageResource(film.poster)
+        val detailsPoster = requireView().findViewById<ImageView>(R.id.details_poster)
+        //Указываем контейнер, в котором будет "жить" картинка
+        Glide.with(requireView())
+            //Загружаем сам ресурс
+            .load(film.poster)
+            //Центруем изображение
+            .centerCrop()
+            //Указываем ImageView, куда будем загружать изображение
+            .into(detailsPoster)
         //Устанавливаем описание
         val detailsDescription = requireView().findViewById<TextView>(R.id.details_description)
-        detailsDescription.text = film.descriptionFull
+        detailsDescription.text = film.description
+        //Данные загружены, запускаем анимацию перехода
+        startPostponedEnterTransition()
     }
 
     private fun initIconFavorites() {
@@ -59,11 +78,9 @@ class DetailsFragment : Fragment() {
             if (!film.isFavorite) {
                 iconFavorites.setImageResource(R.drawable.ic_baseline_favorite)
                 film.isFavorite = true
-                //(activity as MainActivity).filmsRepository.saveFilm(film)
             } else {
                 iconFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
                 film.isFavorite = false
-                //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
             (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
         }
@@ -80,11 +97,9 @@ class DetailsFragment : Fragment() {
             if (!film.isWatchLater) {
                 iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later)
                 film.isWatchLater = true
-                //(activity as MainActivity).filmsRepository.saveFilm(film)
             } else {
                 iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
                 film.isWatchLater = false
-                //(activity as MainActivity).filmsRepository.removeFilm(film.id)
             }
             (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
         }
