@@ -12,7 +12,8 @@
     <!-- details -->
     <dimen name="height_of_appbar">200dp</dimen>
     <dimen name="min_height_of_toolbar">60dp</dimen>
-    <dimen name="margin_of_FAB">16dp</dimen>
+    <dimen name="margin_of_FAB">8dp</dimen>
     <dimen name="margin_of_text">8dp</dimen>
+    <dimen name="margin_of_text_top">24dp</dimen>
 
 </resources>

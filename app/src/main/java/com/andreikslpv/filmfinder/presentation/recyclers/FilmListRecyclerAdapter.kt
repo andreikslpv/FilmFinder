@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
@@ -39,6 +40,7 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
                 val itemContainer = holder.itemView.findViewById<CardView>(R.id.item_container)
                 itemContainer.setOnClickListener {
                     val image = holder.itemView.findViewById<AppCompatImageView>(R.id.poster)
+                    image.transitionName = TRANSITION_NAME
                     clickListener.click(items[position], image)
                 }
             }
