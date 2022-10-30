@@ -52,7 +52,7 @@ class DetailsFragment : Fragment() {
         detailsToolbar.title = film.title
         //Устанавливаем картинку
         val detailsPoster = requireView().findViewById<ImageView>(R.id.details_poster)
-        //Указываем контейнер, в котором будет "жить" наша картинка
+        //Указываем контейнер, в котором будет "жить" картинка
         Glide.with(requireView())
             //Загружаем сам ресурс
             .load(film.poster)
@@ -62,7 +62,7 @@ class DetailsFragment : Fragment() {
             .into(detailsPoster)
         //Устанавливаем описание
         val detailsDescription = requireView().findViewById<TextView>(R.id.details_description)
-        detailsDescription.text = film.descriptionFull
+        detailsDescription.text = film.description
         //Данные загружены, запускаем анимацию перехода
         startPostponedEnterTransition()
     }

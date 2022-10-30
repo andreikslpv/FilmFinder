@@ -6,6 +6,7 @@ import android.transition.ChangeImageTransform
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -22,7 +23,8 @@ import com.google.gson.Gson
 import java.io.File
 
 const val TIME_INTERVAL = 2000
-const val TRANSITION_NAME = "image_name"
+const val TRANSITION_NAME_FOR_IMAGE = "image_name"
+const val TRANSITION_NAME_FOR_TEXT = "text_name"
 const val TRANSITION_DURATION = 800L
 
 class MainActivity : AppCompatActivity() {
@@ -107,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun launchDetailsFragment(film: FilmsLocalModel, image: ImageView) {
+    fun launchDetailsFragment(film: FilmsLocalModel, image: ImageView, text: TextView) {
         setBottomNavigationIcon(Pages.DETAILS)
         //Создаем "посылку"
         val bundle = Bundle()
@@ -120,7 +122,8 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager
             .beginTransaction()
             .setReorderingAllowed(true)
-            .addSharedElement(image, TRANSITION_NAME)
+            .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
+            .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
             .replace(R.id.fragment_placeholder, detailsFragment)
             .addToBackStack(null)
             .commit()

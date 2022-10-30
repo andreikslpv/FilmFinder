@@ -99,6 +99,7 @@
             android:layout_marginTop="@dimen/margin_of_text_top"
             android:layout_marginEnd="@dimen/margin_of_text"
             android:layout_marginBottom="@dimen/margin_of_text"
+            android:transitionName="text_name"
             tools:text="@tools:sample/lorem/random" />
 
     </androidx.core.widget.NestedScrollView>

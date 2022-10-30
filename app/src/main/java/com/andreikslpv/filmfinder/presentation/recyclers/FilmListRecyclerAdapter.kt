@@ -3,12 +3,14 @@ package com.andreikslpv.filmfinder.presentation.recyclers
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
-import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME
+import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_IMAGE
+import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_TEXT
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
@@ -22,7 +24,7 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     //В этом методе мы привязываем наш ViewHolder и передаем туда "надутую" верстку нашего фильма
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return FilmViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.film_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_film, parent, false)
         )
     }
 
@@ -40,8 +42,10 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
                 val itemContainer = holder.itemView.findViewById<CardView>(R.id.item_container)
                 itemContainer.setOnClickListener {
                     val image = holder.itemView.findViewById<ImageView>(R.id.poster)
-                    image.transitionName = TRANSITION_NAME
-                    clickListener.click(items[position], image)
+                    val text = holder.itemView.findViewById<TextView>(R.id.description)
+                    image.transitionName = TRANSITION_NAME_FOR_IMAGE
+                    text.transitionName = TRANSITION_NAME_FOR_TEXT
+                    clickListener.click(items[position], image, text)
                 }
             }
         }
@@ -61,6 +65,6 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
 
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
-        fun click(film: FilmsLocalModel, image: ImageView)
+        fun click(film: FilmsLocalModel, image: ImageView, text: TextView)
     }
 }
