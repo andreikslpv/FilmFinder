@@ -9,9 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.presentation.FragmentsType
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
 import com.bumptech.glide.Glide
@@ -19,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
     private lateinit var film: FilmsLocalModel
+    private lateinit var type: FragmentsType
 
     init {
         enterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
@@ -31,6 +35,7 @@ class DetailsFragment : Fragment() {
     ): View? {
         //Получаем наш фильм из переданного бандла
         film = arguments?.get("film") as FilmsLocalModel
+        type = arguments?.get("type") as FragmentsType
 
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
@@ -47,6 +52,20 @@ class DetailsFragment : Fragment() {
     private fun initView(film: FilmsLocalModel) {
         //Приостанавливаем воспроизведение Transition до загрузки данных
         postponeEnterTransition()
+        // устанавливаем background в зависимости от типа фрагмента, из которого вызван фрагмент Details
+        val layout = requireView().findViewById<CoordinatorLayout>(R.id.details_fragment_root)
+        when (type) {
+            FragmentsType.HOME -> layout.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.background_home, null)
+            FragmentsType.FAVORITES -> layout.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.background_favorites, null)
+            FragmentsType.WATCH_LATER -> layout.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.background_watch_later, null)
+            FragmentsType.SELECTIONS -> layout.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.background_selections, null)
+            FragmentsType.DETAILS -> layout.background =
+                ResourcesCompat.getDrawable(resources, R.drawable.background_details, null)
+        }
         //Устанавливаем заголовок
         val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
         detailsToolbar.title = film.title

@@ -4,10 +4,10 @@
 
     <!-- main -->
     <string name="main.menu_favourites_title">Favourites</string>
-    <string name="main.menu_watch_later_title">See later</string>
-    <string name="main.menu_video_library_title">Collections</string>
+    <string name="main.menu_watch_later_title">Watch later</string>
+    <string name="main.menu_selections_title">Selections</string>
     <string name="main.menu_settings_title">Settings</string>
     <string name="content_description">Poster</string>
-    <string name="details.FAB_share_title">Share it</string>
     <string name="main_backpress_message">Double tap for exit</string>
+    <string name="main.menu_home_title">Home</string>
 </resources>

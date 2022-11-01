@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_baseline_home_border"
+        android:title="@string/main.menu_home_title"
+        app:showAsAction="withText" />
+    <item
         android:id="@+id/favorites"
         android:icon="@drawable/ic_baseline_favorite_border"
         android:title="@string/main.menu_favourites_title"
@@ -13,7 +18,7 @@
         app:showAsAction="withText"/>
     <item
         android:id="@+id/selections"
-        android:icon="@drawable/ic_baseline_video_library_border"
-        android:title="@string/main.menu_video_library_title"
+        android:icon="@drawable/ic_baseline_selections_border"
+        android:title="@string/main.menu_selections_title"
         app:showAsAction="withText"/>
 </menu>

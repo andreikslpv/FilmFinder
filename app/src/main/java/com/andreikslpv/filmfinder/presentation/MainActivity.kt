@@ -1,5 +1,6 @@
 package com.andreikslpv.filmfinder.presentation
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
@@ -9,14 +10,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
-import com.andreikslpv.filmfinder.presentation.fragments.DetailsFragment
-import com.andreikslpv.filmfinder.presentation.fragments.HomeFragment
+import com.andreikslpv.filmfinder.presentation.fragments.*
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
@@ -31,19 +32,17 @@ class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
     private lateinit var bottomNavigation: BottomNavigationView
     lateinit var filmsRepository: FilmsRepositoryImpl
-    var currentPage: Pages = Pages.DETAILS
+    var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
         set(value) {
             if (field == value) return
             field = value
             setBottomNavigationIcon(field)
-            if (field == Pages.HOME || field == Pages.FAVORITES || field == Pages.WATCH_LATER)
-                launchHomeFragment()
         }
 
     private val detailsFragment = DetailsFragment()
 
     init {
-        // задание анимации для shared element - imageview с постером
+        // задание анимации для shared elements - imageview с постером и textview с описанием
         val detailsTransition = TransitionSet()
         detailsTransition.apply {
             addTransition(ChangeBounds())
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initMenus()
+        initBottomNavigationMenu()
 
         val directory = application.filesDir
         filmsRepository = FilmsRepositoryImpl(
@@ -69,23 +68,43 @@ class MainActivity : AppCompatActivity() {
         )
 
         // запускаем фрагмент Home
-        currentPage = Pages.HOME
+        changeFragment(HomeFragment(), FragmentsType.HOME)
     }
 
-    private fun initMenus() {
+    private fun initBottomNavigationMenu() {
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnItemSelectedListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_placeholder)
             when (it.itemId) {
-                R.id.selections -> {
-                    currentPage = Pages.HOME
+                R.id.home -> {
+                    // если активен не HomeFragment, то запускаем HomeFragment
+                    if (currentFragment !is HomeFragment) {
+                        val fragment = checkFragmentExistence(FragmentsType.HOME)
+                        //В первом параметре, если фрагмент не найден и метод вернул null, то с помощью
+                        //элвиса мы вызываем создание нового фрагмента
+                        changeFragment(fragment ?: HomeFragment(), FragmentsType.HOME)
+                    }
                     true
                 }
                 R.id.favorites -> {
-                    currentPage = Pages.FAVORITES
+                    if (currentFragment !is FavoritesFragment) {
+                        val fragment = checkFragmentExistence(FragmentsType.FAVORITES)
+                        changeFragment(fragment ?: FavoritesFragment(), FragmentsType.FAVORITES)
+                    }
                     true
                 }
                 R.id.watch_later -> {
-                    currentPage = Pages.WATCH_LATER
+                    if (currentFragment !is WatchLaterFragment) {
+                        val fragment = checkFragmentExistence(FragmentsType.WATCH_LATER)
+                        changeFragment(fragment ?: WatchLaterFragment(), FragmentsType.WATCH_LATER)
+                    }
+                    true
+                }
+                R.id.selections -> {
+                    if (currentFragment !is SelectionsFragment) {
+                        val fragment = checkFragmentExistence(FragmentsType.SELECTIONS)
+                        changeFragment(fragment ?: SelectionsFragment(), FragmentsType.SELECTIONS)
+                    }
                     true
                 }
                 else -> false
@@ -93,28 +112,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchHomeFragment() {
-        // проверяем, если активен HomeFragment, то обновляем список фильмов
-        // иначе запускаем HomeFragment
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_placeholder)
-        if (currentFragment is HomeFragment)
-            currentFragment.refreshFilmsList()
-        else {
-            // очищаем стек фрагментов перед запуском фрагмента Home
-            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_placeholder, HomeFragment(), "home")
-                .commit()
-        }
+    //Ищем фрагмент по тегу, если он есть то возвращаем его, если нет, то null
+    private fun checkFragmentExistence(type: FragmentsType): Fragment? =
+        supportFragmentManager.findFragmentByTag(type.tag)
+
+    private fun changeFragment(fragment: Fragment, type: FragmentsType) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_placeholder, fragment, type.tag)
+            .addToBackStack(null)
+            .commit()
+        currentFragmentsType = type
     }
 
     fun launchDetailsFragment(film: FilmsLocalModel, image: ImageView, text: TextView) {
-        setBottomNavigationIcon(Pages.DETAILS)
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"
         bundle.putParcelable("film", film)
+        //Кладем тип фрагмента из которого происходит вызов в "посылку"
+        bundle.putParcelable("type", currentFragmentsType)
         //Прикрепляем "посылку" к фрагменту
         detailsFragment.arguments = bundle
 
@@ -124,53 +141,74 @@ class MainActivity : AppCompatActivity() {
             .setReorderingAllowed(true)
             .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
             .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
-            .replace(R.id.fragment_placeholder, detailsFragment)
+            .replace(R.id.fragment_placeholder, detailsFragment, "details")
             .addToBackStack(null)
             .commit()
+        setBottomNavigationIcon(FragmentsType.DETAILS)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // double tap for exit
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_placeholder)
-        if (currentFragment is HomeFragment) {
-            if (backPressed + TIME_INTERVAL > System.currentTimeMillis()) {
-                finish()
-            } else {
-                Toast.makeText(this, R.string.main_backpress_message, Toast.LENGTH_SHORT).show()
+        when (supportFragmentManager.findFragmentById(R.id.fragment_placeholder)) {
+            is HomeFragment, is FavoritesFragment, is WatchLaterFragment, is SelectionsFragment -> {
+                if (backPressed + TIME_INTERVAL > System.currentTimeMillis()) {
+                    finish()
+                } else {
+                    Toast.makeText(this, R.string.main_backpress_message, Toast.LENGTH_SHORT).show()
+                }
+                backPressed = System.currentTimeMillis()
             }
-            backPressed = System.currentTimeMillis()
-        } else {
-            super.onBackPressed()
-            setBottomNavigationIcon(currentPage)
+            else -> {
+                super.onBackPressed()
+                setBottomNavigationIcon(currentFragmentsType)
+            }
         }
     }
 
-    private fun setBottomNavigationIcon(page: Pages) {
-        val selections = bottomNavigation.menu.findItem(R.id.selections)
+    private fun setBottomNavigationIcon(type: FragmentsType) {
+        val home = bottomNavigation.menu.findItem(R.id.home)
         val favorites = bottomNavigation.menu.findItem(R.id.favorites)
         val watchLater = bottomNavigation.menu.findItem(R.id.watch_later)
-        when (page) {
-            Pages.HOME -> {
-                selections.setIcon(R.drawable.ic_baseline_video_library)
+        val selections = bottomNavigation.menu.findItem(R.id.selections)
+        when (type) {
+            FragmentsType.HOME -> {
+                home.setIcon(R.drawable.ic_baseline_home)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
+                selections.setIcon(R.drawable.ic_baseline_selections_border)
             }
-            Pages.FAVORITES -> {
-                selections.setIcon(R.drawable.ic_baseline_video_library_border)
+            FragmentsType.FAVORITES -> {
+                home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
+                selections.setIcon(R.drawable.ic_baseline_selections_border)
             }
-            Pages.WATCH_LATER -> {
-                selections.setIcon(R.drawable.ic_baseline_video_library_border)
+            FragmentsType.WATCH_LATER -> {
+                home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later)
+                selections.setIcon(R.drawable.ic_baseline_selections_border)
             }
-            Pages.DETAILS -> {
-                selections.setIcon(R.drawable.ic_baseline_video_library_border)
+            FragmentsType.SELECTIONS -> {
+                home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
+                selections.setIcon(R.drawable.ic_baseline_selections)
             }
+            FragmentsType.DETAILS -> {
+                home.setIcon(R.drawable.ic_baseline_home_border)
+                favorites.setIcon(R.drawable.ic_baseline_favorite_border)
+                watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
+                selections.setIcon(R.drawable.ic_baseline_selections_border)
+            }
+        }
+    }
+
+    fun setBackground(newBackground: Drawable?) {
+        if (newBackground != null) {
+            val mainActivityLayout = findViewById<ConstraintLayout>(R.id.main_layout)
+            mainActivityLayout.background = newBackground
         }
     }
 }

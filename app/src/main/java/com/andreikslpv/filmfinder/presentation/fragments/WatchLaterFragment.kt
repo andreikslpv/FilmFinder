@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,25 +21,21 @@ import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpaci
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
 import java.util.*
 
-class HomeFragment : Fragment() {
-    private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
-    /*init {
-        exitTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
-        reenterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
-    }*/
+class WatchLaterFragment : Fragment() {
+    private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_watch_later, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 1)
+        AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 3)
 
         initFilmListRecycler()
         initSearchView()
@@ -50,12 +46,12 @@ class HomeFragment : Fragment() {
 
         // меняем background MainActivity на background фрагмента
         val layout =
-            requireView().findViewById<CoordinatorLayout>(R.id.home_fragment_root)
+            requireView().findViewById<CoordinatorLayout>(R.id.watch_later_fragment_root)
         (activity as MainActivity).setBackground(layout.background)
     }
 
     private fun initFilmListRecycler() {
-        val filmListRecycler = requireView().findViewById<RecyclerView>(R.id.home_recycler)
+        val filmListRecycler = requireView().findViewById<RecyclerView>(R.id.watch_later_recycler)
         filmListRecycler.apply {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
@@ -80,11 +76,11 @@ class HomeFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilms())
+        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getWatchLaterFilms())
     }
 
     private fun initSearchView() {
-        val searchView = requireView().findViewById<SearchView>(R.id.home_search_view)
+        val searchView = requireView().findViewById<SearchView>(R.id.watch_later_search_view)
         searchView.setOnClickListener {
             searchView.isIconified = false
         }
@@ -99,11 +95,11 @@ class HomeFragment : Fragment() {
             override fun onQueryTextChange(newText: String): Boolean {
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
-                    filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getAllFilms())
+                    filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getWatchLaterFilms())
                     return true
                 }
                 //Фильтруем список на поиск подходящих сочетаний
-                val result = (activity as MainActivity).filmsRepository.getAllFilms().filter {
+                val result = (activity as MainActivity).filmsRepository.getWatchLaterFilms().filter {
                     //Чтобы все работало правильно, нужно и запрос, и имя фильма приводить к нижнему регистру
                     it.title.lowercase(Locale.getDefault())
                         .contains(newText.lowercase(Locale.getDefault()))
@@ -114,5 +110,4 @@ class HomeFragment : Fragment() {
             }
         })
     }
-
 }

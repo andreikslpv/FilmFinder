@@ -2,12 +2,12 @@
     <string name="app_name">FilmFinder</string>
 
     <!-- main -->
+    <string name="main.menu_home_title">Главная</string>
     <string name="main.menu_favourites_title">Избранное</string>
     <string name="main.menu_watch_later_title">Смотреть позже</string>
-    <string name="main.menu_video_library_title">Подборки</string>
+    <string name="main.menu_selections_title">Подборки</string>
     <string name="main.menu_settings_title">Настройки</string>
     <string name="main_backpress_message">Нажмите дважды для выхода</string>
     <string name="content_description">Постер</string>
-    <string name="details.FAB_share_title">Поделиться</string>
 
 </resources>
