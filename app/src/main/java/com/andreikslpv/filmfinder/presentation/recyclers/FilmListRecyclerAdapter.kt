@@ -8,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_IMAGE
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_TEXT
 

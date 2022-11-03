@@ -13,7 +13,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.FragmentsType
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
@@ -33,7 +33,7 @@ class DetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //Получаем наш фильм из переданного бандла
+        //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
         film = arguments?.get("film") as FilmsLocalModel
         type = arguments?.get("type") as FragmentsType
 

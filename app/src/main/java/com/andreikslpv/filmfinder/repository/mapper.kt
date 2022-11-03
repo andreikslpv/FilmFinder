@@ -1,7 +1,7 @@
 package com.andreikslpv.filmfinder.repository
 
 import com.andreikslpv.filmfinder.datasource.models.FilmsApiModel
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.domain.BaseMapper
 
 object ApiToLocalMapper : BaseMapper<List<FilmsApiModel>, List<FilmsLocalModel>> {

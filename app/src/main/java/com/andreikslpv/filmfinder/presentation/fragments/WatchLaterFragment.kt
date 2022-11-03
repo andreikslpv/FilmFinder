@@ -1,7 +1,6 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
@@ -99,13 +99,15 @@ class WatchLaterFragment : Fragment() {
                     return true
                 }
                 //Фильтруем список на поиск подходящих сочетаний
-                val result = (activity as MainActivity).filmsRepository.getWatchLaterFilms().filter {
-                    //Чтобы все работало правильно, нужно и запрос, и имя фильма приводить к нижнему регистру
-                    it.title.lowercase(Locale.getDefault())
-                        .contains(newText.lowercase(Locale.getDefault()))
-                }
+                val result =
+                    (activity as MainActivity).filmsRepository.getWatchLaterFilms().filter {
+                        //Чтобы все работало правильно, нужно и запрос, и имя фильма приводить к нижнему регистру
+                        it.title.lowercase(Locale.getDefault())
+                            .contains(newText.lowercase(Locale.getDefault()))
+                    }
                 //Добавляем в адаптер
                 filmsAdapter.changeItems(result)
+                filmsAdapter.notifyDataSetChanged()
                 return true
             }
         })

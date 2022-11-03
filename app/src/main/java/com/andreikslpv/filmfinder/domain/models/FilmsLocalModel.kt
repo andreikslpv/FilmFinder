@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.datasource.models
+package com.andreikslpv.filmfinder.domain.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

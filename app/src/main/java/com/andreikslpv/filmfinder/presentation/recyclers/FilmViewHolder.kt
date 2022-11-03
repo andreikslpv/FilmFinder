@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.bumptech.glide.Glide
 
 //В конструктор класса передается layout, который мы создали(film_item.xml)

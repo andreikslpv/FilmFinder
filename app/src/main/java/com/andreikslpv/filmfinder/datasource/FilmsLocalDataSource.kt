@@ -1,6 +1,6 @@
 package com.andreikslpv.filmfinder.datasource
 
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File

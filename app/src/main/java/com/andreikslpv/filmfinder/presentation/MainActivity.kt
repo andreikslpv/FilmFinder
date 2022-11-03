@@ -6,22 +6,27 @@ import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.*
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import java.io.File
+
 
 const val TIME_INTERVAL = 2000
 const val TRANSITION_NAME_FOR_IMAGE = "image_name"
@@ -32,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private var backPressed = 0L
     private lateinit var bottomNavigation: BottomNavigationView
     lateinit var filmsRepository: FilmsRepositoryImpl
-    var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
+    private var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
         set(value) {
             if (field == value) return
             field = value
@@ -58,21 +63,45 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initBottomNavigationMenu()
+        //------- эмуляция Splash Screen с векторной анимацией
+        val image = findViewById<ImageView>(R.id.image_logo)
+        //Создаем экземпляр AnimatedVectorDrawableCompat, чтобы была совместимость с различными версиями Android
+        //в параметры передаем контекст и файл с анимацей вектора
+        val animatedVectorDrawable =
+            AnimatedVectorDrawableCompat.create(this, R.drawable.anim_logo_build)
+        //Устанавливаем animatedVectorDrawable в наше view
+        image.setImageDrawable(animatedVectorDrawable)
+        animatedVectorDrawable?.registerAnimationCallback(object :
+            Animatable2Compat.AnimationCallback() {
+            // Когда заканчивается анимация запускаем нормальную работу приложения
+            override fun onAnimationEnd(drawable: Drawable) {
+                Thread.sleep(500)
+                // прячем imageview с анимацией
+                image.visibility = INVISIBLE
 
-        val directory = application.filesDir
-        filmsRepository = FilmsRepositoryImpl(
-            FilmsCacheDataSource(),
-            FilmsApiDataSource(),
-            FilmsLocalDataSource(File("$directory/local.json"), Gson())
-        )
+                initBottomNavigationMenu()
 
-        // запускаем фрагмент Home
-        changeFragment(HomeFragment(), FragmentsType.HOME)
+                val directory = application.filesDir
+                filmsRepository = FilmsRepositoryImpl(
+                    FilmsCacheDataSource(),
+                    FilmsApiDataSource(),
+                    FilmsLocalDataSource(File("$directory/local.json"), Gson())
+                )
+
+                // запускаем фрагмент Home
+                changeFragment(HomeFragment(), FragmentsType.HOME)
+            }
+        })
+        //запускаем анимацию
+        animatedVectorDrawable?.start()
     }
 
     private fun initBottomNavigationMenu() {
         bottomNavigation = findViewById(R.id.bottom_navigation)
+
+        // показываем BottomNavigation (после Splash Screen)
+        bottomNavigation.visibility = VISIBLE
+
         bottomNavigation.setOnItemSelectedListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_placeholder)
             when (it.itemId) {

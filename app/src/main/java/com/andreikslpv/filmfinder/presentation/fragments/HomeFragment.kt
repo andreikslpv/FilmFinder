@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
 import android.os.Bundle
+import android.transition.Fade
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +14,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
@@ -23,11 +25,6 @@ import java.util.*
 
 class HomeFragment : Fragment() {
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-
-    /*init {
-        exitTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
-        reenterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,6 +107,7 @@ class HomeFragment : Fragment() {
                 }
                 //Добавляем в адаптер
                 filmsAdapter.changeItems(result)
+                filmsAdapter.notifyDataSetChanged()
                 return true
             }
         })

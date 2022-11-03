@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable-night/ic_baseline_settings.xml" value="0.108" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.108" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/anim_logo.xml" value="0.1105" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/anim_logo_build.xml" value="0.106" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_details.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_favorites.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_home.xml" value="0.1105" />
@@ -13,6 +15,7 @@
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_selections.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/background_watch_later.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/central_menu_shape.xml" value="0.108" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic__logo.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_baseline_favorite.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_baseline_favorite_border.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/drawable/ic_baseline_menu.xml" value="0.1105" />
@@ -37,6 +40,7 @@
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1105" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1105" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/xml/recyclerview_item.xml" value="0.25416666666666665" />
       </map>
     </option>
