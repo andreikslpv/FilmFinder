@@ -10,7 +10,10 @@ import kotlin.math.roundToInt
 
 object AnimationHelper {
     //Это переменная для того, что бы круг проявления расходился именно от иконки меню навигации
-    private const val menuItems = 4
+    private const val COUNT_OF_MENU_ITEMS = 4
+    private const val DURATION_OF_ANIMATION = 500L
+    private const val RATIO = 2
+    private const val START_RADIUS = 0f
 
     //В метод у нас приходит 3 параметра:
     //1 - наше rootView, которое одновременно является и контейнером и объектом анимации
@@ -26,24 +29,23 @@ object AnimationHelper {
                     //Возвращаемся в главный тред, чтобы выполнить анимацию
                     activity.runOnUiThread {
                         //Cупер сложная математика вычесления старта анимации
-                        val itemCenter = rootView.width / (menuItems * 2)
-                        val step = (itemCenter * 2) * (position - 1) + itemCenter
+                        val itemCenter = rootView.width / (COUNT_OF_MENU_ITEMS * RATIO)
+                        val step = (itemCenter * RATIO) * (position - 1) + itemCenter
 
                         val x: Int = step
                         val y: Int = rootView.y.roundToInt() + rootView.height
 
-                        val startRadius = 0
                         val endRadius = hypot(rootView.width.toDouble(), rootView.height.toDouble())
                         //Создаем саму анимацию
                         ViewAnimationUtils.createCircularReveal(
                             rootView,
                             x,
                             y,
-                            startRadius.toFloat(),
+                            START_RADIUS,
                             endRadius.toFloat()
                         ).apply {
                             //Устанавливаем время анимации
-                            duration = 500
+                            duration = DURATION_OF_ANIMATION
                             //Интерполятор для более естесственной анимации
                             interpolator = AccelerateDecelerateInterpolator()
                             //Запускаем
