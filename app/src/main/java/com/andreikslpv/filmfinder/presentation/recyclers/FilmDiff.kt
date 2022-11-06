@@ -1,7 +1,7 @@
 package com.andreikslpv.filmfinder.presentation.recyclers
 
 import androidx.recyclerview.widget.DiffUtil
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 
 class FilmDiff(private val oldList: List<FilmsLocalModel>, private val newList: List<FilmsLocalModel>): DiffUtil.Callback() {
     override fun getOldListSize(): Int {

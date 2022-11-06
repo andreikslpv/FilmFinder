@@ -3,7 +3,7 @@ package com.andreikslpv.filmfinder.repository
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 
 class FilmsRepositoryImpl(

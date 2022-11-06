@@ -1,6 +1,6 @@
 package com.andreikslpv.filmfinder.domain
 
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 
 interface FilmsRepository {
 

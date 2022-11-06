@@ -1,6 +1,6 @@
 package com.andreikslpv.filmfinder.datasource
 
-import com.andreikslpv.filmfinder.datasource.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 
 class FilmsCacheDataSource {
     private val filmsMutableList: MutableList<FilmsLocalModel> = mutableListOf()
