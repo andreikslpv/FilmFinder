@@ -6,21 +6,20 @@ import android.transition.Fade
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.FragmentsType
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
 import com.bumptech.glide.Glide
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailsFragment : Fragment() {
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding
+        get() = _binding!!
     private lateinit var film: FilmsLocalModel
     private lateinit var type: FragmentsType
 
@@ -32,12 +31,12 @@ class DetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
         film = arguments?.get("film") as FilmsLocalModel
         type = arguments?.get("type") as FragmentsType
-
-        return inflater.inflate(R.layout.fragment_details, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,28 +48,29 @@ class DetailsFragment : Fragment() {
         initIconShare()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     private fun initView(film: FilmsLocalModel) {
         //Приостанавливаем воспроизведение Transition до загрузки данных
         postponeEnterTransition()
         // устанавливаем background в зависимости от типа фрагмента, из которого вызван фрагмент Details
-        val layout = requireView().findViewById<CoordinatorLayout>(R.id.details_fragment_root)
         when (type) {
-            FragmentsType.HOME -> layout.background =
+            FragmentsType.HOME -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_home, null)
-            FragmentsType.FAVORITES -> layout.background =
+            FragmentsType.FAVORITES -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_favorites, null)
-            FragmentsType.WATCH_LATER -> layout.background =
+            FragmentsType.WATCH_LATER -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_watch_later, null)
-            FragmentsType.SELECTIONS -> layout.background =
+            FragmentsType.SELECTIONS -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_selections, null)
-            FragmentsType.DETAILS -> layout.background =
+            FragmentsType.DETAILS -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_details, null)
         }
         //Устанавливаем заголовок
-        val detailsToolbar = requireView().findViewById<Toolbar>(R.id.details_toolbar)
-        detailsToolbar.title = film.title
-        //Устанавливаем картинку
-        val detailsPoster = requireView().findViewById<ImageView>(R.id.details_poster)
+        binding.detailsToolbar.title = film.title
         //Указываем контейнер, в котором будет "жить" картинка
         Glide.with(requireView())
             //Загружаем сам ресурс
@@ -78,27 +78,24 @@ class DetailsFragment : Fragment() {
             //Центруем изображение
             .centerCrop()
             //Указываем ImageView, куда будем загружать изображение
-            .into(detailsPoster)
+            .into(binding.detailsPoster)
         //Устанавливаем описание
-        val detailsDescription = requireView().findViewById<TextView>(R.id.details_description)
-        detailsDescription.text = film.description
+        binding.detailsDescription.text = film.description
         //Данные загружены, запускаем анимацию перехода
         startPostponedEnterTransition()
     }
 
     private fun initIconFavorites() {
-        val iconFavorites =
-            requireView().findViewById<FloatingActionButton>(R.id.details_fab_favorites)
-        iconFavorites.setImageResource(
+        binding.detailsFabFavorites.setImageResource(
             if (film.isFavorite) R.drawable.ic_baseline_favorite
             else R.drawable.ic_baseline_favorite_border
         )
-        iconFavorites.setOnClickListener {
+        binding.detailsFabFavorites.setOnClickListener {
             if (!film.isFavorite) {
-                iconFavorites.setImageResource(R.drawable.ic_baseline_favorite)
+                binding.detailsFabFavorites.setImageResource(R.drawable.ic_baseline_favorite)
                 film.isFavorite = true
             } else {
-                iconFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
+                binding.detailsFabFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
                 film.isFavorite = false
             }
             (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
@@ -106,18 +103,16 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initIconWatchLater() {
-        val iconWatchLater =
-            requireView().findViewById<FloatingActionButton>(R.id.details_fab_watch_later)
-        iconWatchLater.setImageResource(
+        binding.detailsFabWatchLater.setImageResource(
             if (film.isWatchLater) R.drawable.ic_baseline_watch_later
             else R.drawable.ic_baseline_watch_later_border
         )
-        iconWatchLater.setOnClickListener {
+        binding.detailsFabWatchLater.setOnClickListener {
             if (!film.isWatchLater) {
-                iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later)
+                binding.detailsFabWatchLater.setImageResource(R.drawable.ic_baseline_watch_later)
                 film.isWatchLater = true
             } else {
-                iconWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
+                binding.detailsFabWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
                 film.isWatchLater = false
             }
             (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
@@ -125,9 +120,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initIconShare() {
-        val iconShare =
-            requireView().findViewById<FloatingActionButton>(R.id.details_fab_share)
-        iconShare.setOnClickListener {
+        binding.detailsFabShare.setOnClickListener {
             //Создаем интент
             val intent = Intent()
             //Указываем action с которым он запускается

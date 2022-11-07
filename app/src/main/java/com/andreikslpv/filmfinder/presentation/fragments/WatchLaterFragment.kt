@@ -1,5 +1,6 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.databinding.FragmentWatchLaterBinding
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
@@ -23,13 +22,17 @@ import java.util.*
 
 
 class WatchLaterFragment : Fragment() {
+    private var _binding: FragmentWatchLaterBinding? = null
+    private val binding
+        get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_watch_later, container, false)
+    ): View {
+        _binding = FragmentWatchLaterBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,16 +46,17 @@ class WatchLaterFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
         // меняем background MainActivity на background фрагмента
-        val layout =
-            requireView().findViewById<CoordinatorLayout>(R.id.watch_later_fragment_root)
-        (activity as MainActivity).setBackground(layout.background)
+        (activity as MainActivity).setBackground(binding.watchLaterFragmentRoot.background)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun initFilmListRecycler() {
-        val filmListRecycler = requireView().findViewById<RecyclerView>(R.id.watch_later_recycler)
-        filmListRecycler.apply {
+        binding.watchLaterRecycler.apply {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
@@ -80,18 +84,18 @@ class WatchLaterFragment : Fragment() {
     }
 
     private fun initSearchView() {
-        val searchView = requireView().findViewById<SearchView>(R.id.watch_later_search_view)
-        searchView.setOnClickListener {
-            searchView.isIconified = false
+        binding.watchLaterSearchView.setOnClickListener {
+            binding.watchLaterSearchView.isIconified = false
         }
         //Подключаем слушателя изменений введенного текста в поиска
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.watchLaterSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
 
             //Этот метод отрабатывает на каждое изменения текста
+            @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextChange(newText: String): Boolean {
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {

@@ -2,14 +2,14 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/details_fragment_root"
+    android:id="@+id/detailsFragmentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
     tools:context=".presentation.fragments.DetailsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/details_app_bar"
+        android:id="@+id/detailsAppBar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_of_appbar"
         android:fitsSystemWindows="false"
@@ -17,7 +17,7 @@
 
         <!--При скролле вверх Toolbar не скроется полностью, при скролле вниз будет раскрываться по достижении конца View-->
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+            android:id="@+id/toolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
@@ -30,7 +30,7 @@
 
             <!--при сворачивании View при скролле будет применён эффект pin. pin просто сворачивает с той же скоростью, что и скролл-->
             <ImageView
-                android:id="@+id/details_poster"
+                android:id="@+id/detailsPoster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/teal_200"
@@ -41,7 +41,7 @@
                 app:layout_collapseMode="parallax" />
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/details_toolbar"
+                android:id="@+id/detailsToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
@@ -51,34 +51,34 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/details_fab_share"
+        android:id="@+id/detailsFabShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_of_FAB"
         app:backgroundTint="?attr/colorPrimary"
-        app:layout_anchor="@id/details_app_bar"
+        app:layout_anchor="@id/detailsAppBar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_baseline_share"
         app:tint="?attr/itemIconTint" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/details_fab_favorites"
+        android:id="@+id/detailsFabFavorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_of_FAB"
         app:backgroundTint="?attr/colorPrimary"
-        app:layout_anchor="@id/details_app_bar"
+        app:layout_anchor="@id/detailsAppBar"
         app:layout_anchorGravity="left|bottom"
         app:srcCompat="@drawable/ic_baseline_favorite_border"
         app:tint="?attr/itemIconTint" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/details_fab_watch_later"
+        android:id="@+id/detailsFabWatchLater"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_of_FAB"
         app:backgroundTint="?attr/colorPrimary"
-        app:layout_anchor="@id/details_app_bar"
+        app:layout_anchor="@id/detailsAppBar"
         app:layout_anchorGravity="bottom|center_horizontal"
         app:srcCompat="@drawable/ic_baseline_watch_later_border"
         app:tint="?attr/itemIconTint" />
@@ -89,7 +89,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:id="@+id/details_description"
+            android:id="@+id/detailsDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_of_text"
