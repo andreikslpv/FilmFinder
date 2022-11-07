@@ -4,19 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
 
 class SelectionsFragment : Fragment() {
+    private var _binding: FragmentSelectionsBinding? = null
+    private val binding
+        get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_selections, container, false)
+    ): View {
+        _binding = FragmentSelectionsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,10 +30,12 @@ class SelectionsFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
         // меняем background MainActivity на background фрагмента
-        val layout =
-            requireView().findViewById<FrameLayout>(R.id.selections_fragment_root)
-        (activity as MainActivity).setBackground(layout.background)
+        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

@@ -1,5 +1,6 @@
 package com.andreikslpv.filmfinder.presentation.recyclers.touchHelper
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -26,14 +27,15 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :
         return makeMovementFlags(dragFlags, swipeFlags)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: ViewHolder,
         target: ViewHolder
     ): Boolean {
         val items = adapter.items
-        val fromPosition = viewHolder.adapterPosition
-        val toPosition = target.adapterPosition
+        val fromPosition = viewHolder.absoluteAdapterPosition
+        val toPosition = target.absoluteAdapterPosition
         //Меняем элементы местами с помощью метода swap
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
@@ -49,8 +51,9 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :
         return true
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-        adapter.items.removeAt(viewHolder.adapterPosition)
+        adapter.items.removeAt(viewHolder.absoluteAdapterPosition)
         adapter.notifyDataSetChanged()
         //adapter.notifyItemRemoved(viewHolder.adapterPosition)
     }

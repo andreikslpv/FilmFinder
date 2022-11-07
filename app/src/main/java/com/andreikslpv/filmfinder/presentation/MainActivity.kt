@@ -12,18 +12,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.*
 import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import java.io.File
 
@@ -34,8 +33,8 @@ const val TRANSITION_NAME_FOR_TEXT = "text_name"
 const val TRANSITION_DURATION = 800L
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
-    private lateinit var bottomNavigation: BottomNavigationView
     lateinit var filmsRepository: FilmsRepositoryImpl
     private var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
         set(value) {
@@ -61,23 +60,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         //------- эмуляция Splash Screen с векторной анимацией
-        val image = findViewById<ImageView>(R.id.image_logo)
         //Создаем экземпляр AnimatedVectorDrawableCompat, чтобы была совместимость с различными версиями Android
         //в параметры передаем контекст и файл с анимацей вектора
         val animatedVectorDrawable =
             AnimatedVectorDrawableCompat.create(this, R.drawable.anim_logo_build)
         //Устанавливаем animatedVectorDrawable в наше view
-        image.setImageDrawable(animatedVectorDrawable)
+        binding.imageLogo.setImageDrawable(animatedVectorDrawable)
         animatedVectorDrawable?.registerAnimationCallback(object :
             Animatable2Compat.AnimationCallback() {
             // Когда заканчивается анимация запускаем нормальную работу приложения
             override fun onAnimationEnd(drawable: Drawable) {
                 Thread.sleep(500)
                 // прячем imageview с анимацией
-                image.visibility = INVISIBLE
+                binding.imageLogo.visibility = INVISIBLE
 
                 initBottomNavigationMenu()
 
@@ -97,13 +96,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBottomNavigationMenu() {
-        bottomNavigation = findViewById(R.id.bottom_navigation)
-
         // показываем BottomNavigation (после Splash Screen)
-        bottomNavigation.visibility = VISIBLE
+        binding.bottomNavigation.visibility = VISIBLE
 
-        bottomNavigation.setOnItemSelectedListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_placeholder)
+        binding.bottomNavigation.setOnItemSelectedListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentPlaceholder)
             when (it.itemId) {
                 R.id.home -> {
                     // если активен не HomeFragment, то запускаем HomeFragment
@@ -148,7 +145,7 @@ class MainActivity : AppCompatActivity() {
     private fun changeFragment(fragment: Fragment, type: FragmentsType) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_placeholder, fragment, type.tag)
+            .replace(R.id.fragmentPlaceholder, fragment, type.tag)
             .addToBackStack(null)
             .commit()
         currentFragmentsType = type
@@ -170,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             .setReorderingAllowed(true)
             .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
             .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
-            .replace(R.id.fragment_placeholder, detailsFragment, "details")
+            .replace(R.id.fragmentPlaceholder, detailsFragment, "details")
             .addToBackStack(null)
             .commit()
         setBottomNavigationIcon(FragmentsType.DETAILS)
@@ -179,7 +176,7 @@ class MainActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // double tap for exit
-        when (supportFragmentManager.findFragmentById(R.id.fragment_placeholder)) {
+        when (supportFragmentManager.findFragmentById(R.id.fragmentPlaceholder)) {
             is HomeFragment, is FavoritesFragment, is WatchLaterFragment, is SelectionsFragment -> {
                 if (backPressed + TIME_INTERVAL > System.currentTimeMillis()) {
                     finish()
@@ -196,10 +193,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setBottomNavigationIcon(type: FragmentsType) {
-        val home = bottomNavigation.menu.findItem(R.id.home)
-        val favorites = bottomNavigation.menu.findItem(R.id.favorites)
-        val watchLater = bottomNavigation.menu.findItem(R.id.watch_later)
-        val selections = bottomNavigation.menu.findItem(R.id.selections)
+        val home = binding.bottomNavigation.menu.findItem(R.id.home)
+        val favorites = binding.bottomNavigation.menu.findItem(R.id.favorites)
+        val watchLater = binding.bottomNavigation.menu.findItem(R.id.watch_later)
+        val selections = binding.bottomNavigation.menu.findItem(R.id.selections)
         when (type) {
             FragmentsType.HOME -> {
                 home.setIcon(R.drawable.ic_baseline_home)
@@ -236,8 +233,7 @@ class MainActivity : AppCompatActivity() {
 
     fun setBackground(newBackground: Drawable?) {
         if (newBackground != null) {
-            val mainActivityLayout = findViewById<ConstraintLayout>(R.id.main_layout)
-            mainActivityLayout.background = newBackground
+            binding.mainLayout.background = newBackground
         }
     }
 }
