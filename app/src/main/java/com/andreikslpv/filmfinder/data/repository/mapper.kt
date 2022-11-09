@@ -1,6 +1,6 @@
-package com.andreikslpv.filmfinder.repository
+package com.andreikslpv.filmfinder.data.repository
 
-import com.andreikslpv.filmfinder.datasource.models.FilmsApiModel
+import com.andreikslpv.filmfinder.data.datasource.models.FilmsApiModel
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.domain.BaseMapper
 

@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.datasource
+package com.andreikslpv.filmfinder.data.datasource
 
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 

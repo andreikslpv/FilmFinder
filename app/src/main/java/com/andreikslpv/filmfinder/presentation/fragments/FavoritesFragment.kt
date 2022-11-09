@@ -13,17 +13,26 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.databinding.FragmentFavoritesBinding
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.usecase.GetFavoritesFilmsUseCase
+import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.GetSearchResultUseCase
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
-import java.util.*
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding
         get() = _binding!!
+    private val getFavoritesFilmsUseCase by lazy {
+        GetFavoritesFilmsUseCase((activity as MainActivity).filmsRepository)
+    }
+    private val getFilmLocalStateUseCase by lazy {
+        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
+    }
+    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
@@ -61,7 +70,7 @@ class FavoritesFragment : Fragment() {
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                     override fun click(film: FilmsLocalModel, image: ImageView, text: TextView) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            (activity as MainActivity).filmsRepository.getFilmLocalState(film),
+                            getFilmLocalStateUseCase.execute(film),
                             image,
                             text
                         )
@@ -79,7 +88,7 @@ class FavoritesFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getFavoriteFilms())
+        filmsAdapter.changeItems(getFavoritesFilmsUseCase.execute())
     }
 
     private fun initSearchView() {
@@ -96,18 +105,7 @@ class FavoritesFragment : Fragment() {
             //Этот метод отрабатывает на каждое изменения текста
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextChange(newText: String): Boolean {
-                //Если ввод пуст то вставляем в адаптер всю БД
-                if (newText.isEmpty()) {
-                    filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getFavoriteFilms())
-                    return true
-                }
-                //Фильтруем список на поиск подходящих сочетаний
-                val result = (activity as MainActivity).filmsRepository.getFavoriteFilms().filter {
-                    //Чтобы все работало правильно, нужно и запрос, и имя фильма приводить к нижнему регистру
-                    it.title.lowercase(Locale.getDefault())
-                        .contains(newText.lowercase(Locale.getDefault()))
-                }
-                //Добавляем в адаптер
+                val result = getSearchResultUseCase.execute(newText, getFavoritesFilmsUseCase.execute())
                 filmsAdapter.changeItems(result)
                 filmsAdapter.notifyDataSetChanged()
                 return true
