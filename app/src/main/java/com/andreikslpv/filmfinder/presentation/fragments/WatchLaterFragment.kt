@@ -13,18 +13,27 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.databinding.FragmentWatchLaterBinding
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.GetSearchResultUseCase
+import com.andreikslpv.filmfinder.domain.usecase.GetWatchLaterFilmsUseCase
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
-import java.util.*
 
 
 class WatchLaterFragment : Fragment() {
     private var _binding: FragmentWatchLaterBinding? = null
     private val binding
         get() = _binding!!
+    private val getWatchLaterFilmsUseCase by lazy {
+        GetWatchLaterFilmsUseCase((activity as MainActivity).filmsRepository)
+    }
+    private val getFilmLocalStateUseCase by lazy {
+        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
+    }
+    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
@@ -62,7 +71,7 @@ class WatchLaterFragment : Fragment() {
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                     override fun click(film: FilmsLocalModel, image: ImageView, text: TextView) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            (activity as MainActivity).filmsRepository.getFilmLocalState(film),
+                            getFilmLocalStateUseCase.execute(film),
                             image,
                             text
                         )
@@ -80,7 +89,7 @@ class WatchLaterFragment : Fragment() {
             touchHelper.attachToRecyclerView(this)
         }
         //Кладем нашу БД в RV
-        filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getWatchLaterFilms())
+        filmsAdapter.changeItems(getWatchLaterFilmsUseCase.execute())
     }
 
     private fun initSearchView() {
@@ -88,7 +97,8 @@ class WatchLaterFragment : Fragment() {
             binding.watchLaterSearchView.isIconified = false
         }
         //Подключаем слушателя изменений введенного текста в поиска
-        binding.watchLaterSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.watchLaterSearchView.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -97,19 +107,7 @@ class WatchLaterFragment : Fragment() {
             //Этот метод отрабатывает на каждое изменения текста
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextChange(newText: String): Boolean {
-                //Если ввод пуст то вставляем в адаптер всю БД
-                if (newText.isEmpty()) {
-                    filmsAdapter.changeItems((activity as MainActivity).filmsRepository.getWatchLaterFilms())
-                    return true
-                }
-                //Фильтруем список на поиск подходящих сочетаний
-                val result =
-                    (activity as MainActivity).filmsRepository.getWatchLaterFilms().filter {
-                        //Чтобы все работало правильно, нужно и запрос, и имя фильма приводить к нижнему регистру
-                        it.title.lowercase(Locale.getDefault())
-                            .contains(newText.lowercase(Locale.getDefault()))
-                    }
-                //Добавляем в адаптер
+                val result = getSearchResultUseCase.execute(newText, getWatchLaterFilmsUseCase.execute())
                 filmsAdapter.changeItems(result)
                 filmsAdapter.notifyDataSetChanged()
                 return true

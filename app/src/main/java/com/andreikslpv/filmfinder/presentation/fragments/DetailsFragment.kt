@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.usecase.ChangeFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.FragmentsType
 import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.TRANSITION_DURATION
@@ -20,6 +21,9 @@ class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
     private val binding
         get() = _binding!!
+    private val changeFilmLocalStateUseCase by lazy {
+        ChangeFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
+    }
     private lateinit var film: FilmsLocalModel
     private lateinit var type: FragmentsType
 
@@ -98,7 +102,7 @@ class DetailsFragment : Fragment() {
                 binding.detailsFabFavorites.setImageResource(R.drawable.ic_baseline_favorite_border)
                 film.isFavorite = false
             }
-            (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
+            changeFilmLocalStateUseCase.execute(film)
         }
     }
 
@@ -115,7 +119,7 @@ class DetailsFragment : Fragment() {
                 binding.detailsFabWatchLater.setImageResource(R.drawable.ic_baseline_watch_later_border)
                 film.isWatchLater = false
             }
-            (activity as MainActivity).filmsRepository.changeFilmLocalState(film)
+            changeFilmLocalStateUseCase.execute(film)
         }
     }
 

@@ -1,7 +1,7 @@
-package com.andreikslpv.filmfinder.datasource
+package com.andreikslpv.filmfinder.data.datasource
 
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.datasource.models.FilmsApiModel
+import com.andreikslpv.filmfinder.data.datasource.models.FilmsApiModel
 
 class FilmsApiDataSource {
     // подмена данных из сети

@@ -6,12 +6,8 @@ interface FilmsRepository {
 
     fun getAllFilms(): List<FilmsLocalModel>
 
-    fun changeFilmLocalState(film: FilmsLocalModel)
+    fun getAllLocalSavedFilms(): List<FilmsLocalModel>
 
-    fun getFilmLocalState(film: FilmsLocalModel): FilmsLocalModel
-
-    fun getFavoriteFilms(): List<FilmsLocalModel>
-
-    fun getWatchLaterFilms(): List<FilmsLocalModel>
+    fun saveFilms(listFilmsToSave: List<FilmsLocalModel>)
 
 }

@@ -17,12 +17,12 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
-import com.andreikslpv.filmfinder.datasource.FilmsApiDataSource
-import com.andreikslpv.filmfinder.datasource.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.datasource.FilmsLocalDataSource
+import com.andreikslpv.filmfinder.data.datasource.FilmsApiDataSource
+import com.andreikslpv.filmfinder.data.datasource.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.data.datasource.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.*
-import com.andreikslpv.filmfinder.repository.FilmsRepositoryImpl
+import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.google.gson.Gson
 import java.io.File
 
@@ -31,6 +31,7 @@ const val TIME_INTERVAL = 2000
 const val TRANSITION_NAME_FOR_IMAGE = "image_name"
 const val TRANSITION_NAME_FOR_TEXT = "text_name"
 const val TRANSITION_DURATION = 800L
+const val NAME_OF_LOCAL_STORAGE = "local.json"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -80,11 +81,13 @@ class MainActivity : AppCompatActivity() {
 
                 initBottomNavigationMenu()
 
-                val directory = application.filesDir
                 filmsRepository = FilmsRepositoryImpl(
                     FilmsCacheDataSource(),
                     FilmsApiDataSource(),
-                    FilmsLocalDataSource(File("$directory/local.json"), Gson())
+                    FilmsLocalDataSource(
+                        File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE"),
+                        Gson()
+                    )
                 )
 
                 // запускаем фрагмент Home
