@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.databinding.ItemFilmBinding
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_IMAGE
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_TEXT
 
@@ -15,7 +15,7 @@ import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_TEXT
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //Здесь у нас хранится список элементов для RV
-    val items = mutableListOf<FilmsLocalModel>()
+    val items = mutableListOf<FilmDomainModel>()
 
     //Этот метод нужно переопределить на возврат количества элементов в списке RV
     override fun getItemCount() = items.size
@@ -47,7 +47,7 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     }
 
     //Метод для добавления объектов в наш список
-    fun changeItems(list: List<FilmsLocalModel>) {
+    fun changeItems(list: List<FilmDomainModel>) {
         val diff = FilmDiff(items, list)
         val diffResult = DiffUtil.calculateDiff(diff)
         //Сначала очищаем
@@ -60,6 +60,6 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
 
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
-        fun click(film: FilmsLocalModel, image: ImageView, text: TextView)
+        fun click(film: FilmDomainModel, image: ImageView, text: TextView)
     }
 }

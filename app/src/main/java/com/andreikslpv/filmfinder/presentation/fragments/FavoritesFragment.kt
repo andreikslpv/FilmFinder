@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.databinding.FragmentFavoritesBinding
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.GetFavoritesFilmsUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetSearchResultUseCase
@@ -68,7 +68,7 @@ class FavoritesFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: FilmsLocalModel, image: ImageView, text: TextView) {
+                    override fun click(film: FilmDomainModel, image: ImageView, text: TextView) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
                             getFilmLocalStateUseCase.execute(film),
                             image,

@@ -16,14 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
-import com.andreikslpv.filmfinder.data.datasource.FilmsApiDataSource
-import com.andreikslpv.filmfinder.data.datasource.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.data.datasource.FilmsLocalDataSource
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
-import com.andreikslpv.filmfinder.presentation.fragments.*
+import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
+import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
-import com.google.gson.Gson
+import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.presentation.fragments.*
 import java.io.File
 
 
@@ -83,10 +82,9 @@ class MainActivity : AppCompatActivity() {
 
                 filmsRepository = FilmsRepositoryImpl(
                     FilmsCacheDataSource(),
-                    FilmsApiDataSource(),
-                    FilmsLocalDataSource(
-                        File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE"),
-                        Gson()
+                    FilmsTestDataSource(),
+                    FilmsJsonDataSource(
+                        File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE")
                     )
                 )
 
@@ -154,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         currentFragmentsType = type
     }
 
-    fun launchDetailsFragment(film: FilmsLocalModel, image: ImageView, text: TextView) {
+    fun launchDetailsFragment(film: FilmDomainModel, image: ImageView, text: TextView) {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"

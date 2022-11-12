@@ -10,7 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.ChangeFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.FragmentsType
 import com.andreikslpv.filmfinder.presentation.MainActivity
@@ -24,7 +24,7 @@ class DetailsFragment : Fragment() {
     private val changeFilmLocalStateUseCase by lazy {
         ChangeFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
     }
-    private lateinit var film: FilmsLocalModel
+    private lateinit var film: FilmDomainModel
     private lateinit var type: FragmentsType
 
     init {
@@ -37,7 +37,7 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
-        film = arguments?.get("film") as FilmsLocalModel
+        film = arguments?.get("film") as FilmDomainModel
         type = arguments?.get("type") as FragmentsType
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
@@ -57,7 +57,7 @@ class DetailsFragment : Fragment() {
         _binding = null
     }
 
-    private fun initView(film: FilmsLocalModel) {
+    private fun initView(film: FilmDomainModel) {
         //Приостанавливаем воспроизведение Transition до загрузки данных
         postponeEnterTransition()
         // устанавливаем background в зависимости от типа фрагмента, из которого вызван фрагмент Details
