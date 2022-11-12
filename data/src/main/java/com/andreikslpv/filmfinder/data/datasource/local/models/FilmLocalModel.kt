@@ -1,9 +1,5 @@
 package com.andreikslpv.filmfinder.data.datasource.local.models
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
 data class FilmLocalModel (
     val id: Int,
     val title: String,
@@ -11,4 +7,4 @@ data class FilmLocalModel (
     val description: String,
     var isFavorite: Boolean = false,
     var isWatchLater: Boolean = false
-) : Parcelable
+)

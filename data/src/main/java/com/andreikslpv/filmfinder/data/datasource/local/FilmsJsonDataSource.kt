@@ -6,7 +6,9 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 
 
-class FilmsJsonDataSource(private val file: File, private val gson: Gson) : FilmsLocalDataSource{
+class FilmsJsonDataSource(private val file: File) : FilmsLocalDataSource{
+
+    private val gson: Gson = Gson()
 
     override fun getItems(): List<FilmLocalModel> {
         val json = if (file.isFile) file.readText(Charsets.UTF_8) else ""

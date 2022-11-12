@@ -1,6 +1,6 @@
 package com.andreikslpv.filmfinder.data.datasource.api
 
-import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.models.FilmApiModel
 
 class FilmsTestDataSource : FilmsApiDataSource {
