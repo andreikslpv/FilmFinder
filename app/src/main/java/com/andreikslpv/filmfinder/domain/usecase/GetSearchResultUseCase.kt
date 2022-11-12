@@ -1,10 +1,10 @@
 package com.andreikslpv.filmfinder.domain.usecase
 
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import java.util.*
 
 class GetSearchResultUseCase {
-    fun execute(searchText: String, listToSearch: List<FilmsLocalModel>): List<FilmsLocalModel> {
+    fun execute(searchText: String, listToSearch: List<FilmDomainModel>): List<FilmDomainModel> {
         //Если текст для поиска пуст то возвращаем список без изменений
         if (searchText.isEmpty()) {
             return listToSearch

@@ -1,13 +1,13 @@
 package com.andreikslpv.filmfinder.domain
 
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 interface FilmsRepository {
 
-    fun getAllFilmsByPage(): List<FilmsLocalModel>
+    fun getAllFilmsByPage(): List<FilmDomainModel>
 
-    fun getAllLocalSavedFilms(): List<FilmsLocalModel>
+    fun getAllLocalSavedFilms(): List<FilmDomainModel>
 
-    fun saveFilmToLocal(film: FilmsLocalModel)
+    fun saveFilmToLocal(film: FilmDomainModel)
 
 }

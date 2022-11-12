@@ -4,7 +4,7 @@ import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.domain.FilmsRepository
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class FilmsRepositoryImpl(
     private val cacheDataSource: FilmsCacheDataSource,
@@ -12,20 +12,20 @@ class FilmsRepositoryImpl(
     private val localDataSource: FilmsLocalDataSource
 ) : FilmsRepository {
 
-    override fun getAllFilmsByPage(): List<FilmsLocalModel> {
-        val allFilms: List<FilmsLocalModel> = cacheDataSource.films
+    override fun getAllFilmsByPage(): List<FilmDomainModel> {
+        val allFilms: List<FilmDomainModel> = cacheDataSource.films
         // если в кэш уже загружен список фильмов, то возвращаем его
         if (allFilms.isNotEmpty()) return allFilms
-        // иначе получаем из сети
-        cacheDataSource.films = ApiToLocalMapper.map(apiDataSource.getAllFilmsByPage())
+        // иначе получаем из API
+        cacheDataSource.films = ApiToDomainMapper.map(apiDataSource.getAllFilmsByPage())
         return cacheDataSource.films.ifEmpty { emptyList() }
     }
 
-    override fun getAllLocalSavedFilms(): List<FilmsLocalModel> {
-        return localDataSource.getItems()
+    override fun getAllLocalSavedFilms(): List<FilmDomainModel> {
+        return LocalToDomainMapper.map(localDataSource.getItems())
     }
 
-    override fun saveFilmToLocal(film: FilmsLocalModel) {
-        localDataSource.saveItem(film)
+    override fun saveFilmToLocal(film: FilmDomainModel) {
+        localDataSource.saveItem(DomainToLocalMapper.map(film))
     }
 }

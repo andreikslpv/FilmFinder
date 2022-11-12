@@ -1,10 +1,10 @@
 package com.andreikslpv.filmfinder.data.datasource.cache
 
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class FilmsCacheDataSource {
-    private val filmsMutableList: MutableList<FilmsLocalModel> = mutableListOf()
-    var films: List<FilmsLocalModel>
+    private val filmsMutableList: MutableList<FilmDomainModel> = mutableListOf()
+    var films: List<FilmDomainModel>
         get() = filmsMutableList
         set(value) {
             filmsMutableList.clear()

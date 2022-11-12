@@ -1,11 +1,10 @@
-package com.andreikslpv.filmfinder.domain.models
+package com.andreikslpv.filmfinder.data.datasource.local.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-
 @Parcelize
-data class FilmsLocalModel(
+data class FilmLocalModel (
     val id: Int,
     val title: String,
     val poster: Int,

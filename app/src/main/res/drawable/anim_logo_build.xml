@@ -47,12 +47,12 @@
         <aapt:attr name="android:animation">
             <set>
                 <objectAnimator
-                    android:duration="2500"
+                    android:duration="2000"
                     android:propertyName="scaleX"
                     android:valueFrom="5"
                     android:valueTo="1.0" />
                 <objectAnimator
-                    android:duration="2500"
+                    android:duration="2000"
                     android:propertyName="scaleY"
                     android:valueFrom="5"
                     android:valueTo="1.0" />
@@ -64,12 +64,12 @@
         <aapt:attr name="android:animation">
             <set>
                 <objectAnimator
-                    android:duration="2500"
+                    android:duration="2000"
                     android:propertyName="scaleX"
                     android:valueFrom="0.2"
                     android:valueTo="1.0" />
                 <objectAnimator
-                    android:duration="2500"
+                    android:duration="2000"
                     android:propertyName="scaleY"
                     android:valueFrom="0.2"
                     android:valueTo="1.0" />

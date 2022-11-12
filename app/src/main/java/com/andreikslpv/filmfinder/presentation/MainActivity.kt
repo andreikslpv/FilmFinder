@@ -20,7 +20,7 @@ import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.fragments.*
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.google.gson.Gson
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         currentFragmentsType = type
     }
 
-    fun launchDetailsFragment(film: FilmsLocalModel, image: ImageView, text: TextView) {
+    fun launchDetailsFragment(film: FilmDomainModel, image: ImageView, text: TextView) {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"

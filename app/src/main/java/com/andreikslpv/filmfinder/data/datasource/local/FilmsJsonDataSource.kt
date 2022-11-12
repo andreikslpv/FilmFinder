@@ -1,6 +1,6 @@
 package com.andreikslpv.filmfinder.data.datasource.local
 
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -8,16 +8,20 @@ import java.io.File
 
 class FilmsJsonDataSource(private val file: File, private val gson: Gson) : FilmsLocalDataSource{
 
-    override fun getItems(): List<FilmsLocalModel> {
+    override fun getItems(): List<FilmLocalModel> {
         val json = if (file.isFile) file.readText(Charsets.UTF_8) else ""
-        return gson.fromJson(json, object : TypeToken<ArrayList<FilmsLocalModel?>?>() {}.type)
+        return gson.fromJson(json, object : TypeToken<ArrayList<FilmLocalModel?>?>() {}.type)
             ?: emptyList()
     }
 
-    override fun saveItem(item: FilmsLocalModel) {
+    override fun saveItem(item: FilmLocalModel) {
         val listToSave = if (file.isFile) {
-            val mutableItems: MutableList<FilmsLocalModel> = getItems().toMutableList()
+            // получаем в изменяемый список все сохраненные фильмы
+            val mutableItems: MutableList<FilmLocalModel> = getItems().toMutableList()
             val existItem = mutableItems.any { it.id == item.id }
+            // если переданный фильм есть в списке
+            // то меняем значения его полей isFavorite и isWatchLater на переданные
+            // иначе добавляем переданный фильм в список
             if (existItem) {
                 mutableItems.filter { it.id == item.id }[0].apply {
                     isFavorite = item.isFavorite
@@ -25,6 +29,7 @@ class FilmsJsonDataSource(private val file: File, private val gson: Gson) : Film
                 }
             } else
                 mutableItems.add(item)
+            // удаляем из списка все фильмы, где поля isFavorite и isWatchLater равны false
             mutableItems.removeAll {
                 !it.isFavorite && !it.isWatchLater
             }
@@ -36,7 +41,4 @@ class FilmsJsonDataSource(private val file: File, private val gson: Gson) : Film
         file.writeText(gson.toJson(listToSave))
     }
 
-    /*fun saveItems(listToSave: List<FilmsLocalModel>) {
-        file.writeText(gson.toJson(listToSave))
-    }*/
 }

@@ -1,12 +1,12 @@
 package com.andreikslpv.filmfinder.domain.usecase
 
 import com.andreikslpv.filmfinder.domain.FilmsRepository
-import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class GetFilmLocalStateUseCase(private val filmsRepository: FilmsRepository) {
-    fun execute(film: FilmsLocalModel): FilmsLocalModel {
+    fun execute(film: FilmDomainModel): FilmDomainModel {
         val localFilms = filmsRepository.getAllLocalSavedFilms()
-        var localFilm: FilmsLocalModel? = null
+        var localFilm: FilmDomainModel? = null
 
         if (localFilms.any { it.id == film.id })
             localFilm = localFilms.filter { it.id == film.id }[0]
