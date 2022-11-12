@@ -1,9 +1,9 @@
-package com.andreikslpv.filmfinder.data.datasource
+package com.andreikslpv.filmfinder.data.datasource.api
 
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.data.datasource.models.FilmsApiModel
+import com.andreikslpv.filmfinder.data.datasource.api.models.FilmsApiModel
 
-class FilmsApiDataSource {
+class FilmsTestDataSource : FilmsApiDataSource {
     // подмена данных из сети
     private val filmsMutableList = mutableListOf(
         FilmsApiModel(
@@ -60,7 +60,7 @@ class FilmsApiDataSource {
         ),
     )
 
-    fun getAllFilms(): List<FilmsApiModel> {
+    override fun getAllFilmsByPage(): List<FilmsApiModel> {
         // получение всех фильмов из сети
         return filmsMutableList
     }

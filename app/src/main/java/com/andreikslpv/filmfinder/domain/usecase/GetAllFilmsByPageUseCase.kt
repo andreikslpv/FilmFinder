@@ -5,6 +5,6 @@ import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 
 class GetAllFilmsByPageUseCase(private val filmsRepository: FilmsRepository) {
     fun execute() : List<FilmsLocalModel> {
-        return filmsRepository.getAllFilms()
+        return filmsRepository.getAllFilmsByPage()
     }
 }

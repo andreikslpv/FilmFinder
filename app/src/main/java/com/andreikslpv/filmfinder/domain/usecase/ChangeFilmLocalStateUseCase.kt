@@ -5,7 +5,8 @@ import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 
 class ChangeFilmLocalStateUseCase(private val filmsRepository: FilmsRepository) {
     fun execute(film: FilmsLocalModel) {
-        // получаем в изменяемый список все сохраненные фильмы
+        filmsRepository.saveFilmToLocal(film)
+        /*// получаем в изменяемый список все сохраненные фильмы
         val mutableFilms: MutableList<FilmsLocalModel> = filmsRepository.getAllLocalSavedFilms().toMutableList()
         val existFilm = mutableFilms.any { it.id == film.id }
         // если переданный фильм есть в списке
@@ -23,6 +24,6 @@ class ChangeFilmLocalStateUseCase(private val filmsRepository: FilmsRepository) 
             !it.isFavorite && !it.isWatchLater
         }
         // сохраняем список в файл
-        filmsRepository.saveFilms(mutableFilms)
+        filmsRepository.saveFilmToLocal(mutableFilms)*/
     }
 }

@@ -17,9 +17,9 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
-import com.andreikslpv.filmfinder.data.datasource.FilmsApiDataSource
-import com.andreikslpv.filmfinder.data.datasource.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.data.datasource.FilmsLocalDataSource
+import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
+import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmsLocalModel
 import com.andreikslpv.filmfinder.presentation.fragments.*
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
@@ -83,8 +83,8 @@ class MainActivity : AppCompatActivity() {
 
                 filmsRepository = FilmsRepositoryImpl(
                     FilmsCacheDataSource(),
-                    FilmsApiDataSource(),
-                    FilmsLocalDataSource(
+                    FilmsTestDataSource(),
+                    FilmsJsonDataSource(
                         File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE"),
                         Gson()
                     )
