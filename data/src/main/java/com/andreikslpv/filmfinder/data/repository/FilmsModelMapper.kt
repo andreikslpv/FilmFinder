@@ -13,6 +13,7 @@ object ApiToDomainMapper : BaseMapper<List<FilmApiModel>, List<FilmDomainModel>>
                 title = it.title ?: "",
                 poster = it.poster ?: -1,
                 description = it.description ?: "",
+                rating = it.rating ?: 0f,
                 isFavorite = false,
                 isWatchLater = false
             )
@@ -28,6 +29,7 @@ object LocalToDomainMapper : BaseMapper<List<FilmLocalModel>, List<FilmDomainMod
                 title = it.title ?: "",
                 poster = it.poster ?: -1,
                 description = it.description ?: "",
+                rating = it.rating ?: 0f,
                 isFavorite = it.isFavorite ?: false,
                 isWatchLater = it.isWatchLater ?: false
             )
@@ -35,15 +37,16 @@ object LocalToDomainMapper : BaseMapper<List<FilmLocalModel>, List<FilmDomainMod
     }
 }
 
-object DomainToLocalMapper : BaseMapper<FilmDomainModel, FilmLocalModel > {
+object DomainToLocalMapper : BaseMapper<FilmDomainModel, FilmLocalModel> {
     override fun map(type: FilmDomainModel?): FilmLocalModel {
         return FilmLocalModel(
-                id = type?.id ?: -1,
-                title = type?.title ?: "",
-                poster = type?.poster ?: -1,
-                description = type?.description ?: "",
-                isFavorite = type?.isFavorite ?: false,
-                isWatchLater = type?.isWatchLater ?: false
-            )
+            id = type?.id ?: -1,
+            title = type?.title ?: "",
+            poster = type?.poster ?: -1,
+            description = type?.description ?: "",
+            rating = type?.rating ?: 0f,
+            isFavorite = type?.isFavorite ?: false,
+            isWatchLater = type?.isWatchLater ?: false
+        )
     }
 }

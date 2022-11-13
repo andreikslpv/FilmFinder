@@ -5,10 +5,9 @@ import com.andreikslpv.filmfinder.databinding.ItemFilmBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.bumptech.glide.Glide
 
-//В конструктор класса передается layout, который мы создали(film_item.xml)
 class FilmViewHolder(val binding: ItemFilmBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    //В этом методе кладем данные из Film в наши View
+    // кладем данные из Film в наши View
     fun bind(film: FilmDomainModel) {
         //Устанавливаем заголовок
         binding.title.text = film.title
@@ -23,5 +22,7 @@ class FilmViewHolder(val binding: ItemFilmBinding) : RecyclerView.ViewHolder(bin
             .into(binding.poster)
         //Устанавливаем описание
         binding.description.text = film.description
+        //Устанавливаем рэйтинг
+        binding.ratingDonut.setProgress((film.rating * 10).toInt())
     }
 }
