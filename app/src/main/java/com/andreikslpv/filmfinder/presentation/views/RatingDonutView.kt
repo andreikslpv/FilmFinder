@@ -15,6 +15,7 @@ private const val RATE_GROUP_1_MAX = 25
 private const val RATE_GROUP_2_MAX = 50
 private const val RATE_GROUP_3_MAX = 75
 private const val RATE_MAX = 100
+private const val CENTER = 0F
 
 
 class RatingDonutView @JvmOverloads constructor(
@@ -34,7 +35,18 @@ class RatingDonutView @JvmOverloads constructor(
     private var stroke = 10f
 
     //Значение прогресса от 0 - 100
-    private var progress = 50
+    var progress = 0
+        set(value) {
+            if (field == value) return
+            //Кладем новое значение в наше поле класса
+            field = value
+            //если в допустимом диапазоне, то стандартная отрисовка, иначе считаем что not rated
+            isRated = field in RATE_MIN..RATE_MAX
+            //Создаем краски с новыми цветами
+            initPaint()
+            //вызываем перерисовку View
+            invalidate()
+        }
 
     private var isRated = true
 
@@ -75,7 +87,7 @@ class RatingDonutView @JvmOverloads constructor(
         digitPaint = Paint().apply {
             style = Paint.Style.FILL_AND_STROKE
             strokeWidth = 2f
-            setShadowLayer(5f, 0f, 0f, Color.DKGRAY)
+            setShadowLayer(5f, CENTER, CENTER, Color.DKGRAY)
             textSize = scaleSize
             typeface = Typeface.SANS_SERIF
             color = getPaintColor(progress)
@@ -142,9 +154,9 @@ class RatingDonutView @JvmOverloads constructor(
         //Перемещаем нулевые координаты канваса в центр, вы помните, так проще рисовать все круглое
         canvas.translate(centerX, centerY)
         //Устанавливаем размеры под наш овал
-        oval.set(0f - scale, 0f - scale, scale, scale)
+        oval.set(CENTER - scale, CENTER - scale, scale, scale)
         //Рисуем задний фон(Желательно его отрисовать один раз в bitmap, так как он статичный)
-        canvas.drawCircle(0f, 0f, radius, circlePaint)
+        canvas.drawCircle(CENTER, CENTER, radius, circlePaint)
         //Рисуем "арки", из них и будет состоять наше кольцо + у нас тут специальный метод
         if (isRated)
             canvas.drawArc(oval, -90f, convertProgressToDegrees(progress), false, strokePaint)
@@ -173,15 +185,5 @@ class RatingDonutView @JvmOverloads constructor(
         for (width in widths) advance += width
         //Рисуем наш текст
         canvas.drawText(message, centerX - advance / 2, centerY + advance / factorY, digitPaint)
-    }
-
-    fun setProgress(pr: Int) {
-        //Кладем новое значение в наше поле класса
-        progress = pr
-        isRated = progress in RATE_MIN..RATE_MAX
-        //Создаем краски с новыми цветами
-        initPaint()
-        //вызываем перерисовку View
-        invalidate()
     }
 }

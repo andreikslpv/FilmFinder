@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/card_dimens">
+    android:layout_height="@dimen/card_height">
 
     <com.andreikslpv.filmfinder.presentation.views.RatingDonutView
         android:id="@+id/ratingDonut"
@@ -30,13 +30,13 @@
 
             <ImageView
                 android:id="@+id/poster"
-                android:layout_width="@dimen/card_dimens"
+                android:layout_width="@dimen/card_width"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/content_description"
                 android:scaleType="centerCrop"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars" />
+                tools:src="@tools:sample/avatars"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/title"
