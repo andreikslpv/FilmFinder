@@ -21,6 +21,7 @@ import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
+import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
@@ -68,11 +69,17 @@ class FavoritesFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: FilmDomainModel, image: ImageView, text: TextView) {
+                    override fun click(
+                        film: FilmDomainModel,
+                        image: ImageView,
+                        text: TextView,
+                        rating: RatingDonutView
+                    ) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
                             getFilmLocalStateUseCase.execute(film),
                             image,
-                            text
+                            text,
+                            rating
                         )
                     }
                 })
@@ -105,7 +112,8 @@ class FavoritesFragment : Fragment() {
             //Этот метод отрабатывает на каждое изменения текста
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextChange(newText: String): Boolean {
-                val result = getSearchResultUseCase.execute(newText, getFavoritesFilmsUseCase.execute())
+                val result =
+                    getSearchResultUseCase.execute(newText, getFavoritesFilmsUseCase.execute())
                 filmsAdapter.changeItems(result)
                 filmsAdapter.notifyDataSetChanged()
                 return true

@@ -11,6 +11,7 @@
         android:layout_height="@dimen/rating_donut_dimens"
         android:layout_gravity="bottom|start"
         android:translationZ="@dimen/rating_donut_z"
+        app:colorCircle="?attr/colorPrimary"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

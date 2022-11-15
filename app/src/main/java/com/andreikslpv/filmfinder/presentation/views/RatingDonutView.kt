@@ -3,8 +3,8 @@ package com.andreikslpv.filmfinder.presentation.views
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.View
 import com.andreikslpv.filmfinder.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.math.min
 
 private const val RATIO = 2f
@@ -21,7 +21,7 @@ private const val CENTER = 0F
 class RatingDonutView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null
-) : View(context, attributeSet) {
+) : FloatingActionButton(context, attributeSet) {
 
     //Овал для рисования сегментов прогресс бара
     private val oval = RectF()
@@ -33,6 +33,9 @@ class RatingDonutView @JvmOverloads constructor(
 
     //Толщина линии прогресса
     private var stroke = 10f
+
+    //Цвет круга
+    private var colorCircle = Color.DKGRAY
 
     //Значение прогресса от 0 - 100
     var progress = 0
@@ -65,6 +68,7 @@ class RatingDonutView @JvmOverloads constructor(
         try {
             stroke = a.getFloat(R.styleable.RatingDonutView_stroke, stroke)
             progress = a.getInt(R.styleable.RatingDonutView_progress, progress)
+            colorCircle = a.getColor(R.styleable.RatingDonutView_colorCircle, colorCircle)
         } finally {
             a.recycle()
         }
@@ -96,7 +100,7 @@ class RatingDonutView @JvmOverloads constructor(
         //Краска для заднего фона
         circlePaint = Paint().apply {
             style = Paint.Style.FILL
-            color = Color.DKGRAY
+            color = colorCircle
         }
     }
 

@@ -30,6 +30,5 @@ class FilmViewHolder(val binding: ItemFilmBinding) : RecyclerView.ViewHolder(bin
         }
         animator.duration = 1000
         animator.start()
-        //binding.ratingDonut.setProgress((film.rating * 10).toInt())
     }
 }

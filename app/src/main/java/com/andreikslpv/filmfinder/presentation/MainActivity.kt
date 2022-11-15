@@ -23,12 +23,14 @@ import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.fragments.*
+import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
 import java.io.File
 
 
 const val TIME_INTERVAL = 2000
 const val TRANSITION_NAME_FOR_IMAGE = "image_name"
 const val TRANSITION_NAME_FOR_TEXT = "text_name"
+const val TRANSITION_NAME_FOR_RATING = "rating_name"
 const val TRANSITION_DURATION = 800L
 const val NAME_OF_LOCAL_STORAGE = "local.json"
 
@@ -152,7 +154,12 @@ class MainActivity : AppCompatActivity() {
         currentFragmentsType = type
     }
 
-    fun launchDetailsFragment(film: FilmDomainModel, image: ImageView, text: TextView) {
+    fun launchDetailsFragment(
+        film: FilmDomainModel,
+        image: ImageView,
+        text: TextView,
+        rating: RatingDonutView
+    ) {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"
@@ -168,6 +175,7 @@ class MainActivity : AppCompatActivity() {
             .setReorderingAllowed(true)
             .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
             .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
+            .addSharedElement(rating, TRANSITION_NAME_FOR_RATING)
             .replace(R.id.fragmentPlaceholder, detailsFragment, "details")
             .addToBackStack(null)
             .commit()

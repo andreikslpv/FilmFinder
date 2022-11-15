@@ -21,6 +21,7 @@ import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
+import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -63,11 +64,17 @@ class HomeFragment : Fragment() {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
                 FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(film: FilmDomainModel, image: ImageView, text: TextView) {
+                    override fun click(
+                        film: FilmDomainModel,
+                        image: ImageView,
+                        text: TextView,
+                        rating: RatingDonutView
+                    ) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
                             getFilmLocalStateUseCase.execute(film),
                             image,
-                            text
+                            text,
+                            rating
                         )
                     }
                 })
