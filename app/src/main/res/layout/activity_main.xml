@@ -7,16 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".presentation.MainActivity">
 
-    <ImageView
-        android:id="@+id/imageLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
-
     <FrameLayout
         android:id="@+id/fragmentPlaceholder"
         android:layout_width="match_parent"
@@ -29,12 +19,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:visibility="invisible"
         app:itemIconTint="?attr/itemIconTint"
         app:itemTextColor="?attr/itemTextColor"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/navigation_menu"
-        tools:visibility="visible" />
+        app:menu="@menu/navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

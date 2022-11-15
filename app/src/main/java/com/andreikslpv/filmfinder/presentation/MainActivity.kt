@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
@@ -61,47 +62,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //------- эмуляция Splash Screen с векторной анимацией
-        //Создаем экземпляр AnimatedVectorDrawableCompat, чтобы была совместимость с различными версиями Android
-        //в параметры передаем контекст и файл с анимацей вектора
-        val animatedVectorDrawable =
-            AnimatedVectorDrawableCompat.create(this, R.drawable.anim_logo_build)
-        //Устанавливаем animatedVectorDrawable в наше view
-        binding.imageLogo.setImageDrawable(animatedVectorDrawable)
-        animatedVectorDrawable?.registerAnimationCallback(object :
-            Animatable2Compat.AnimationCallback() {
-            // Когда заканчивается анимация запускаем нормальную работу приложения
-            override fun onAnimationEnd(drawable: Drawable) {
-                Thread.sleep(500)
-                // прячем imageview с анимацией
-                binding.imageLogo.visibility = INVISIBLE
+        initBottomNavigationMenu()
 
-                initBottomNavigationMenu()
+        filmsRepository = FilmsRepositoryImpl(
+            FilmsCacheDataSource(),
+            FilmsTestDataSource(),
+            FilmsJsonDataSource(
+                File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE")
+            )
+        )
 
-                filmsRepository = FilmsRepositoryImpl(
-                    FilmsCacheDataSource(),
-                    FilmsTestDataSource(),
-                    FilmsJsonDataSource(
-                        File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE")
-                    )
-                )
-
-                // запускаем фрагмент Home
-                changeFragment(HomeFragment(), FragmentsType.HOME)
-            }
-        })
-        //запускаем анимацию
-        animatedVectorDrawable?.start()
+        // запускаем фрагмент Home
+        changeFragment(HomeFragment(), FragmentsType.HOME)
     }
 
     private fun initBottomNavigationMenu() {
-        // показываем BottomNavigation (после Splash Screen)
-        binding.bottomNavigation.visibility = VISIBLE
-
         binding.bottomNavigation.setOnItemSelectedListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentPlaceholder)
             when (it.itemId) {
