@@ -1,6 +1,5 @@
 package com.andreikslpv.filmfinder.presentation.recyclers
 
-import android.animation.ValueAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.databinding.ItemFilmBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
@@ -24,11 +23,6 @@ class FilmViewHolder(val binding: ItemFilmBinding) : RecyclerView.ViewHolder(bin
         //Устанавливаем описание
         binding.description.text = film.description
         //Устанавливаем рейтинг
-        val animator = ValueAnimator.ofInt(0, (film.rating * 10).toInt())
-        animator.addUpdateListener {
-            binding.ratingDonut.progress = it.animatedValue as Int
-        }
-        animator.duration = 1000
-        animator.start()
+        binding.ratingDonut.setProgressWithAnimation((film.rating * 10).toInt())
     }
 }

@@ -1,5 +1,6 @@
 package com.andreikslpv.filmfinder.presentation.views
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -9,13 +10,17 @@ import kotlin.math.min
 
 private const val RATIO = 2f
 private const val RADIUS_ADJUST = 0.8f
+private const val START_ANGLE = -90f
 private const val DEF_VIEW_SIZE = 50
 private const val RATE_MIN = 0
 private const val RATE_GROUP_1_MAX = 25
 private const val RATE_GROUP_2_MAX = 50
 private const val RATE_GROUP_3_MAX = 75
 private const val RATE_MAX = 100
+private const val DIGITAL_STROKE_WIDTH = 2f
+private const val DIGITAL_SHADOW_RADIUS = 5f
 private const val CENTER = 0F
+private const val ANIMATION_DURATION = 1000L
 
 
 class RatingDonutView @JvmOverloads constructor(
@@ -90,8 +95,8 @@ class RatingDonutView @JvmOverloads constructor(
         //Краска для цифр
         digitPaint = Paint().apply {
             style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = 2f
-            setShadowLayer(5f, CENTER, CENTER, Color.DKGRAY)
+            strokeWidth = DIGITAL_STROKE_WIDTH
+            setShadowLayer(DIGITAL_SHADOW_RADIUS, CENTER, CENTER, Color.DKGRAY)
             textSize = scaleSize
             typeface = Typeface.SANS_SERIF
             color = getPaintColor(progress)
@@ -163,7 +168,7 @@ class RatingDonutView @JvmOverloads constructor(
         canvas.drawCircle(CENTER, CENTER, radius, circlePaint)
         //Рисуем "арки", из них и будет состоять наше кольцо + у нас тут специальный метод
         if (isRated)
-            canvas.drawArc(oval, -90f, convertProgressToDegrees(progress), false, strokePaint)
+            canvas.drawArc(oval, START_ANGLE, convertProgressToDegrees(progress), false, strokePaint)
         //Восстанавливаем канвас, чтобы курсор вернулся в исходное состояние и мы могли корректно рисовать все остальное
         canvas.restore()
     }
@@ -189,5 +194,17 @@ class RatingDonutView @JvmOverloads constructor(
         for (width in widths) advance += width
         //Рисуем наш текст
         canvas.drawText(message, centerX - advance / 2, centerY + advance / factorY, digitPaint)
+    }
+
+    fun setProgressWithAnimation(newProgress: Int) {
+        if (newProgress in RATE_MIN..RATE_MAX) {
+            val progressAnimator = ValueAnimator.ofInt(progress, newProgress)
+            progressAnimator.duration = ANIMATION_DURATION
+            progressAnimator.addUpdateListener {
+                progress = it.animatedValue as Int
+            }
+            progressAnimator.start()
+        } else
+            progress = newProgress
     }
 }
