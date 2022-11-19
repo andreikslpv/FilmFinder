@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.databinding.ItemFilmBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_IMAGE
+import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_RATING
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_TEXT
+import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
@@ -22,7 +24,8 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
 
     //В этом методе мы привязываем наш ViewHolder и передаем туда "надутую" верстку нашего фильма
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return FilmViewHolder(ItemFilmBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FilmViewHolder(
+            ItemFilmBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -40,7 +43,13 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
                 holder.binding.itemContainer.setOnClickListener {
                     holder.binding.poster.transitionName = TRANSITION_NAME_FOR_IMAGE
                     holder.binding.description.transitionName = TRANSITION_NAME_FOR_TEXT
-                    clickListener.click(items[position], holder.binding.poster, holder.binding.description)
+                    holder.binding.ratingDonut.transitionName = TRANSITION_NAME_FOR_RATING
+                    clickListener.click(
+                        items[position],
+                        holder.binding.poster,
+                        holder.binding.description,
+                        holder.binding.ratingDonut
+                    )
                 }
             }
         }
@@ -60,6 +69,6 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
 
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
-        fun click(film: FilmDomainModel, image: ImageView, text: TextView)
+        fun click(film: FilmDomainModel, image: ImageView, text: TextView, rating: RatingDonutView)
     }
 }

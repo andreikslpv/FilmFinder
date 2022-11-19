@@ -85,6 +85,8 @@ class DetailsFragment : Fragment() {
             .into(binding.detailsPoster)
         //Устанавливаем описание
         binding.detailsDescription.text = film.description
+        //Устанавливаем рейтинг
+        binding.detailsRatingDonut.progress = (film.rating * 10).toInt()
         //Данные загружены, запускаем анимацию перехода
         startPostponedEnterTransition()
     }
