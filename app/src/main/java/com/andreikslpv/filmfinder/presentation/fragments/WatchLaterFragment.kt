@@ -21,20 +21,20 @@ import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
-import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
+import com.andreikslpv.filmfinder.presentation.customviews.RatingDonutView
 
 
 class WatchLaterFragment : Fragment() {
     private var _binding: FragmentWatchLaterBinding? = null
     private val binding
         get() = _binding!!
-    private val getWatchLaterFilmsUseCase by lazy {
-        GetWatchLaterFilmsUseCase((activity as MainActivity).filmsRepository)
-    }
-    private val getFilmLocalStateUseCase by lazy {
-        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
-    }
-    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
+//    private val getWatchLaterFilmsUseCase by lazy {
+//        GetWatchLaterFilmsUseCase((activity as MainActivity).filmsRepository)
+//    }
+//    private val getFilmLocalStateUseCase by lazy {
+//        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
+//    }
+//    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
@@ -50,8 +50,8 @@ class WatchLaterFragment : Fragment() {
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 3)
 
-        initFilmListRecycler()
-        initSearchView()
+//        initFilmListRecycler()
+//        initSearchView()
     }
 
     override fun onPause() {
@@ -65,61 +65,61 @@ class WatchLaterFragment : Fragment() {
         _binding = null
     }
 
-    private fun initFilmListRecycler() {
-        binding.watchLaterRecycler.apply {
-            //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
-            filmsAdapter =
-                FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                    override fun click(
-                        film: FilmDomainModel,
-                        image: ImageView,
-                        text: TextView,
-                        rating: RatingDonutView
-                    ) {
-                        (requireActivity() as MainActivity).launchDetailsFragment(
-                            getFilmLocalStateUseCase.execute(film),
-                            image,
-                            text,
-                            rating
-                        )
-                    }
-                })
-            //Присваиваем адаптер
-            adapter = filmsAdapter
-            //Присвои layoutManager
-            layoutManager = LinearLayoutManager(requireContext())
-            //Применяем декоратор для отступов
-            val decorator = TopSpacingItemDecoration(8)
-            addItemDecoration(decorator)
-            val callback = FilmTouchHelperCallback(adapter as FilmListRecyclerAdapter)
-            val touchHelper = ItemTouchHelper(callback)
-            touchHelper.attachToRecyclerView(this)
-        }
-        //Кладем нашу БД в RV
-        filmsAdapter.changeItems(getWatchLaterFilmsUseCase.execute())
-    }
-
-    private fun initSearchView() {
-        binding.watchLaterSearchView.setOnClickListener {
-            binding.watchLaterSearchView.isIconified = false
-        }
-        //Подключаем слушателя изменений введенного текста в поиска
-        binding.watchLaterSearchView.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            //Этот метод отрабатывает на каждое изменения текста
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onQueryTextChange(newText: String): Boolean {
-                val result =
-                    getSearchResultUseCase.execute(newText, getWatchLaterFilmsUseCase.execute())
-                filmsAdapter.changeItems(result)
-                filmsAdapter.notifyDataSetChanged()
-                return true
-            }
-        })
-    }
+//    private fun initFilmListRecycler() {
+//        binding.watchLaterRecycler.apply {
+//            //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
+//            filmsAdapter =
+//                FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+//                    override fun click(
+//                        film: FilmDomainModel,
+//                        image: ImageView,
+//                        text: TextView,
+//                        rating: RatingDonutView
+//                    ) {
+//                        (requireActivity() as MainActivity).launchDetailsFragment(
+//                            getFilmLocalStateUseCase.execute(film),
+//                            image,
+//                            text,
+//                            rating
+//                        )
+//                    }
+//                })
+//            //Присваиваем адаптер
+//            adapter = filmsAdapter
+//            //Присвои layoutManager
+//            layoutManager = LinearLayoutManager(requireContext())
+//            //Применяем декоратор для отступов
+//            val decorator = TopSpacingItemDecoration(8)
+//            addItemDecoration(decorator)
+//            val callback = FilmTouchHelperCallback(adapter as FilmListRecyclerAdapter)
+//            val touchHelper = ItemTouchHelper(callback)
+//            touchHelper.attachToRecyclerView(this)
+//        }
+//        //Кладем нашу БД в RV
+//        filmsAdapter.changeItems(getWatchLaterFilmsUseCase.execute())
+//    }
+//
+//    private fun initSearchView() {
+//        binding.watchLaterSearchView.setOnClickListener {
+//            binding.watchLaterSearchView.isIconified = false
+//        }
+//        //Подключаем слушателя изменений введенного текста в поиска
+//        binding.watchLaterSearchView.setOnQueryTextListener(object :
+//            SearchView.OnQueryTextListener {
+//            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return true
+//            }
+//
+//            //Этот метод отрабатывает на каждое изменения текста
+//            @SuppressLint("NotifyDataSetChanged")
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                val result =
+//                    getSearchResultUseCase.execute(newText, getWatchLaterFilmsUseCase.execute())
+//                filmsAdapter.changeItems(result)
+//                filmsAdapter.notifyDataSetChanged()
+//                return true
+//            }
+//        })
+//    }
 }

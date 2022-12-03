@@ -1,39 +1,32 @@
 package com.andreikslpv.filmfinder.presentation.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.GetAllFilmsByPageUseCase
-import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
-import com.andreikslpv.filmfinder.domain.usecase.GetSearchResultUseCase
 import com.andreikslpv.filmfinder.presentation.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
-import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
+import com.andreikslpv.filmfinder.presentation.vm.MainViewModel
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding
         get() = _binding!!
-    private val getAllFilmsByPageUseCase by lazy {
-        GetAllFilmsByPageUseCase((activity as MainActivity).filmsRepository)
-    }
-    private val getFilmLocalStateUseCase by lazy {
-        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
-    }
-    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
+
+    private lateinit var vm: MainViewModel
+
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
@@ -49,8 +42,15 @@ class HomeFragment : Fragment() {
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 1)
 
+        vm = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
         initFilmListRecycler()
-        initSearchView()
+
+        vm.allFilmsLive.observe(requireActivity()) {
+            filmsAdapter.changeItems(it)
+        }
+
+        //initSearchView()
     }
 
     override fun onPause() {
@@ -70,8 +70,10 @@ class HomeFragment : Fragment() {
                         text: TextView,
                         rating: RatingDonutView
                     ) {
+                        // устанавливаем какой фильм будет отображен во фрагменте Details
+                        vm.loadSelectedFilm(film)
+                        // запускаем фрагмент Details с передачей shared elements
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            getFilmLocalStateUseCase.execute(film),
                             image,
                             text,
                             rating
@@ -80,7 +82,7 @@ class HomeFragment : Fragment() {
                 })
             //Присваиваем адаптер
             adapter = filmsAdapter
-            //Присвои layoutManager
+            //Присваиваем layoutManager
             layoutManager = LinearLayoutManager(requireContext())
             //Применяем декоратор для отступов
             val decorator = TopSpacingItemDecoration(8)
@@ -89,11 +91,11 @@ class HomeFragment : Fragment() {
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
         }
-        //Кладем нашу БД в RV
-        filmsAdapter.changeItems(getAllFilmsByPageUseCase.execute())
+        // получаем список всех фильмов и храним во vm
+        vm.getAllFilmsByPage()
     }
 
-    private fun initSearchView() {
+    /*private fun initSearchView() {
         binding.homeSearchView.setOnClickListener {
             binding.homeSearchView.isIconified = false
         }
@@ -114,6 +116,6 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
-    }
+    }*/
 
 }

@@ -6,26 +6,19 @@ import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import androidx.lifecycle.ViewModelProvider
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
-import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
-import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
-import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.presentation.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.fragments.*
-import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
-import java.io.File
+import com.andreikslpv.filmfinder.presentation.vm.MainViewModel
+import com.andreikslpv.filmfinder.presentation.vm.MainViewModelFactory
 
 
 const val TIME_INTERVAL = 2000
@@ -37,8 +30,10 @@ const val NAME_OF_LOCAL_STORAGE = "local.json"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    lateinit var vm: MainViewModel
     private var backPressed = 0L
-    lateinit var filmsRepository: FilmsRepositoryImpl
+
+
     private var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
         set(value) {
             if (field == value) return
@@ -67,15 +62,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        vm = ViewModelProvider(
+            this,
+            MainViewModelFactory("${application.filesDir}/$NAME_OF_LOCAL_STORAGE")
+        )[MainViewModel::class.java]
+
         initBottomNavigationMenu()
 
-        filmsRepository = FilmsRepositoryImpl(
-            FilmsCacheDataSource(),
-            FilmsTestDataSource(),
-            FilmsJsonDataSource(
-                File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE")
-            )
-        )
 
         // запускаем фрагмент Home
         changeFragment(HomeFragment(), FragmentsType.HOME)
@@ -135,7 +128,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun launchDetailsFragment(
-        film: FilmDomainModel,
         image: ImageView,
         text: TextView,
         rating: RatingDonutView
@@ -143,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"
-        bundle.putParcelable("film", film)
+        //bundle.putParcelable("film", film)
         //Кладем тип фрагмента из которого происходит вызов в "посылку"
         bundle.putParcelable("type", currentFragmentsType)
         //Прикрепляем "посылку" к фрагменту

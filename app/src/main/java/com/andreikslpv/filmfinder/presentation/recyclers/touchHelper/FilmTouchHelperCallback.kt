@@ -34,8 +34,8 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :
         target: ViewHolder
     ): Boolean {
         val items = adapter.items
-        val fromPosition = viewHolder.absoluteAdapterPosition
-        val toPosition = target.absoluteAdapterPosition
+        val fromPosition = viewHolder.adapterPosition
+        val toPosition = target.adapterPosition
         //Меняем элементы местами с помощью метода swap
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
@@ -46,15 +46,14 @@ class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :
                 Collections.swap(items, i, i - 1)
             }
         }
-        //Сообщаем об изменениях адаптеру Or DiffUtil
+        //Сообщаем об изменениях адаптеру
         adapter.notifyDataSetChanged()
         return true
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-        adapter.items.removeAt(viewHolder.absoluteAdapterPosition)
+        adapter.items.removeAt(viewHolder.adapterPosition)
         adapter.notifyDataSetChanged()
-        //adapter.notifyItemRemoved(viewHolder.adapterPosition)
     }
 }

@@ -21,19 +21,19 @@ import com.andreikslpv.filmfinder.presentation.MainActivity
 import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.recyclers.touchHelper.FilmTouchHelperCallback
-import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
+import com.andreikslpv.filmfinder.presentation.customviews.RatingDonutView
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding
         get() = _binding!!
-    private val getFavoritesFilmsUseCase by lazy {
-        GetFavoritesFilmsUseCase((activity as MainActivity).filmsRepository)
-    }
-    private val getFilmLocalStateUseCase by lazy {
-        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
-    }
-    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
+//    private val getFavoritesFilmsUseCase by lazy {
+//        GetFavoritesFilmsUseCase((activity as MainActivity).filmsRepository)
+//    }
+//    private val getFilmLocalStateUseCase by lazy {
+//        GetFilmLocalStateUseCase((activity as MainActivity).filmsRepository)
+//    }
+//    private val getSearchResultUseCase by lazy { GetSearchResultUseCase() }
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
@@ -49,8 +49,8 @@ class FavoritesFragment : Fragment() {
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 2)
 
-        initFilmListRecycler()
-        initSearchView()
+        //initFilmListRecycler()
+        //initSearchView()
     }
 
     override fun onPause() {
@@ -64,7 +64,7 @@ class FavoritesFragment : Fragment() {
         _binding = null
     }
 
-    private fun initFilmListRecycler() {
+    /*private fun initFilmListRecycler() {
         binding.favoritesRecycler.apply {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
@@ -85,7 +85,7 @@ class FavoritesFragment : Fragment() {
                 })
             //Присваиваем адаптер
             adapter = filmsAdapter
-            //Присвои layoutManager
+            //Присваиваем layoutManager
             layoutManager = LinearLayoutManager(requireContext())
             //Применяем декоратор для отступов
             val decorator = TopSpacingItemDecoration(8)
@@ -119,5 +119,5 @@ class FavoritesFragment : Fragment() {
                 return true
             }
         })
-    }
+    }*/
 }

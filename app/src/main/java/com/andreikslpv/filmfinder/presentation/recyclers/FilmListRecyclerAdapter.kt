@@ -11,7 +11,7 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_IMAGE
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_RATING
 import com.andreikslpv.filmfinder.presentation.TRANSITION_NAME_FOR_TEXT
-import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
+import com.andreikslpv.filmfinder.presentation.customviews.RatingDonutView
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :

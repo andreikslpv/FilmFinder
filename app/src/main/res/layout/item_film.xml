@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/card_height">
 
-    <com.andreikslpv.filmfinder.presentation.views.RatingDonutView
+    <com.andreikslpv.filmfinder.presentation.customviews.RatingDonutView
         android:id="@+id/ratingDonut"
         android:layout_width="@dimen/rating_donut_dimens"
         android:layout_height="@dimen/rating_donut_dimens"
