@@ -1,31 +1,56 @@
 package com.andreikslpv.filmfinder
 
 import android.app.Application
-import android.content.res.Configuration
+import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
+import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
+import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
+import com.andreikslpv.filmfinder.domain.usecase.*
 import timber.log.Timber
+import java.io.File
+
+const val NAME_OF_LOCAL_STORAGE = "local.json"
 
 class App : Application() {
+    private lateinit var filmsRepository: FilmsRepositoryImpl
+    lateinit var changeFilmLocalStateUseCase: ChangeFilmLocalStateUseCase
+    lateinit var getAllFilmsByPageUseCase: GetAllFilmsByPageUseCase
+    lateinit var getFavoritesFilmsUseCase: GetFavoritesFilmsUseCase
+    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+    lateinit var getSearchResultUseCase: GetSearchResultUseCase
+    lateinit var getWatchLaterFilmsUseCase: GetWatchLaterFilmsUseCase
 
-    // Этот метод вызывается при старте приложения до того, как будут созданы другие компоненты приложения
-    // Этот метод необязательно переопределять, но это самое хорошее место для инициализации глобальных объектов
     override fun onCreate() {
         super.onCreate()
+
+        //Инициализируем экземпляр App, через который будем получать доступ к остальным переменным
+        instance = this
+        //Инициализируем репозиторий
+        filmsRepository = FilmsRepositoryImpl(
+            FilmsCacheDataSource(),
+            FilmsTestDataSource(),
+            FilmsJsonDataSource(
+                File("${filesDir}/$NAME_OF_LOCAL_STORAGE")
+            )
+        )
+        //Инициализируем usecase
+        changeFilmLocalStateUseCase = ChangeFilmLocalStateUseCase(filmsRepository)
+        getAllFilmsByPageUseCase = GetAllFilmsByPageUseCase(filmsRepository)
+        getFavoritesFilmsUseCase = GetFavoritesFilmsUseCase(filmsRepository)
+        getFilmLocalStateUseCase = GetFilmLocalStateUseCase(filmsRepository)
+        getSearchResultUseCase = GetSearchResultUseCase()
+        getWatchLaterFilmsUseCase = GetWatchLaterFilmsUseCase(filmsRepository)
+
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
     }
 
-    // Вызывается при изменении конфигурации, например, поворот
-    // Этот метод тоже не обязателен к предопределению
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-    }
-
-    // Этот метод вызывается, когда у системы остается мало оперативной памяти
-    // и система хочет, чтобы запущенные приложения поумерили аппетиты
-    // Переопределять необязательно
-    override fun onLowMemory() {
-        super.onLowMemory()
+    companion object {
+        //Здесь статически хранится ссылка на экземпляр App
+        lateinit var instance: App
+            //Приватный сеттер, чтобы нельзя было в эту переменную присвоить что-либо другое
+            private set
     }
 }

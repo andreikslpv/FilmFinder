@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation.views
+package com.andreikslpv.filmfinder.presentation.ui.customviews
 
 import android.animation.ValueAnimator
 import android.content.Context

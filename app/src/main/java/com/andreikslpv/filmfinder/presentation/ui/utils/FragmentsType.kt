@@ -1,7 +1,7 @@
-package com.andreikslpv.filmfinder.presentation
+package com.andreikslpv.filmfinder.presentation.ui.utils
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class FragmentsType(val tag: String) : Parcelable {

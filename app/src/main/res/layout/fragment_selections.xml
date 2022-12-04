@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_selections"
     android:visibility="invisible"
-    tools:context=".presentation.fragments.SelectionsFragment"
+    tools:context=".presentation.ui.fragments.SelectionsFragment"
     tools:visibility="visible">
 
 </FrameLayout>

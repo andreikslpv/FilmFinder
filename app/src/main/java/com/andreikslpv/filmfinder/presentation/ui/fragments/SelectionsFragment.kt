@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation.fragments
+package com.andreikslpv.filmfinder.presentation.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
-import com.andreikslpv.filmfinder.presentation.AnimationHelper
-import com.andreikslpv.filmfinder.presentation.MainActivity
+import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
+import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 
 class SelectionsFragment : Fragment() {
     private var _binding: FragmentSelectionsBinding? = null
