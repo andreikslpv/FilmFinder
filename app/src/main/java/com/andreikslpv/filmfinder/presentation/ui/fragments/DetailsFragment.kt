@@ -113,7 +113,7 @@ class DetailsFragment : Fragment() {
                 ResourcesCompat.getDrawable(resources, R.drawable.background_watch_later, null)
             FragmentsType.SELECTIONS -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_selections, null)
-            FragmentsType.DETAILS -> binding.detailsFragmentRoot.background =
+            else -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(
                     resources,
                     R.drawable.background_details,

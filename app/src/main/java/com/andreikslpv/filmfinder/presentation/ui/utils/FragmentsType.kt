@@ -9,5 +9,6 @@ enum class FragmentsType(val tag: String) : Parcelable {
     FAVORITES("favorites"),
     WATCH_LATER("watch_later"),
     SELECTIONS("selections"),
-    DETAILS("details")
+    DETAILS("details"),
+    NONE("none")
 }

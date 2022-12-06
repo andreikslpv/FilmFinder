@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
 
-    private var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
+    private var currentFragmentsType: FragmentsType = FragmentsType.NONE
         set(value) {
             if (field == value) return
             field = value
@@ -167,6 +167,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        currentFragmentsType = savedInstanceState.get(BUNDLE_KEY_TYPE) as FragmentsType
+    }
+
     private fun setBottomNavigationIcon(type: FragmentsType) {
         val home = binding.bottomNavigation.menu.findItem(R.id.home)
         val favorites = binding.bottomNavigation.menu.findItem(R.id.favorites)
@@ -197,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
                 selections.setIcon(R.drawable.ic_baseline_selections)
             }
-            FragmentsType.DETAILS -> {
+            else -> {
                 home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
