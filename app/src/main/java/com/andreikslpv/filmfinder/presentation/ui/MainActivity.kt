@@ -25,6 +25,8 @@ const val TRANSITION_NAME_FOR_IMAGE = "image_name"
 const val TRANSITION_NAME_FOR_TEXT = "text_name"
 const val TRANSITION_NAME_FOR_RATING = "rating_name"
 const val TRANSITION_DURATION = 800L
+const val BUNDLE_KEY_FILM = "film"
+const val BUNDLE_KEY_TYPE = "type"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -60,8 +62,9 @@ class MainActivity : AppCompatActivity() {
 
         initBottomNavigationMenu()
 
-        // запускаем фрагмент Home
-        changeFragment(HomeFragment(), FragmentsType.HOME)
+        // если первый, то запускаем фрагмент Home
+        if (savedInstanceState == null)
+            changeFragment(HomeFragment(), FragmentsType.HOME)
     }
 
     private fun initBottomNavigationMenu() {
@@ -126,9 +129,9 @@ class MainActivity : AppCompatActivity() {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"
-        bundle.putParcelable("film", film)
+        bundle.putParcelable(BUNDLE_KEY_FILM, film)
         //Кладем тип фрагмента из которого происходит вызов в "посылку"
-        bundle.putParcelable("type", currentFragmentsType)
+        bundle.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
         //Прикрепляем "посылку" к фрагменту
         detailsFragment.arguments = bundle
 

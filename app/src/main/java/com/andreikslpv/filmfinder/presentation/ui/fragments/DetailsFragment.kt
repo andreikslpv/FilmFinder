@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
+import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
+import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_DURATION
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
 import com.andreikslpv.filmfinder.presentation.vm.DetailsFragmentViewModel
@@ -38,8 +41,8 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
-        viewModel.setFilm(arguments?.get("film") as FilmDomainModel)
-        type = arguments?.get("type") as FragmentsType
+        viewModel.setFilm(arguments?.get(BUNDLE_KEY_FILM) as FilmDomainModel)
+        type = arguments?.get(BUNDLE_KEY_TYPE) as FragmentsType
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -90,7 +93,7 @@ class DetailsFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         // сбрасываем сохраненный id для того чтобы данные фильма загрузились
-        // после backpress и повторного вызова данного фильма
+        // в случае backpress и повторного вызова данного фильма
         currentId = -1
     }
 
@@ -111,7 +114,11 @@ class DetailsFragment : Fragment() {
             FragmentsType.SELECTIONS -> binding.detailsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_selections, null)
             FragmentsType.DETAILS -> binding.detailsFragmentRoot.background =
-                ResourcesCompat.getDrawable(resources, R.drawable.background_details, null)
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.background_details,
+                    (activity as MainActivity).theme
+                )
         }
     }
 
