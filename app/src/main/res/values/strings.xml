@@ -8,6 +8,8 @@
     <string name="main.menu_selections_title">Подборки</string>
     <string name="main.menu_settings_title">Настройки</string>
     <string name="main_backpress_message">Нажмите дважды для выхода</string>
+    <string name="details_share_message">"Посмотри этот фильм: "</string>
+    <string name="details_share_title">"Поделиться:"</string>
     <string name="content_description">Постер</string>
 
 </resources>

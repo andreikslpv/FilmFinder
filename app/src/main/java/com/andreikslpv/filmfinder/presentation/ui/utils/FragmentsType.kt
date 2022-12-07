@@ -1,7 +1,7 @@
-package com.andreikslpv.filmfinder.presentation
+package com.andreikslpv.filmfinder.presentation.ui.utils
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class FragmentsType(val tag: String) : Parcelable {
@@ -9,5 +9,6 @@ enum class FragmentsType(val tag: String) : Parcelable {
     FAVORITES("favorites"),
     WATCH_LATER("watch_later"),
     SELECTIONS("selections"),
-    DETAILS("details")
+    DETAILS("details"),
+    NONE("none")
 }

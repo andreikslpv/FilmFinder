@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context=".presentation.fragments.DetailsFragment">
+    tools:context=".presentation.ui.fragments.DetailsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/detailsAppBar"
@@ -51,7 +51,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.andreikslpv.filmfinder.presentation.views.RatingDonutView
+    <com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
         android:id="@+id/detailsRatingDonut"
         android:layout_width="@dimen/rating_donut_dimens_det"
         android:layout_height="@dimen/rating_donut_dimens_det"

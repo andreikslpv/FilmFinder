@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_home"
     android:visibility="invisible"
-    tools:context=".presentation.fragments.HomeFragment"
+    tools:context=".presentation.ui.fragments.HomeFragment"
     tools:visibility="visible">
 
     <com.google.android.material.appbar.AppBarLayout

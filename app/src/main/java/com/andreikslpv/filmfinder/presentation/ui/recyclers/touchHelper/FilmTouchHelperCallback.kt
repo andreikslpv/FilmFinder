@@ -1,10 +1,10 @@
-package com.andreikslpv.filmfinder.presentation.recyclers.touchHelper
+package com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.andreikslpv.filmfinder.presentation.recyclers.FilmListRecyclerAdapter
+import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmListRecyclerAdapter
 import java.util.*
 
 class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :

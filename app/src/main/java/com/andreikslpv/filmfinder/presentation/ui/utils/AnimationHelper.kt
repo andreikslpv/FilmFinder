@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation
+package com.andreikslpv.filmfinder.presentation.ui.utils
 
 import android.app.Activity
 import android.view.View

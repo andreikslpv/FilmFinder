@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation
+package com.andreikslpv.filmfinder.presentation.ui
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -6,26 +6,18 @@ import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
-import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
-import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.presentation.fragments.*
-import com.andreikslpv.filmfinder.presentation.views.RatingDonutView
-import java.io.File
+import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
+import com.andreikslpv.filmfinder.presentation.ui.fragments.*
+import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
 
 
 const val TIME_INTERVAL = 2000
@@ -33,13 +25,14 @@ const val TRANSITION_NAME_FOR_IMAGE = "image_name"
 const val TRANSITION_NAME_FOR_TEXT = "text_name"
 const val TRANSITION_NAME_FOR_RATING = "rating_name"
 const val TRANSITION_DURATION = 800L
-const val NAME_OF_LOCAL_STORAGE = "local.json"
+const val BUNDLE_KEY_FILM = "film"
+const val BUNDLE_KEY_TYPE = "type"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
-    lateinit var filmsRepository: FilmsRepositoryImpl
-    private var currentFragmentsType: FragmentsType = FragmentsType.DETAILS
+
+    private var currentFragmentsType: FragmentsType = FragmentsType.NONE
         set(value) {
             if (field == value) return
             field = value
@@ -69,16 +62,9 @@ class MainActivity : AppCompatActivity() {
 
         initBottomNavigationMenu()
 
-        filmsRepository = FilmsRepositoryImpl(
-            FilmsCacheDataSource(),
-            FilmsTestDataSource(),
-            FilmsJsonDataSource(
-                File("${application.filesDir}/$NAME_OF_LOCAL_STORAGE")
-            )
-        )
-
-        // запускаем фрагмент Home
-        changeFragment(HomeFragment(), FragmentsType.HOME)
+        // если первый, то запускаем фрагмент Home
+        if (savedInstanceState == null)
+            changeFragment(HomeFragment(), FragmentsType.HOME)
     }
 
     private fun initBottomNavigationMenu() {
@@ -90,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     if (currentFragment !is HomeFragment) {
                         val fragment = checkFragmentExistence(FragmentsType.HOME)
                         //В первом параметре, если фрагмент не найден и метод вернул null, то с помощью
-                        //элвиса мы вызываем создание нового фрагмента
+                        //элвиса вызываем создание нового фрагмента
                         changeFragment(fragment ?: HomeFragment(), FragmentsType.HOME)
                     }
                     true
@@ -143,9 +129,9 @@ class MainActivity : AppCompatActivity() {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"
-        bundle.putParcelable("film", film)
+        bundle.putParcelable(BUNDLE_KEY_FILM, film)
         //Кладем тип фрагмента из которого происходит вызов в "посылку"
-        bundle.putParcelable("type", currentFragmentsType)
+        bundle.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
         //Прикрепляем "посылку" к фрагменту
         detailsFragment.arguments = bundle
 
@@ -181,6 +167,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        currentFragmentsType = savedInstanceState.get(BUNDLE_KEY_TYPE) as FragmentsType
+    }
+
     private fun setBottomNavigationIcon(type: FragmentsType) {
         val home = binding.bottomNavigation.menu.findItem(R.id.home)
         val favorites = binding.bottomNavigation.menu.findItem(R.id.favorites)
@@ -211,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
                 selections.setIcon(R.drawable.ic_baseline_selections)
             }
-            FragmentsType.DETAILS -> {
+            else -> {
                 home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)

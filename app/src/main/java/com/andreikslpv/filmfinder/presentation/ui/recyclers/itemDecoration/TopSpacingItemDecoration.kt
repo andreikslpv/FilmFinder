@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.presentation.recyclers.itemDecoration
+package com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration
 
 import android.content.res.Resources
 import android.graphics.Rect
