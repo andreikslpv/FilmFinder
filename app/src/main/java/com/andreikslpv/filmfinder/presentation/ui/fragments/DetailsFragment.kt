@@ -10,6 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.andreikslpv.filmfinder.R
+import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbConstants
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
@@ -73,7 +74,7 @@ class DetailsFragment : Fragment() {
                 //Указываем контейнер, в котором будет "жить" картинка
                 Glide.with(requireView())
                     //Загружаем сам ресурс
-                    .load(it.poster)
+                    .load(it.posterDetails)
                     //Центруем изображение
                     .centerCrop()
                     //Указываем ImageView, куда будем загружать изображение

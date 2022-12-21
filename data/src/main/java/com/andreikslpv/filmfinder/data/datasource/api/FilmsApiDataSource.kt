@@ -1,8 +1,11 @@
 package com.andreikslpv.filmfinder.data.datasource.api
 
-import com.andreikslpv.filmfinder.data.datasource.api.models.FilmApiModel
+import com.andreikslpv.filmfinder.domain.ApiCallback
 
 interface FilmsApiDataSource {
 
-    fun getAllFilmsByPage(): List<FilmApiModel>
+    fun getFilmsFromApi(page: Int, language: String, callback: ApiCallback)
+
+    fun getSearchResultFromApi(query: String, page: Int, language: String, callback: ApiCallback)
+
 }

@@ -1,8 +1,7 @@
 package com.andreikslpv.filmfinder
 
 import android.app.Application
-import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
-import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
+import com.andreikslpv.filmfinder.data.datasource.api.tmdb.FilmsTmdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.domain.usecase.*
@@ -17,6 +16,8 @@ class App : Application() {
     lateinit var getAllFilmsByPageUseCase: GetAllFilmsByPageUseCase
     lateinit var getFavoritesFilmsUseCase: GetFavoritesFilmsUseCase
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+    lateinit var getFilmsFromApiUseCase: GetFilmsFromApiUseCase
+    lateinit var getSearchResultFromApiUseCase: GetSearchResultFromApiUseCase
     lateinit var getSearchResultUseCase: GetSearchResultUseCase
     lateinit var getWatchLaterFilmsUseCase: GetWatchLaterFilmsUseCase
 
@@ -27,8 +28,7 @@ class App : Application() {
         instance = this
         //Инициализируем репозиторий
         filmsRepository = FilmsRepositoryImpl(
-            FilmsCacheDataSource(),
-            FilmsTestDataSource(),
+            FilmsTmdbDataSource(),
             FilmsJsonDataSource(
                 File("${filesDir}/$NAME_OF_LOCAL_STORAGE")
             )
@@ -38,6 +38,8 @@ class App : Application() {
         getAllFilmsByPageUseCase = GetAllFilmsByPageUseCase(filmsRepository)
         getFavoritesFilmsUseCase = GetFavoritesFilmsUseCase(filmsRepository)
         getFilmLocalStateUseCase = GetFilmLocalStateUseCase(filmsRepository)
+        getFilmsFromApiUseCase = GetFilmsFromApiUseCase(filmsRepository)
+        getSearchResultFromApiUseCase = GetSearchResultFromApiUseCase(filmsRepository)
         getSearchResultUseCase = GetSearchResultUseCase()
         getWatchLaterFilmsUseCase = GetWatchLaterFilmsUseCase(filmsRepository)
 

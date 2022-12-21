@@ -89,7 +89,6 @@ class HomeFragment : Fragment() {
             val callback = FilmTouchHelperCallback(adapter as FilmListRecyclerAdapter)
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
-            viewModel.getAllFilmsByPage()
         }
     }
 
@@ -107,6 +106,10 @@ class HomeFragment : Fragment() {
 
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
+                if (newText.isEmpty()) {
+                    viewModel.getFilms()
+                    return true
+                }
                 viewModel.getSearchResult(newText)
                 return true
             }

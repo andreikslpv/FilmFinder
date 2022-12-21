@@ -11,9 +11,10 @@ object ApiToDomainMapper : BaseMapper<List<FilmApiModel>, List<FilmDomainModel>>
             FilmDomainModel(
                 id = it.id ?: -1,
                 title = it.title ?: "",
-                poster = it.poster ?: -1,
+                posterPreview = it.posterPreview ?: "",
+                posterDetails = it.posterDetails ?: "",
                 description = it.description ?: "",
-                rating = it.rating ?: 0f,
+                rating = it.rating ?: 0.0,
                 isFavorite = false,
                 isWatchLater = false
             )
@@ -27,9 +28,10 @@ object LocalToDomainMapper : BaseMapper<List<FilmLocalModel>, List<FilmDomainMod
             FilmDomainModel(
                 id = it.id ?: -1,
                 title = it.title ?: "",
-                poster = it.poster ?: -1,
+                posterPreview = it.posterPreview ?: "",
+                posterDetails = it.posterDetails ?: "",
                 description = it.description ?: "",
-                rating = it.rating ?: 0f,
+                rating = it.rating ?: 0.0,
                 isFavorite = it.isFavorite ?: false,
                 isWatchLater = it.isWatchLater ?: false
             )
@@ -42,9 +44,10 @@ object DomainToLocalMapper : BaseMapper<FilmDomainModel, FilmLocalModel> {
         return FilmLocalModel(
             id = type?.id ?: -1,
             title = type?.title ?: "",
-            poster = type?.poster ?: -1,
+            posterPreview = type?.posterPreview ?: "",
+            posterDetails = type?.posterDetails ?: "",
             description = type?.description ?: "",
-            rating = type?.rating ?: 0f,
+            rating = type?.rating ?: 0.0,
             isFavorite = type?.isFavorite ?: false,
             isWatchLater = type?.isWatchLater ?: false
         )

@@ -11,5 +11,6 @@
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
     <string name="content_description">Постер</string>
+    <string name="tmdb_language">ru-RU</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder.presentation.ui.recyclers
 
 import androidx.recyclerview.widget.RecyclerView
+import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbConstants
 import com.andreikslpv.filmfinder.databinding.ItemFilmBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.bumptech.glide.Glide
@@ -15,7 +16,7 @@ class FilmViewHolder(val binding: ItemFilmBinding) : RecyclerView.ViewHolder(bin
         //Указываем контейнер, в котором будет "жить" наша картинка
         Glide.with(itemView)
             //Загружаем сам ресурс
-            .load(film.poster)
+            .load(film.posterPreview)
             //Центруем изображение
             .centerCrop()
             //Указываем ImageView, куда будем загружать изображение
