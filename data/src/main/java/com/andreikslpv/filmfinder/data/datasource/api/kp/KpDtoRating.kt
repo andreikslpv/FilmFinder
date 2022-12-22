@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class KpDtoRating(
     @SerializedName("imdb")
-    val imdb: Double,
+    val imdb: Double?,
     @SerializedName("kp")
-    val kp: Double,
+    val kp: Double?,
     @SerializedName("tmdb")
-    val tmdb: Double
+    val tmdb: Double?
 )

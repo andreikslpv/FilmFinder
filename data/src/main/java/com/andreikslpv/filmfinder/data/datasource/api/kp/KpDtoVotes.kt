@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class KpDtoVotes(
     @SerializedName("imdb")
-    val imdb: Int,
+    val imdb: Int?,
     @SerializedName("kp")
-    val kp: Int,
+    val kp: Int?,
     @SerializedName("tmdb")
-    val tmdb: Int
+    val tmdb: Int?
 )

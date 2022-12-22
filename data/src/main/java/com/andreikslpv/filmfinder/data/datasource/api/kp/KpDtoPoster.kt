@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class KpDtoPoster(
     @SerializedName("previewUrl")
-    val previewUrl: String,
+    val previewUrl: String?,
     @SerializedName("url")
-    val url: String
+    val url: String?
 )

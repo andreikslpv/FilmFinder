@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder
 
 import android.app.Application
+import com.andreikslpv.filmfinder.data.datasource.api.kp.FilmsKpDataSource
 import com.andreikslpv.filmfinder.data.datasource.api.tmdb.FilmsTmdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
@@ -13,7 +14,6 @@ const val NAME_OF_LOCAL_STORAGE = "local.json"
 class App : Application() {
     private lateinit var filmsRepository: FilmsRepositoryImpl
     lateinit var changeFilmLocalStateUseCase: ChangeFilmLocalStateUseCase
-    lateinit var getAllFilmsByPageUseCase: GetAllFilmsByPageUseCase
     lateinit var getFavoritesFilmsUseCase: GetFavoritesFilmsUseCase
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
     lateinit var getFilmsFromApiUseCase: GetFilmsFromApiUseCase
@@ -35,7 +35,6 @@ class App : Application() {
         )
         //Инициализируем usecase
         changeFilmLocalStateUseCase = ChangeFilmLocalStateUseCase(filmsRepository)
-        getAllFilmsByPageUseCase = GetAllFilmsByPageUseCase(filmsRepository)
         getFavoritesFilmsUseCase = GetFavoritesFilmsUseCase(filmsRepository)
         getFilmLocalStateUseCase = GetFilmLocalStateUseCase(filmsRepository)
         getFilmsFromApiUseCase = GetFilmsFromApiUseCase(filmsRepository)

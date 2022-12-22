@@ -5,23 +5,23 @@ import com.google.gson.annotations.SerializedName
 
 data class KpDtoDoc(
     @SerializedName("description")
-    val description: String,
+    val description: String?,
     @SerializedName("externalId")
-    val externalId: KpDtoExternalId,
+    val externalId: KpDtoExternalId?,
     @SerializedName("id")
     val id: Int,
     @SerializedName("movieLength")
-    val movieLength: Int,
+    val movieLength: Int?,
     @SerializedName("name")
-    val name: String,
+    val name: String?,
     @SerializedName("poster")
-    val poster: KpDtoPoster,
+    val poster: KpDtoPoster?,
     @SerializedName("rating")
-    val rating: KpDtoRating,
+    val rating: KpDtoRating?,
     @SerializedName("type")
-    val type: String,
+    val type: String?,
     @SerializedName("votes")
-    val votes: KpDtoVotes,
+    val votes: KpDtoVotes?,
     @SerializedName("year")
-    val year: Int
+    val year: Int?
 )

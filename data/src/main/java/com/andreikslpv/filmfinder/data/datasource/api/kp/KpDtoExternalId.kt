@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class KpDtoExternalId(
     @SerializedName("imdb")
-    val imdb: String,
+    val imdb: String?,
     @SerializedName("tmdb")
-    val tmdb: Int
+    val tmdb: Int?
 )

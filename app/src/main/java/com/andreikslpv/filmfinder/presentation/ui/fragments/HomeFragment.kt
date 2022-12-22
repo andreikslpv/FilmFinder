@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -52,6 +53,9 @@ class HomeFragment : Fragment() {
             filmsAdapter.notifyDataSetChanged()
         }
         initSearchView()
+        viewModel.apiResponseMessage.observe(viewLifecycleOwner) {
+            Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onPause() {

@@ -9,6 +9,7 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class HomeFragmentViewModel : ViewModel() {
     val filmsListLiveData: MutableLiveData<List<FilmDomainModel>> = MutableLiveData()
+    val apiResponseMessage: MutableLiveData<String> = MutableLiveData()
 
     //Инициализируем usecases
     private var getSearchResultFromApiUseCase = App.instance.getSearchResultFromApiUseCase
@@ -43,6 +44,7 @@ class HomeFragmentViewModel : ViewModel() {
                 }
 
                 override fun onFailure(message: String) {
+                    apiResponseMessage.postValue(message)
                 }
             })
     }
