@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.datasource.api.tmdb
+package com.andreikslpv.filmfinder.data.datasource.api.dto
 
 import com.google.gson.annotations.SerializedName
 

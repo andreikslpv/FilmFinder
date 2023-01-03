@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmListRecyclerAdapter
+import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmRecyclerAdapter
 import java.util.*
 
-class FilmTouchHelperCallback(private val adapter: FilmListRecyclerAdapter) :
+class FilmTouchHelperCallback(private val adapter: FilmRecyclerAdapter) :
     ItemTouchHelper.Callback() {
 
     override fun isLongPressDragEnabled(): Boolean {

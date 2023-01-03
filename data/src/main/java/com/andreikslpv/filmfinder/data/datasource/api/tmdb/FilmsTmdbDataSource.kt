@@ -2,6 +2,10 @@ package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 
 import com.andreikslpv.filmfinder.data.BuildConfig
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
+import com.andreikslpv.filmfinder.data.datasource.api.dto.TmdbDtoResults
+import com.andreikslpv.filmfinder.data.datasource.api.utils.TmdbConstants
+import com.andreikslpv.filmfinder.data.datasource.api.utils.TmdbKey
+import com.andreikslpv.filmfinder.data.datasource.api.utils.TmdbToDomainModel
 import com.andreikslpv.filmfinder.domain.ApiCallback
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class FilmsTmdbDataSource : FilmsApiDataSource {
-    private var retrofitServiceGetPopular: TmdbInterfaceGetPopular
+    private var retrofitServiceGetPopular: TmdbInterfaceGetPopularOld
     private var retrofitServiceGetSearchResult: TmdbInterfaceGetSearchResult
 
     init {
@@ -39,7 +43,7 @@ class FilmsTmdbDataSource : FilmsApiDataSource {
             .client(okHttpClient)
             .build()
         //Создаем сам сервис с методами для запросов
-        retrofitServiceGetPopular = retrofit.create(TmdbInterfaceGetPopular::class.java)
+        retrofitServiceGetPopular = retrofit.create(TmdbInterfaceGetPopularOld::class.java)
         retrofitServiceGetSearchResult = retrofit.create(TmdbInterfaceGetSearchResult::class.java)
     }
 
@@ -57,7 +61,7 @@ class FilmsTmdbDataSource : FilmsApiDataSource {
                     response: Response<TmdbDtoResults>
                 ) {
                     //При успехе мы вызываем метод onSuccess и передаем в этот коллбэк список фильмов
-                    callback.onSuccess(TmdbToDomainModel.map(response.body()?.tmdbDtoFilms))
+                    callback.onSuccess(TmdbToDomainModel.map(response.body()?.results))
                 }
 
                 override fun onFailure(call: Call<TmdbDtoResults>, t: Throwable) {
@@ -87,7 +91,7 @@ class FilmsTmdbDataSource : FilmsApiDataSource {
                     response: Response<TmdbDtoResults>
                 ) {
                     //При успехе мы вызываем метод onSuccess и передаем в этот коллбэк список фильмов
-                    callback.onSuccess(TmdbToDomainModel.map(response.body()?.tmdbDtoFilms))
+                    callback.onSuccess(TmdbToDomainModel.map(response.body()?.results))
                 }
 
                 override fun onFailure(call: Call<TmdbDtoResults>, t: Throwable) {

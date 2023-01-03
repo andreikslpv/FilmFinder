@@ -18,7 +18,8 @@ import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
-import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmListRecyclerAdapter
+import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
+import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
@@ -28,7 +29,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding
         get() = _binding!!
-    private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var filmsAdapter: FilmRecyclerAdapter
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
     }
@@ -47,7 +48,7 @@ class HomeFragment : Fragment() {
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 1)
 
-        initFilmListRecycler()
+        /*initFilmListRecycler()
         viewModel.filmsListLiveData.observe(viewLifecycleOwner) {
             filmsAdapter.changeItems(it)
             filmsAdapter.notifyDataSetChanged()
@@ -55,7 +56,7 @@ class HomeFragment : Fragment() {
         initSearchView()
         viewModel.apiResponseMessage.observe(viewLifecycleOwner) {
             Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
 
     override fun onPause() {
@@ -68,7 +69,7 @@ class HomeFragment : Fragment() {
         binding.homeRecycler.apply {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
-                FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+                FilmRecyclerAdapter(object : FilmOnItemClickListener {
                     override fun click(
                         film: FilmDomainModel,
                         image: ImageView,
@@ -90,7 +91,7 @@ class HomeFragment : Fragment() {
             //Применяем декоратор для отступов
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
-            val callback = FilmTouchHelperCallback(adapter as FilmListRecyclerAdapter)
+            val callback = FilmTouchHelperCallback(adapter as FilmRecyclerAdapter)
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
         }

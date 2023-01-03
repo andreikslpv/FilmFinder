@@ -6,14 +6,13 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface TmdbInterfaceGetSearchResult {
+interface TmdbInterfaceGetPopularOld {
     @GET("{version}/{path_1}/{path_2}")
     fun getFilms(
         @Path("version") version: String,
         @Path("path_1") path1: String,
         @Path("path_2") path2: String,
         @Query("api_key") apiKey: String,
-        @Query("query") query: String,
         @Query("language") language: String,
         @Query("page") page: Int
     ): Call<TmdbDtoResults>

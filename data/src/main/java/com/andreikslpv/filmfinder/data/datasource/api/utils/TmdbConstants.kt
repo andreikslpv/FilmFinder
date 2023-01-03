@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.datasource.api.tmdb
+package com.andreikslpv.filmfinder.data.datasource.api.utils
 
 object TmdbConstants {
     const val BASE_URL = "https://api.themoviedb.org/"
@@ -8,4 +8,5 @@ object TmdbConstants {
     const val PATH_GET_POPULAR_2 = "popular"
     const val PATH_GET_SEARCH_RESULT_1 = "search"
     const val PATH_GET_SEARCH_RESULT_2 = "movie"
+    const val START_PAGE = 1
 }

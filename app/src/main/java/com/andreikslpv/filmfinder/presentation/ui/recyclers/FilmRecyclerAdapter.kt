@@ -2,8 +2,6 @@ package com.andreikslpv.filmfinder.presentation.ui.recyclers
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.databinding.ItemFilmBinding
@@ -11,10 +9,9 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_NAME_FOR_IMAGE
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_NAME_FOR_RATING
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_NAME_FOR_TEXT
-import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
-class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
+class FilmRecyclerAdapter(private val clickListener: FilmOnItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //Здесь у нас хранится список элементов для RV
     val items = mutableListOf<FilmDomainModel>()
@@ -66,9 +63,4 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
         diffResult.dispatchUpdatesTo(this)
     }
 
-
-    //Интерфейс для обработки кликов
-    interface OnItemClickListener {
-        fun click(film: FilmDomainModel, image: ImageView, text: TextView, rating: RatingDonutView)
-    }
 }
