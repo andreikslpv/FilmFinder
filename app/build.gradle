@@ -43,27 +43,25 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    // Splashscreen
     implementation 'androidx.core:core-splashscreen:1.0.0'
     // Modules
     implementation project(path: ':domain')
     implementation project(path: ':data')
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    //Glide
+    // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'androidx.paging:paging-common-ktx:3.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    //Retrofit
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.7.2"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
-    // Android Jetpack Paging 3.0
+    // Jetpack Paging 3
     implementation "androidx.paging:paging-runtime:3.2.0-alpha03"
-    //
+    // lifecycle
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-    //Tests
+    // pull-to-refresh
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    // Tests
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.hamcrest:hamcrest-library:2.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'

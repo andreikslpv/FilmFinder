@@ -2,50 +2,41 @@ package com.andreikslpv.filmfinder.presentation.vm
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
-import com.andreikslpv.filmfinder.data.R
-import com.andreikslpv.filmfinder.domain.ApiCallback
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListLiveData: MutableLiveData<List<FilmDomainModel>> = MutableLiveData()
-    val apiResponseMessage: MutableLiveData<String> = MutableLiveData()
-
     //Инициализируем usecases
-    private var getSearchResultFromApiUseCase = App.instance.getSearchResultFromApiUseCase
-    private var getFilmsFromApiUseCase = App.instance.getFilmsFromApiUseCase
+    private var getPagedSearchResultUseCase = App.instance.getPagedSearchResultUseCase
+    val filmsFlow: Flow<PagingData<FilmDomainModel>>
+    private val currentQuery = MutableLiveData("")
 
     init {
-        getFilms()
+        filmsFlow = currentQuery
+            .asFlow()
+            // исключаем слишком частые запросы, если пользователь быстро вводит поисковой запрос
+            .debounce(500)
+            .flatMapLatest { getPagedSearchResultUseCase.execute(it) }
+            // кешируем прлучившийся flow, чтобы на него можно было подписаться несколько раз
+            .cachedIn(viewModelScope)
     }
 
-    fun getFilms() {
-        getFilmsFromApiUseCase.execute(
-            1,
-            App.instance.getString(R.string.tmdb_language),
-            object : ApiCallback {
-                override fun onSuccess(films: List<FilmDomainModel>) {
-                    filmsListLiveData.postValue(films)
-                }
-
-                override fun onFailure(message: String) {
-                }
-            })
+    fun setQuery(newQuery: String) {
+        if (this.currentQuery.value == newQuery) return
+        else this.currentQuery.value = newQuery
     }
 
-    fun getSearchResult(searchText: String) {
-        getSearchResultFromApiUseCase.execute(
-            searchText,
-            1,
-            App.instance.getString(R.string.tmdb_language),
-            object : ApiCallback {
-                override fun onSuccess(films: List<FilmDomainModel>) {
-                    filmsListLiveData.postValue(films)
-                }
-
-                override fun onFailure(message: String) {
-                    apiResponseMessage.postValue(message)
-                }
-            })
+    fun refresh() {
+        this.currentQuery.postValue(this.currentQuery.value)
     }
 }

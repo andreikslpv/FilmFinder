@@ -16,6 +16,7 @@
     <dimen name="item_padding">8dp</dimen>
     <dimen name="rating_donut_dimens">50dp</dimen>
     <dimen name="rating_donut_z">11dp</dimen>
+    <dimen name="progress_bar_size">32dp</dimen>
 
     <!-- details -->
     <dimen name="height_of_appbar">200dp</dimen>

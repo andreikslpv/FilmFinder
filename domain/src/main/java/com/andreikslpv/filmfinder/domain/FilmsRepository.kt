@@ -6,11 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface FilmsRepository {
 
-    fun getFilmsFromApi(page: Int, language: String, callback: ApiCallback)
+    fun getPagedFilmsByCategory(category: String): Flow<PagingData<FilmDomainModel>>
 
-    fun getSearchResultFromApi(query: String, page: Int, language: String, callback: ApiCallback)
-
-    fun getPagedFilmsByCategory(language: String): Flow<PagingData<FilmDomainModel>>
+    fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>>
 
     fun getAllLocalSavedFilms(): List<FilmDomainModel>
 

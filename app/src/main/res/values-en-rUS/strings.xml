@@ -7,10 +7,15 @@
     <string name="main.menu_watch_later_title">Watch later</string>
     <string name="main.menu_selections_title">Selections</string>
     <string name="main.menu_settings_title">Settings</string>
-    <string name="content_description">Poster</string>
     <string name="main_backpress_message">Double tap for exit</string>
     <string name="main.menu_home_title">Home</string>
     <string name="details_share_message">"Check out this film: "</string>
     <string name="details_share_title">Share to:</string>
     <string name="tmdb_language">en-US</string>
+    <string name="tmdb_now_playing">Now paying in theatres</string>
+    <string name="tmdb_popular">Popular</string>
+    <string name="tmdb_top_rated">Top rated</string>
+    <string name="tmdb_upcoming">Upcoming movies in theatres</string>
+    <string name="retry_button">Tap to Retry</string>
+    <string name="welcome_text">To start searching for a movie, start typing its name into the search bar</string>
 </resources>

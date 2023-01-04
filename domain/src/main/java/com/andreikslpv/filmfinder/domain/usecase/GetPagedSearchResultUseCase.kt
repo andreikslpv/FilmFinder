@@ -5,8 +5,8 @@ import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import kotlinx.coroutines.flow.Flow
 
-class GetPagedFilmsByCategoryUseCase(private val filmsRepository: FilmsRepository) {
-    fun execute(category: String): Flow<PagingData<FilmDomainModel>> {
-        return filmsRepository.getPagedFilmsByCategory(category)
+class GetPagedSearchResultUseCase(private val filmsRepository: FilmsRepository) {
+    fun execute(query: String): Flow<PagingData<FilmDomainModel>> {
+        return filmsRepository.getPagedSearchResult(query)
     }
 }

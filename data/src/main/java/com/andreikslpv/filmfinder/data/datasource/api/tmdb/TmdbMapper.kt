@@ -1,6 +1,5 @@
-package com.andreikslpv.filmfinder.data.datasource.api.utils
+package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 
-import com.andreikslpv.filmfinder.data.datasource.api.dto.TmdbDtoFilm
 import com.andreikslpv.filmfinder.domain.BaseMapper
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 

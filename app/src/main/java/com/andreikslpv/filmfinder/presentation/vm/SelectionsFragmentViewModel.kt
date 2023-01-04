@@ -17,21 +17,22 @@ class SelectionsFragmentViewModel : ViewModel() {
     //Инициализируем usecases
     private var getPagedFilmsByCategoryUseCase = App.instance.getPagedFilmsByCategoryUseCase
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
-
-    private val language = MutableLiveData("")
+    private val currentCategory = MutableLiveData("")
 
     init {
-        filmsFlow = language.asFlow().flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }
+        filmsFlow = currentCategory
+            .asFlow()
+            .flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }
             .cachedIn(viewModelScope)
     }
 
-    fun setLanguage(newLanguage: String) {
-        if (this.language.value == newLanguage) return
-        else this.language.value = newLanguage
+    fun setCategory(newCategory: String) {
+        if (this.currentCategory.value == newCategory) return
+        else this.currentCategory.value = newCategory
     }
 
     fun refresh() {
-        this.language.postValue(this.language.value)
+        this.currentCategory.postValue(this.currentCategory.value)
     }
 
 }
