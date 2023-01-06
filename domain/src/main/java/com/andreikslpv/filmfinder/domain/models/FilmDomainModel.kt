@@ -8,9 +8,10 @@ import kotlinx.parcelize.Parcelize
 data class FilmDomainModel(
     val id: Int,
     val title: String,
-    val poster: Int,
+    val posterPreview: String,
+    val posterDetails: String,
     val description: String,
-    var rating: Float = 0f,
+    var rating: Double = 0.0,
     var isFavorite: Boolean = false,
     var isWatchLater: Boolean = false
 ) : Parcelable

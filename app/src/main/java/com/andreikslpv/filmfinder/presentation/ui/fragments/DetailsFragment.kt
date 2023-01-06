@@ -17,8 +17,8 @@ import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_DURATION
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
+import com.andreikslpv.filmfinder.presentation.ui.utils.loadImage
 import com.andreikslpv.filmfinder.presentation.vm.DetailsFragmentViewModel
-import com.bumptech.glide.Glide
 
 class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
@@ -70,14 +70,8 @@ class DetailsFragment : Fragment() {
                 message = resources.getString(R.string.details_share_message) + it.title
                 //Устанавливаем заголовок
                 binding.detailsToolbar.title = it.title
-                //Указываем контейнер, в котором будет "жить" картинка
-                Glide.with(requireView())
-                    //Загружаем сам ресурс
-                    .load(it.poster)
-                    //Центруем изображение
-                    .centerCrop()
-                    //Указываем ImageView, куда будем загружать изображение
-                    .into(binding.detailsPoster)
+                // Устанавливаем постер фильма (большой)
+                binding.detailsPoster.loadImage(it.posterDetails)
                 //Устанавливаем описание
                 binding.detailsDescription.text = it.description
                 //Устанавливаем рейтинг

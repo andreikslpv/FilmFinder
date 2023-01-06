@@ -39,6 +39,9 @@
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_selections.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_watch_later.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/item_film.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/item_loading_state.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/item_spinner.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/item_spinner_dropdown.xml" value="0.253125" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/merge_home_screen_content.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/navigation_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/menu/toolbar.xml" value="0.25416666666666665" />

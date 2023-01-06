@@ -1,8 +1,6 @@
 package com.andreikslpv.filmfinder
 
 import android.app.Application
-import com.andreikslpv.filmfinder.data.datasource.api.FilmsTestDataSource
-import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.domain.usecase.*
@@ -14,11 +12,12 @@ const val NAME_OF_LOCAL_STORAGE = "local.json"
 class App : Application() {
     private lateinit var filmsRepository: FilmsRepositoryImpl
     lateinit var changeFilmLocalStateUseCase: ChangeFilmLocalStateUseCase
-    lateinit var getAllFilmsByPageUseCase: GetAllFilmsByPageUseCase
     lateinit var getFavoritesFilmsUseCase: GetFavoritesFilmsUseCase
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+    lateinit var getPagedSearchResultUseCase: GetPagedSearchResultUseCase
     lateinit var getSearchResultUseCase: GetSearchResultUseCase
     lateinit var getWatchLaterFilmsUseCase: GetWatchLaterFilmsUseCase
+    lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
 
     override fun onCreate() {
         super.onCreate()
@@ -27,20 +26,17 @@ class App : Application() {
         instance = this
         //Инициализируем репозиторий
         filmsRepository = FilmsRepositoryImpl(
-            FilmsCacheDataSource(),
-            FilmsTestDataSource(),
-            FilmsJsonDataSource(
-                File("${filesDir}/$NAME_OF_LOCAL_STORAGE")
-            )
+            FilmsJsonDataSource(File("${filesDir}/$NAME_OF_LOCAL_STORAGE")),
+            getString(R.string.tmdb_language)
         )
         //Инициализируем usecase
         changeFilmLocalStateUseCase = ChangeFilmLocalStateUseCase(filmsRepository)
-        getAllFilmsByPageUseCase = GetAllFilmsByPageUseCase(filmsRepository)
         getFavoritesFilmsUseCase = GetFavoritesFilmsUseCase(filmsRepository)
         getFilmLocalStateUseCase = GetFilmLocalStateUseCase(filmsRepository)
+        getPagedSearchResultUseCase = GetPagedSearchResultUseCase(filmsRepository)
         getSearchResultUseCase = GetSearchResultUseCase()
         getWatchLaterFilmsUseCase = GetWatchLaterFilmsUseCase(filmsRepository)
-
+        getPagedFilmsByCategoryUseCase = GetPagedFilmsByCategoryUseCase(filmsRepository)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

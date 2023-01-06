@@ -2,22 +2,41 @@ package com.andreikslpv.filmfinder.presentation.vm
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListLiveData: MutableLiveData<List<FilmDomainModel>> = MutableLiveData()
-
     //Инициализируем usecases
-    private var getAllFilmsByPageUseCase = App.instance.getAllFilmsByPageUseCase
-    private var getSearchResultUseCase = App.instance.getSearchResultUseCase
+    private var getPagedSearchResultUseCase = App.instance.getPagedSearchResultUseCase
+    val filmsFlow: Flow<PagingData<FilmDomainModel>>
+    private val currentQuery = MutableLiveData("")
 
-    fun getAllFilmsByPage() {
-        filmsListLiveData.value = getAllFilmsByPageUseCase.execute()
+    init {
+        filmsFlow = currentQuery
+            .asFlow()
+            // исключаем слишком частые запросы, если пользователь быстро вводит поисковой запрос
+            .debounce(500)
+            .flatMapLatest { getPagedSearchResultUseCase.execute(it) }
+            // кешируем прлучившийся flow, чтобы на него можно было подписаться несколько раз
+            .cachedIn(viewModelScope)
     }
 
-    fun getSearchResult(searchText: String) {
-        filmsListLiveData.value =
-            getSearchResultUseCase.execute(searchText, getAllFilmsByPageUseCase.execute())
+    fun setQuery(newQuery: String) {
+        if (this.currentQuery.value == newQuery) return
+        else this.currentQuery.value = newQuery
+    }
+
+    fun refresh() {
+        this.currentQuery.postValue(this.currentQuery.value)
     }
 }
