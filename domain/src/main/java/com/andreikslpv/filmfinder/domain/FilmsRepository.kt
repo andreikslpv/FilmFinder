@@ -10,6 +10,8 @@ interface FilmsRepository {
 
     fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>>
 
+    fun getAvailableCategories(): Map<CategoryType, String>
+
     fun getAllLocalSavedFilms(): List<FilmDomainModel>
 
     fun saveFilmToLocal(film: FilmDomainModel)

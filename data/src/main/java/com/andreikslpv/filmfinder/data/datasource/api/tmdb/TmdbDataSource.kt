@@ -2,6 +2,7 @@ package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
+import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -50,6 +51,15 @@ class TmdbDataSource(private val language: String) : FilmsApiDataSource {
             retrofit.create(TmdbServiceSearchResult::class.java),
             language,
             query
+        )
+    }
+
+    override fun getAvailableCategories(): Map<CategoryType, String> {
+        return mapOf(
+            Pair(CategoryType.POPULAR, TmdbConstants.CATEGORY_POPULAR),
+            Pair(CategoryType.TOP_RATED, TmdbConstants.CATEGORY_TOP_RATED),
+            Pair(CategoryType.NOW_PLAYING, TmdbConstants.CATEGORY_NOW_PLAYING),
+            Pair(CategoryType.UPCOMING, TmdbConstants.CATEGORY_UPCOMING),
         )
     }
 }

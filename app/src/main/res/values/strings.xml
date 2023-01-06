@@ -10,11 +10,12 @@
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
     <string name="tmdb_language">ru-RU</string>
-    <string name="tmdb_now_playing">Сейчас в кино</string>
-    <string name="tmdb_popular">Популярные фильмы</string>
-    <string name="tmdb_top_rated">Лучшие фильмы</string>
-    <string name="tmdb_upcoming">Скоро в кино</string>
+    <string name="category_now_playing">Сейчас в кино</string>
+    <string name="category_popular">Популярные фильмы</string>
+    <string name="category_top_rated">Лучшие фильмы</string>
+    <string name="category_upcoming">Скоро в кино</string>
     <string name="retry_button">Нажмите для перезагрузки</string>
-    <string name="welcome_text">Для начала поиска фильма, начните вводить его название в строку поиска</string>
+    <string name="welcome_text">Для поиска фильма, начните вводить его название в строку поиска</string>
+    <string name="error_category">Ошибка при получении списка доступных категорий</string>
 
 </resources>

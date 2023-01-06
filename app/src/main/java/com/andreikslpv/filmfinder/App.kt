@@ -5,7 +5,6 @@ import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.JsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.domain.usecase.*
-import timber.log.Timber
 import java.io.File
 
 const val NAME_OF_LOCAL_STORAGE = "local.json"
@@ -19,6 +18,7 @@ class App : Application() {
     lateinit var getSearchResultUseCase: GetSearchResultUseCase
     lateinit var getWatchLaterFilmsUseCase: GetWatchLaterFilmsUseCase
     lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
+    lateinit var getAvailableCategories: GetAvailableCategories
 
     override fun onCreate() {
         super.onCreate()
@@ -38,6 +38,7 @@ class App : Application() {
         getSearchResultUseCase = GetSearchResultUseCase()
         getWatchLaterFilmsUseCase = GetWatchLaterFilmsUseCase(filmsRepository)
         getPagedFilmsByCategoryUseCase = GetPagedFilmsByCategoryUseCase(filmsRepository)
+        getAvailableCategories = GetAvailableCategories(filmsRepository)
     }
 
     companion object {

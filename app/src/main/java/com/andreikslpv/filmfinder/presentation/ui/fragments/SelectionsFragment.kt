@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
+import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
@@ -23,7 +21,6 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
-import com.andreikslpv.filmfinder.presentation.ui.utils.CategoryType
 import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
 import com.andreikslpv.filmfinder.presentation.vm.SelectionsFragmentViewModel
 import kotlinx.coroutines.flow.Flow
@@ -38,15 +35,8 @@ class SelectionsFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }
-    private val categoryList = listOf(
-        CategoryType.POPULAR,
-        CategoryType.TOP_RATED,
-        CategoryType.NOW_PLAYING,
-        CategoryType.UPCOMING
-    )
-    private val spinnerList by lazy {
-        categoryList.map { getString(it.res) }
-    }
+    private lateinit var spinnerList: MutableList<String>
+    private lateinit var categoryList: MutableList<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +56,9 @@ class SelectionsFragment : Fragment() {
     }
 
     private fun initSpinner() {
+        val categoryMap = App.instance.getAvailableCategories.execute()
+        mapToLists(categoryMap)
+
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
             R.layout.item_spinner, spinnerList
@@ -76,12 +69,42 @@ class SelectionsFragment : Fragment() {
         binding.selectionsSpinner.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                viewModel.setCategory(categoryList[p2].tmdbPath)
+                if (p2 >= 0 && p2 < categoryList.size) {
+                    viewModel.setCategory(categoryList[p2])
+                } else {
+                    Toast.makeText(requireContext(), R.string.error_category, Toast.LENGTH_SHORT)
+                        .show()
+                    viewModel.setCategory("")
+                }
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
+        }
+    }
 
+    private fun mapToLists(map: Map<CategoryType, String>) {
+        spinnerList = emptyList<String>().toMutableList()
+        categoryList = emptyList<String>().toMutableList()
+        for (entity in map) {
+            when (entity.key) {
+                CategoryType.POPULAR -> {
+                    spinnerList.add(getString(R.string.category_popular))
+                    categoryList.add(entity.value)
+                }
+                CategoryType.TOP_RATED -> {
+                    spinnerList.add(getString(R.string.category_top_rated))
+                    categoryList.add(entity.value)
+                }
+                CategoryType.NOW_PLAYING -> {
+                    spinnerList.add(getString(R.string.category_now_playing))
+                    categoryList.add(entity.value)
+                }
+                CategoryType.UPCOMING -> {
+                    spinnerList.add(getString(R.string.category_upcoming))
+                    categoryList.add(entity.value)
+                }
+            }
         }
     }
 

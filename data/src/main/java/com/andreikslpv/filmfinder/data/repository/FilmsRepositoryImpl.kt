@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
+import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +38,10 @@ class FilmsRepositoryImpl(
             pagingSourceFactory = {
                 apiDataSource.getSearchResultPagingSource(query)
             }).flow
+    }
+
+    override fun getAvailableCategories(): Map<CategoryType, String> {
+        return apiDataSource.getAvailableCategories()
     }
 
     override fun getAllLocalSavedFilms(): List<FilmDomainModel> {
