@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.File
 
 
-class FilmsJsonDataSource(private val file: File) : FilmsLocalDataSource{
+class JsonDataSource(private val file: File) : FilmsLocalDataSource{
 
     private val gson: Gson = Gson()
 

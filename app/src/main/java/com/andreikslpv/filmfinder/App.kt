@@ -1,7 +1,8 @@
 package com.andreikslpv.filmfinder
 
 import android.app.Application
-import com.andreikslpv.filmfinder.data.datasource.local.FilmsJsonDataSource
+import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbDataSource
+import com.andreikslpv.filmfinder.data.datasource.local.JsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.domain.usecase.*
 import timber.log.Timber
@@ -26,8 +27,8 @@ class App : Application() {
         instance = this
         //Инициализируем репозиторий
         filmsRepository = FilmsRepositoryImpl(
-            FilmsJsonDataSource(File("${filesDir}/$NAME_OF_LOCAL_STORAGE")),
-            getString(R.string.tmdb_language)
+            TmdbDataSource(getString(R.string.tmdb_language)),
+            JsonDataSource(File("${filesDir}/$NAME_OF_LOCAL_STORAGE")),
         )
         //Инициализируем usecase
         changeFilmLocalStateUseCase = ChangeFilmLocalStateUseCase(filmsRepository)
@@ -37,10 +38,6 @@ class App : Application() {
         getSearchResultUseCase = GetSearchResultUseCase()
         getWatchLaterFilmsUseCase = GetWatchLaterFilmsUseCase(filmsRepository)
         getPagedFilmsByCategoryUseCase = GetPagedFilmsByCategoryUseCase(filmsRepository)
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
     }
 
     companion object {

@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface TmdbServiceSearchFilm {
+interface TmdbServiceSearchResult {
     @GET("{version}/{path_1}/{path_2}")
     suspend fun getFilms(
         @Path("version") version: String = TmdbConstants.VERSION_API,
