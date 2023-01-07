@@ -3,6 +3,7 @@ package com.andreikslpv.filmfinder.di
  import android.content.Context
  import com.andreikslpv.filmfinder.di.modules.DataModule
  import com.andreikslpv.filmfinder.di.modules.DomainModule
+ import com.andreikslpv.filmfinder.di.modules.RemoteModule
  import com.andreikslpv.filmfinder.presentation.ui.fragments.FavoritesFragment
  import com.andreikslpv.filmfinder.presentation.ui.fragments.HomeFragment
  import com.andreikslpv.filmfinder.presentation.ui.fragments.SelectionsFragment
@@ -13,7 +14,7 @@ package com.andreikslpv.filmfinder.di
  import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [DomainModule::class, DataModule::class])
+@Component(modules = [DomainModule::class, DataModule::class, RemoteModule::class])
 interface AppComponent {
 
     @Component.Factory

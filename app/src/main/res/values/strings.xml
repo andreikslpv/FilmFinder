@@ -9,7 +9,6 @@
     <string name="main_backpress_message">Нажмите дважды для выхода</string>
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
-    <string name="tmdb_language">ru-RU</string>
     <string name="category_now_playing">Сейчас в кино</string>
     <string name="category_popular">Популярные фильмы</string>
     <string name="category_top_rated">Лучшие фильмы</string>

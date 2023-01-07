@@ -1,14 +1,20 @@
 package com.andreikslpv.filmfinder.data.datasource.local
 
+import android.content.Context
 import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Singleton
 
+const val NAME_OF_LOCAL_STORAGE = "local.json"
 
-class JsonDataSource(private val file: File) : FilmsLocalDataSource{
+@Singleton
+class JsonDataSource @Inject constructor(context: Context) : FilmsLocalDataSource{
 
     private val gson: Gson = Gson()
+    private val file = File("${context.filesDir}/$NAME_OF_LOCAL_STORAGE")
 
     override fun getItems(): List<FilmLocalModel> {
         val json = if (file.isFile) file.readText(Charsets.UTF_8) else ""

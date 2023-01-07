@@ -9,8 +9,11 @@ import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FilmsRepositoryImpl(
+@Singleton
+class FilmsRepositoryImpl @Inject constructor(
     private val apiDataSource: FilmsApiDataSource,
     private val localDataSource: FilmsLocalDataSource,
 ) : FilmsRepository {

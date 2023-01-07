@@ -11,7 +11,6 @@
     <string name="main.menu_home_title">Home</string>
     <string name="details_share_message">"Check out this film: "</string>
     <string name="details_share_title">Share to:</string>
-    <string name="tmdb_language">en-US</string>
     <string name="category_now_playing">Now paying in theatres</string>
     <string name="category_popular">Popular</string>
     <string name="category_top_rated">Top rated</string>
