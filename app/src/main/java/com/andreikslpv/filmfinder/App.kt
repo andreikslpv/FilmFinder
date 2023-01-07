@@ -3,7 +3,6 @@ package com.andreikslpv.filmfinder
 import android.app.Application
 import com.andreikslpv.filmfinder.di.AppComponent
 import com.andreikslpv.filmfinder.di.DaggerAppComponent
-import com.andreikslpv.filmfinder.di.modules.AppModule
 
 class App : Application() {
     lateinit var dagger: AppComponent
@@ -14,7 +13,7 @@ class App : Application() {
         //Инициализируем экземпляр App, через который будем получать доступ к остальным переменным
         instance = this
         //Создаем компонент
-        dagger = DaggerAppComponent.builder().appModule(AppModule(context = this)).build()
+        dagger = DaggerAppComponent.factory().create(this)
     }
 
     companion object {
