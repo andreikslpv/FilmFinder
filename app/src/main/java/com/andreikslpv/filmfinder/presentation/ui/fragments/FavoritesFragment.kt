@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.databinding.FragmentFavoritesBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
@@ -23,14 +24,23 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration.TopSp
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.vm.FavoritesFragmentViewModel
+import javax.inject.Inject
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding
         get() = _binding!!
+
+    @Inject
+    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
     private lateinit var filmsAdapter: FilmRecyclerAdapter
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(FavoritesFragmentViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.instance.dagger.inject(this)
     }
 
     override fun onCreateView(
@@ -78,7 +88,7 @@ class FavoritesFragment : Fragment() {
                         rating: RatingDonutView
                     ) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            App.instance.getFilmLocalStateUseCase.execute(film),
+                            getFilmLocalStateUseCase.execute(film),
                             image,
                             text,
                             rating

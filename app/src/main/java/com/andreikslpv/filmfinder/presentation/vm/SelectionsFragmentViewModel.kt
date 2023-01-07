@@ -8,18 +8,23 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.usecase.GetPagedFilmsByCategoryUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SelectionsFragmentViewModel : ViewModel() {
     //Инициализируем usecases
-    private var getPagedFilmsByCategoryUseCase = App.instance.getPagedFilmsByCategoryUseCase
+    @Inject
+    lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
     private val currentCategory = MutableLiveData("")
 
     init {
+        App.instance.dagger.inject(this)
+
         filmsFlow = currentCategory
             .asFlow()
             .flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }

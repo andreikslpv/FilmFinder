@@ -15,6 +15,8 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
 import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategories
+import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -27,16 +29,28 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class SelectionsFragment : Fragment() {
     private var _binding: FragmentSelectionsBinding? = null
     private val binding
         get() = _binding!!
+
+    @Inject
+    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+
+    @Inject
+    lateinit var getAvailableCategories: GetAvailableCategories
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }
     private lateinit var spinnerList: MutableList<String>
     private lateinit var categoryList: MutableList<String>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.instance.dagger.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +70,7 @@ class SelectionsFragment : Fragment() {
     }
 
     private fun initSpinner() {
-        val categoryMap = App.instance.getAvailableCategories.execute()
+        val categoryMap = getAvailableCategories.execute()
         mapToLists(categoryMap)
 
         val spinnerAdapter = ArrayAdapter(
@@ -117,7 +131,7 @@ class SelectionsFragment : Fragment() {
                 rating: RatingDonutView
             ) {
                 (requireActivity() as MainActivity).launchDetailsFragment(
-                    App.instance.getFilmLocalStateUseCase.execute(film),
+                    getFilmLocalStateUseCase.execute(film),
                     image,
                     text,
                     rating
