@@ -19,7 +19,7 @@ class FilmsRepositoryImpl @Inject constructor(
 ) : FilmsRepository {
     private val pageSize = 10
 
-    override fun getPagedFilmsByCategory(category: String): Flow<PagingData<FilmDomainModel>> {
+    override fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
@@ -43,7 +43,7 @@ class FilmsRepositoryImpl @Inject constructor(
             }).flow
     }
 
-    override fun getAvailableCategories(): Map<CategoryType, String> {
+    override fun getAvailableCategories(): List<CategoryType> {
         return apiDataSource.getAvailableCategories()
     }
 

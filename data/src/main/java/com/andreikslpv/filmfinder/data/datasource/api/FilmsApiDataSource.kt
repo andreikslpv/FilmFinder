@@ -6,9 +6,11 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 interface FilmsApiDataSource {
 
-    fun getFilmsByCategoryPagingSource(category: String): PagingSource<Int, FilmDomainModel>
+    fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel>
 
     fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel>
 
-    fun getAvailableCategories(): Map<CategoryType, String>
+    fun getAvailableCategories(): List<CategoryType>
+
+    fun getPathFromCategory(category: CategoryType): String
 }

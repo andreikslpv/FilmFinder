@@ -5,4 +5,5 @@ enum class CategoryType {
     TOP_RATED,
     NOW_PLAYING,
     UPCOMING,
+    NONE
 }

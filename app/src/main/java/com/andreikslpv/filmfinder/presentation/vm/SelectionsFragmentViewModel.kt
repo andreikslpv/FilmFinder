@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
+import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.GetPagedFilmsByCategoryUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +21,7 @@ class SelectionsFragmentViewModel : ViewModel() {
     @Inject
     lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
-    private val currentCategory = MutableLiveData("")
+    private val currentCategory = MutableLiveData(CategoryType.NONE)
 
     init {
         App.instance.dagger.inject(this)
@@ -31,7 +32,7 @@ class SelectionsFragmentViewModel : ViewModel() {
             .cachedIn(viewModelScope)
     }
 
-    fun setCategory(newCategory: String) {
+    fun setCategory(newCategory: CategoryType) {
         if (this.currentCategory.value == newCategory) return
         else this.currentCategory.value = newCategory
     }

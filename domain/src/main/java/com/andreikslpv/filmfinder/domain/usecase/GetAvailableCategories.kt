@@ -4,7 +4,7 @@ import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 
 class GetAvailableCategories(private val filmsRepository: FilmsRepository) {
-    fun execute(): Map<CategoryType, String> {
+    fun execute(): List<CategoryType> {
         return filmsRepository.getAvailableCategories()
     }
 }

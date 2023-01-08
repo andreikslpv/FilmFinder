@@ -160,11 +160,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupSwipeToRefresh() {
-        binding.swipeRefreshLayout.setOnRefreshListener {
+        binding.homeSwipeRefreshLayout.setOnRefreshListener {
             viewModel.refresh()
             this.lifecycleScope.launch {
                 delay(1000L)
-                binding.swipeRefreshLayout.isRefreshing = false
+                binding.homeSwipeRefreshLayout.isRefreshing = false
             }
         }
     }

@@ -25,6 +25,7 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
 import com.andreikslpv.filmfinder.presentation.vm.SelectionsFragmentViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -44,8 +45,8 @@ class SelectionsFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }
-    private lateinit var spinnerList: MutableList<String>
-    private lateinit var categoryList: MutableList<String>
+    private lateinit var spinnerList: List<String>
+    private lateinit var categoryList: List<CategoryType>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,12 +67,13 @@ class SelectionsFragment : Fragment() {
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 4)
 
         initSpinner()
+        setupSwipeToRefresh()
         initFilmListRecycler()
     }
 
     private fun initSpinner() {
-        val categoryMap = getAvailableCategories.execute()
-        mapToLists(categoryMap)
+        categoryList = getAvailableCategories.execute()
+        spinnerList = convertCategoryListToSpinnerList(categoryList)
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
@@ -88,7 +90,7 @@ class SelectionsFragment : Fragment() {
                 } else {
                     Toast.makeText(requireContext(), R.string.error_category, Toast.LENGTH_SHORT)
                         .show()
-                    viewModel.setCategory("")
+                    viewModel.setCategory(CategoryType.NONE)
                 }
             }
 
@@ -97,29 +99,26 @@ class SelectionsFragment : Fragment() {
         }
     }
 
-    private fun mapToLists(map: Map<CategoryType, String>) {
-        spinnerList = emptyList<String>().toMutableList()
-        categoryList = emptyList<String>().toMutableList()
-        for (entity in map) {
-            when (entity.key) {
+    private fun convertCategoryListToSpinnerList(inputList: List<CategoryType>): List<String> {
+        val resultList = emptyList<String>().toMutableList()
+        for (entity in inputList) {
+            when (entity) {
                 CategoryType.POPULAR -> {
-                    spinnerList.add(getString(R.string.category_popular))
-                    categoryList.add(entity.value)
+                    resultList.add(getString(R.string.category_popular))
                 }
                 CategoryType.TOP_RATED -> {
-                    spinnerList.add(getString(R.string.category_top_rated))
-                    categoryList.add(entity.value)
+                    resultList.add(getString(R.string.category_top_rated))
                 }
                 CategoryType.NOW_PLAYING -> {
-                    spinnerList.add(getString(R.string.category_now_playing))
-                    categoryList.add(entity.value)
+                    resultList.add(getString(R.string.category_now_playing))
                 }
                 CategoryType.UPCOMING -> {
-                    spinnerList.add(getString(R.string.category_upcoming))
-                    categoryList.add(entity.value)
+                    resultList.add(getString(R.string.category_upcoming))
                 }
+                else -> {}
             }
         }
+        return resultList
     }
 
     private fun initFilmListRecycler() {
@@ -184,5 +183,15 @@ class SelectionsFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun setupSwipeToRefresh() {
+        binding.selectionsSwipeRefreshLayout.setOnRefreshListener {
+            viewModel.refresh()
+            this.lifecycleScope.launch {
+                delay(1000L)
+                binding.selectionsSwipeRefreshLayout.isRefreshing = false
+            }
+        }
     }
 }

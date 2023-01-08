@@ -15,12 +15,18 @@ class TmdbDataSource @Inject constructor(
     private val context: Context,
     private val retrofit: Retrofit
 ) : FilmsApiDataSource {
+    private val categoryMap = mapOf(
+        Pair(CategoryType.POPULAR, TmdbConstants.CATEGORY_POPULAR),
+        Pair(CategoryType.TOP_RATED, TmdbConstants.CATEGORY_TOP_RATED),
+        Pair(CategoryType.NOW_PLAYING, TmdbConstants.CATEGORY_NOW_PLAYING),
+        Pair(CategoryType.UPCOMING, TmdbConstants.CATEGORY_UPCOMING),
+    )
 
-    override fun getFilmsByCategoryPagingSource(category: String): PagingSource<Int, FilmDomainModel> {
+    override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
         return TmdbPagingSourceFilmsByCategory(
             retrofit.create(TmdbServiceFilmsByCategory::class.java),
             context.getString(R.string.tmdb_language),
-            category
+            getPathFromCategory(category)
         )
     }
 
@@ -32,12 +38,11 @@ class TmdbDataSource @Inject constructor(
         )
     }
 
-    override fun getAvailableCategories(): Map<CategoryType, String> {
-        return mapOf(
-            Pair(CategoryType.POPULAR, TmdbConstants.CATEGORY_POPULAR),
-            Pair(CategoryType.TOP_RATED, TmdbConstants.CATEGORY_TOP_RATED),
-            Pair(CategoryType.NOW_PLAYING, TmdbConstants.CATEGORY_NOW_PLAYING),
-            Pair(CategoryType.UPCOMING, TmdbConstants.CATEGORY_UPCOMING),
-        )
+    override fun getAvailableCategories(): List<CategoryType> {
+        return categoryMap.keys.toList()
+    }
+
+    override fun getPathFromCategory(category: CategoryType): String {
+        return categoryMap[category] ?: ""
     }
 }

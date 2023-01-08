@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface FilmsRepository {
 
-    fun getPagedFilmsByCategory(category: String): Flow<PagingData<FilmDomainModel>>
+    fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>>
 
     fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>>
 
-    fun getAvailableCategories(): Map<CategoryType, String>
+    fun getAvailableCategories(): List<CategoryType>
 
     fun getAllLocalSavedFilms(): List<FilmDomainModel>
 
