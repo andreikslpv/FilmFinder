@@ -8,20 +8,25 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.usecase.GetPagedSearchResultUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeFragmentViewModel : ViewModel() {
     //Инициализируем usecases
-    private var getPagedSearchResultUseCase = App.instance.getPagedSearchResultUseCase
+    @Inject
+    lateinit var getPagedSearchResultUseCase: GetPagedSearchResultUseCase
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
     private val currentQuery = MutableLiveData("")
 
     init {
+        App.instance.dagger.inject(this)
+
         filmsFlow = currentQuery
             .asFlow()
             // исключаем слишком частые запросы, если пользователь быстро вводит поисковой запрос

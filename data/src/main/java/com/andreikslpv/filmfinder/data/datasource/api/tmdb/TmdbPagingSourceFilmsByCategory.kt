@@ -5,10 +5,10 @@ import androidx.paging.PagingState
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import retrofit2.HttpException
 
-class TmdbDataSourceSearchFilm(
-    private val categoryService: TmdbServiceSearchFilm,
+class TmdbPagingSourceFilmsByCategory(
+    private val categoryService: TmdbServiceFilmsByCategory,
     private val language: String,
-    private val query: String
+    private val category: String
 ) : PagingSource<Int, FilmDomainModel>() {
     private val step = 1
 
@@ -17,7 +17,7 @@ class TmdbDataSourceSearchFilm(
             var pageNumber = params.key ?: TmdbConstants.START_PAGE
             if (pageNumber == 0) pageNumber = TmdbConstants.START_PAGE
             val response = categoryService.getFilms(
-                query = query,
+                path2 = category,
                 language = language,
                 page = pageNumber
             )
