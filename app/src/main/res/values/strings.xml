@@ -13,8 +13,14 @@
     <string name="category_popular">Популярные фильмы</string>
     <string name="category_top_rated">Лучшие фильмы</string>
     <string name="category_upcoming">Скоро в кино</string>
+    <string name="category_top_250">Топ 250</string>
+    <string name="category_boxoffice_weekend">Кассовые сборы за выходные</string>
+    <string name="category_boxoffice_alltime">Кассовые сборы за всё время</string>
     <string name="retry_button">Нажмите для перезагрузки</string>
     <string name="welcome_text">Для поиска фильма, начните вводить его название в строку поиска</string>
     <string name="error_category">Ошибка при получении списка доступных категорий</string>
+    <string name="settings_api_title">Использовать данные с сайта:</string>
+    <string name="settings_api_tmdb">themoviedb.org</string>
+    <string name="settings_api_imdb">imdb-api.com</string>
 
 </resources>

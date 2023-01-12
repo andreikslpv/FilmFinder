@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class FilmDomainModel(
-    val id: Int,
+    val id: String,
     val title: String,
     val posterPreview: String,
     val posterDetails: String,

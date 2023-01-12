@@ -10,5 +10,6 @@ enum class FragmentsType(val tag: String) : Parcelable {
     WATCH_LATER("watch_later"),
     SELECTIONS("selections"),
     DETAILS("details"),
-    NONE("none")
+    SETTINGS("settings"),
+    NONE("none"),
 }

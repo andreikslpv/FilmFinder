@@ -36,8 +36,8 @@
                 android:scaleType="centerCrop"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars"
-                tools:ignore="ContentDescription" />
+                tools:ignore="ContentDescription"
+                tools:src="@tools:sample/avatars" />
 
             <TextView
                 android:id="@+id/title"
@@ -58,6 +58,7 @@
                 android:ellipsize="end"
                 android:maxLines="5"
                 android:padding="@dimen/item_padding"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/poster"
                 app:layout_constraintRight_toRightOf="parent"

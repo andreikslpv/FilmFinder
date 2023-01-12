@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
+import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentFavoritesBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
@@ -63,6 +64,7 @@ class FavoritesFragment : Fragment() {
             filmsAdapter.notifyDataSetChanged()
         }
         initSearchView()
+        initSettingsButton()
     }
 
     override fun onPause() {
@@ -128,5 +130,12 @@ class FavoritesFragment : Fragment() {
                 return true
             }
         })
+    }
+
+    private fun initSettingsButton() {
+        binding.favoritesToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {
+            (requireActivity() as MainActivity).launchSettingsFragment()
+            true
+        }
     }
 }

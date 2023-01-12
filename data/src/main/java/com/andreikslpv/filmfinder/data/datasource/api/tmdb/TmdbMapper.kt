@@ -7,7 +7,7 @@ object TmdbToDomainModel : BaseMapper<List<TmdbDtoFilm>, List<FilmDomainModel>> 
     override fun map(type: List<TmdbDtoFilm>?): List<FilmDomainModel> {
         return type?.map {
             FilmDomainModel(
-                id = it.id ?: -1,
+                id = it.id.toString() ?: "",
                 title = it.title ?: "",
                 posterPreview = (TmdbConstants.IMAGES_URL + "w342" + it.posterPath) ?: "",
                 posterDetails = (TmdbConstants.IMAGES_URL + "w780" + it.posterPath) ?: "",

@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.datasource.api.tmdb
+package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
 import android.content.Context
 import androidx.paging.PagingSource
@@ -13,37 +13,41 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TmdbDataSource @Inject constructor(
+class ImdbDataSource @Inject constructor(
     private val context: Context,
-    okHttpClient: OkHttpClient
+    okHttpClient: OkHttpClient,
 ) : FilmsApiDataSource {
     private val categoryMap = mapOf(
-        Pair(CategoryType.POPULAR, TmdbConstants.CATEGORY_POPULAR),
-        Pair(CategoryType.TOP_RATED, TmdbConstants.CATEGORY_TOP_RATED),
-        Pair(CategoryType.NOW_PLAYING, TmdbConstants.CATEGORY_NOW_PLAYING),
-        Pair(CategoryType.UPCOMING, TmdbConstants.CATEGORY_UPCOMING),
+        Pair(CategoryType.POPULAR, ImdbConstants.CATEGORY_POPULAR),
+        Pair(CategoryType.TOP_250, ImdbConstants.CATEGORY_TOP_250),
+        Pair(CategoryType.NOW_PLAYING, ImdbConstants.CATEGORY_NOW_PLAYING),
+        Pair(CategoryType.UPCOMING, ImdbConstants.CATEGORY_UPCOMING),
+        Pair(CategoryType.BOXOFFICE_WEEKEND, ImdbConstants.CATEGORY_BOXOFFICE_WEEKEND),
+        Pair(CategoryType.BOXOFFICE_ALLTIME, ImdbConstants.CATEGORY_BOXOFFICE_ALLTIME),
     )
+
     private val retrofit: Retrofit = Retrofit.Builder()
         //Указываем базовый URL из констант
-        .baseUrl(TmdbConstants.BASE_URL)
+        .baseUrl(ImdbConstants.BASE_URL)
         //Добавляем конвертер
+        //.addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .addConverterFactory(GsonConverterFactory.create())
         //Добавляем кастомный клиент
         .client(okHttpClient)
         .build()
 
     override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
-        return TmdbPagingSourceFilmsByCategory(
-            retrofit.create(TmdbServiceFilmsByCategory::class.java),
-            context.getString(R.string.tmdb_language),
+        return ImdbPagingSourceFilmsByCategory(
+            retrofit.create(ImdbServiceFilmsByCategory::class.java),
+            context.getString(R.string.imdb_language),
             getPathFromCategory(category)
         )
     }
 
     override fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel> {
-        return TmdbPagingSourceSearchResult(
-            retrofit.create(TmdbServiceSearchResult::class.java),
-            context.getString(R.string.tmdb_language),
+        return ImdbPagingSourceSearchResult(
+            retrofit.create(ImdbServiceSearchResult::class.java),
+            context.getString(R.string.imdb_language),
             query
         )
     }

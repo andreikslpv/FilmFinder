@@ -148,6 +148,17 @@ class MainActivity : AppCompatActivity() {
         setBottomNavigationIcon(FragmentsType.DETAILS)
     }
 
+    fun launchSettingsFragment() {
+        val bundle = Bundle()
+        //Кладем тип фрагмента из которого происходит вызов в "посылку"
+        bundle.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
+        var fragment = checkFragmentExistence(FragmentsType.SETTINGS)
+        if (fragment == null)
+            fragment = SettingsFragment()
+        fragment.arguments = bundle
+        changeFragment(fragment, FragmentsType.SETTINGS)
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // double tap for exit

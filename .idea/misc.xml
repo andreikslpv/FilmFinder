@@ -37,6 +37,7 @@
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_favorites.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_selections.xml" value="0.24010416666666667" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_settings.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/fragment_watch_later.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/item_film.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Andrey/AndroidStudioProjects/FilmFinder/app/src/main/res/layout/item_loading_state.xml" value="0.25416666666666665" />
@@ -53,8 +54,9 @@
     </option>
   </component>
   <component name="EntryPointsManager">
-    <list size="1">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="dagger.Binds" />
+      <item index="1" class="java.lang.String" itemvalue="dagger.Provides" />
     </list>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">

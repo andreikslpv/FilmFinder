@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
+import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
@@ -64,6 +65,7 @@ class HomeFragment : Fragment() {
         initSearchView()
         setupSwipeToRefresh()
         initFilmListRecycler()
+        initSettingsButton()
     }
 
     override fun onPause() {
@@ -153,7 +155,10 @@ class HomeFragment : Fragment() {
 
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.setQuery(newText)
+                if (newText.isNotBlank()) {
+                    viewModel.setQuery(newText)
+                    return true
+                }
                 return true
             }
         })
@@ -166,6 +171,13 @@ class HomeFragment : Fragment() {
                 delay(1000L)
                 binding.homeSwipeRefreshLayout.isRefreshing = false
             }
+        }
+    }
+
+    private fun initSettingsButton() {
+        binding.homeToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {
+            (requireActivity() as MainActivity).launchSettingsFragment()
+            true
         }
     }
 

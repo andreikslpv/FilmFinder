@@ -69,6 +69,7 @@ class SelectionsFragment : Fragment() {
         initSpinner()
         setupSwipeToRefresh()
         initFilmListRecycler()
+        initSettingsButton()
     }
 
     private fun initSpinner() {
@@ -103,18 +104,20 @@ class SelectionsFragment : Fragment() {
         val resultList = emptyList<String>().toMutableList()
         for (entity in inputList) {
             when (entity) {
-                CategoryType.POPULAR -> {
+                CategoryType.POPULAR ->
                     resultList.add(getString(R.string.category_popular))
-                }
-                CategoryType.TOP_RATED -> {
+                CategoryType.TOP_RATED ->
                     resultList.add(getString(R.string.category_top_rated))
-                }
-                CategoryType.NOW_PLAYING -> {
+                CategoryType.NOW_PLAYING ->
                     resultList.add(getString(R.string.category_now_playing))
-                }
-                CategoryType.UPCOMING -> {
+                CategoryType.UPCOMING ->
                     resultList.add(getString(R.string.category_upcoming))
-                }
+                CategoryType.TOP_250 ->
+                    resultList.add(getString(R.string.category_top_250))
+                CategoryType.BOXOFFICE_WEEKEND ->
+                    resultList.add(getString(R.string.category_boxoffice_weekend))
+                CategoryType.BOXOFFICE_ALLTIME ->
+                    resultList.add(getString(R.string.category_boxoffice_alltime))
                 else -> {}
             }
         }
@@ -192,6 +195,13 @@ class SelectionsFragment : Fragment() {
                 delay(1000L)
                 binding.selectionsSwipeRefreshLayout.isRefreshing = false
             }
+        }
+    }
+
+    private fun initSettingsButton() {
+        binding.selectionsToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {
+            (requireActivity() as MainActivity).launchSettingsFragment()
+            true
         }
     }
 }

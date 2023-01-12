@@ -1,7 +1,7 @@
 package com.andreikslpv.filmfinder.data.datasource.local.models
 
 data class FilmLocalModel (
-    val id: Int,
+    val id: String,
     val title: String,
     val posterPreview: String,
     val posterDetails: String,
