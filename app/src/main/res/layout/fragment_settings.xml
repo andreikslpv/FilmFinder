@@ -26,9 +26,10 @@
         android:layout_marginStart="@dimen/margin_of_elements"
         android:layout_marginTop="@dimen/margin_of_elements"
         android:layout_marginEnd="@dimen/margin_of_elements"
-        android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:text="@string/settings_api_title"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingsToolbar" />

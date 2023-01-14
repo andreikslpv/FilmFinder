@@ -12,16 +12,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.SettingsType
-import com.andreikslpv.filmfinder.domain.usecase.GetSettingValueUseCase
+import com.andreikslpv.filmfinder.domain.usecase.GetAllSettingValueUseCase
 import com.andreikslpv.filmfinder.domain.usecase.SetApiDataSourceUseCase
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
+import com.andreikslpv.filmfinder.presentation.vm.MainActivityViewModel
 import javax.inject.Inject
 
 
@@ -37,17 +39,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
 
-    private var currentFragmentsType: FragmentsType = FragmentsType.NONE
-        set(value) {
-            if (field == value) return
-            field = value
-            setBottomNavigationIcon(field)
-        }
-
     private val detailsFragment = DetailsFragment()
 
+    private val viewModel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(MainActivityViewModel::class.java)
+    }
+
     @Inject
-    lateinit var getSettingValueUseCase: GetSettingValueUseCase
+    lateinit var getAllSettingValueUseCase: GetAllSettingValueUseCase
     @Inject
     lateinit var setApiDataSourceUseCase: SetApiDataSourceUseCase
 
@@ -71,15 +70,23 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // устанавливаем ApiDataSource
-        val api = getSettingValueUseCase.execute(SettingsType.API_TYPE)
-        setApiDataSourceUseCase.execute(api)
-
+        initApplicationSettings()
+        observeCurrentFragment()
         initBottomNavigationMenu()
 
         // если первый, то запускаем фрагмент Home
         if (savedInstanceState == null)
             changeFragment(HomeFragment(), FragmentsType.HOME)
+    }
+
+    private fun initApplicationSettings() {
+        // устанавливаем сохраненные настройки приложения
+        val settingsMap = getAllSettingValueUseCase.execute()
+        for (entity in settingsMap)
+            when(entity.key) {
+                SettingsType.API_TYPE -> setApiDataSourceUseCase.execute(entity.value)
+                else -> {}
+            }
     }
 
     private fun initBottomNavigationMenu() {
@@ -132,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragmentPlaceholder, fragment, type.tag)
             .addToBackStack(null)
             .commit()
-        currentFragmentsType = type
+        viewModel.setCurrentFragment(type)
     }
 
     fun launchDetailsFragment(
@@ -146,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         //Кладем переданный фильм в "посылку"
         bundle.putParcelable(BUNDLE_KEY_FILM, film)
         //Кладем тип фрагмента из которого происходит вызов в "посылку"
-        bundle.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
+        bundle.putParcelable(BUNDLE_KEY_TYPE, viewModel.getCurrentFragment())
         //Прикрепляем "посылку" к фрагменту
         detailsFragment.arguments = bundle
 
@@ -160,13 +167,13 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragmentPlaceholder, detailsFragment, "details")
             .addToBackStack(null)
             .commit()
-        setBottomNavigationIcon(FragmentsType.DETAILS)
+        viewModel.setCurrentFragment(FragmentsType.DETAILS)
     }
 
     fun launchSettingsFragment() {
         val bundle = Bundle()
         //Кладем тип фрагмента из которого происходит вызов в "посылку"
-        bundle.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
+        bundle.putParcelable(BUNDLE_KEY_TYPE, viewModel.getCurrentFragment())
         var fragment = checkFragmentExistence(FragmentsType.SETTINGS)
         if (fragment == null)
             fragment = SettingsFragment()
@@ -188,19 +195,15 @@ class MainActivity : AppCompatActivity() {
             }
             else -> {
                 super.onBackPressed()
-                setBottomNavigationIcon(currentFragmentsType)
+                viewModel.setCurrentFragmentFromPrevious()
             }
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(BUNDLE_KEY_TYPE, currentFragmentsType)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        currentFragmentsType = savedInstanceState.get(BUNDLE_KEY_TYPE) as FragmentsType
+    private fun observeCurrentFragment() {
+        viewModel.currentFragmentLiveData.observe(this) {
+            setBottomNavigationIcon(it)
+        }
     }
 
     private fun setBottomNavigationIcon(type: FragmentsType) {
