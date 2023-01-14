@@ -1,8 +1,9 @@
 package com.andreikslpv.filmfinder.data.datasource.api
 
 import androidx.paging.PagingSource
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 
 interface FilmsApiDataSource {
 
@@ -13,4 +14,6 @@ interface FilmsApiDataSource {
     fun getAvailableCategories(): List<CategoryType>
 
     fun getPathFromCategory(category: CategoryType): String
+
+    fun getApiType(): ValuesType
 }

@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.repository
+package com.andreikslpv.filmfinder.data.datasource.local
 
 import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
@@ -8,7 +8,7 @@ object LocalToDomainMapper : BaseMapper<List<FilmLocalModel>, List<FilmDomainMod
     override fun map(type: List<FilmLocalModel>?): List<FilmDomainModel> {
         return type?.map {
             FilmDomainModel(
-                id = it.id ?: -1,
+                id = it.id ?: "",
                 title = it.title ?: "",
                 posterPreview = it.posterPreview ?: "",
                 posterDetails = it.posterDetails ?: "",
@@ -24,7 +24,7 @@ object LocalToDomainMapper : BaseMapper<List<FilmLocalModel>, List<FilmDomainMod
 object DomainToLocalMapper : BaseMapper<FilmDomainModel, FilmLocalModel> {
     override fun map(type: FilmDomainModel?): FilmLocalModel {
         return FilmLocalModel(
-            id = type?.id ?: -1,
+            id = type?.id ?: "",
             title = type?.title ?: "",
             posterPreview = type?.posterPreview ?: "",
             posterDetails = type?.posterDetails ?: "",

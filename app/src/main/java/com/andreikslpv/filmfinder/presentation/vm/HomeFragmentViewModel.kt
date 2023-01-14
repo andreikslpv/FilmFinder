@@ -8,6 +8,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.GetCurrentApiDataSourceUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetPagedSearchResultUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,8 +23,12 @@ class HomeFragmentViewModel : ViewModel() {
     //Инициализируем usecases
     @Inject
     lateinit var getPagedSearchResultUseCase: GetPagedSearchResultUseCase
+    @Inject
+    lateinit var getCurrentApiDataSourceUseCase: GetCurrentApiDataSourceUseCase
+
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
     private val currentQuery = MutableLiveData("")
+    val apiLiveData: MutableLiveData<ValuesType> = MutableLiveData()
 
     init {
         App.instance.dagger.inject(this)
@@ -43,5 +49,11 @@ class HomeFragmentViewModel : ViewModel() {
 
     fun refresh() {
         this.currentQuery.postValue(this.currentQuery.value)
+    }
+
+    fun setApiType() {
+        val newApi = getCurrentApiDataSourceUseCase.execute()
+        if (newApi == apiLiveData.value) return
+        else apiLiveData.value = newApi
     }
 }

@@ -24,7 +24,7 @@ class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
     private val binding
         get() = _binding!!
-    private var currentId: Int = -1
+    private var currentId: String = ""
     private var message: String = ""
     private lateinit var type: FragmentsType
     private val viewModel by lazy {
@@ -88,7 +88,7 @@ class DetailsFragment : Fragment() {
         super.onPause()
         // сбрасываем сохраненный id для того чтобы данные фильма загрузились
         // в случае backpress и повторного вызова данного фильма
-        currentId = -1
+        currentId = ""
     }
 
     override fun onDestroy() {

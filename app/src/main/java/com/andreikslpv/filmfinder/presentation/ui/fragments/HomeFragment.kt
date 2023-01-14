@@ -14,8 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
+import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
@@ -39,6 +41,7 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
     }
@@ -64,12 +67,24 @@ class HomeFragment : Fragment() {
         initSearchView()
         setupSwipeToRefresh()
         initFilmListRecycler()
+        observeApiType()
+        initSettingsButton()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setApiType()
     }
 
     override fun onPause() {
         super.onPause()
         // меняем background MainActivity на background фрагмента
         (activity as MainActivity).setBackground(binding.homeFragmentRoot.background)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun initFilmListRecycler() {
@@ -139,6 +154,17 @@ class HomeFragment : Fragment() {
             .map { it.refresh }
     }
 
+    private fun observeApiType() {
+        viewModel.apiLiveData.observe(viewLifecycleOwner) {
+            viewModel.refresh()
+            when (it) {
+                ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                ValuesType.IMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                else -> {}
+            }
+        }
+    }
+
     private fun initSearchView() {
         binding.homeSearchView.setOnClickListener {
             binding.homeSearchView.isIconified = false
@@ -153,7 +179,10 @@ class HomeFragment : Fragment() {
 
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.setQuery(newText)
+                if (newText.isNotBlank()) {
+                    viewModel.setQuery(newText)
+                    return true
+                }
                 return true
             }
         })
@@ -166,6 +195,13 @@ class HomeFragment : Fragment() {
                 delay(1000L)
                 binding.homeSwipeRefreshLayout.isRefreshing = false
             }
+        }
+    }
+
+    private fun initSettingsButton() {
+        binding.homeToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {
+            (requireActivity() as MainActivity).launchSettingsFragment()
+            true
         }
     }
 

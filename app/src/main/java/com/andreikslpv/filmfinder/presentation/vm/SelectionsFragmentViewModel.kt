@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.GetCurrentApiDataSourceUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetPagedFilmsByCategoryUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +22,12 @@ class SelectionsFragmentViewModel : ViewModel() {
     //Инициализируем usecases
     @Inject
     lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
+    @Inject
+    lateinit var getCurrentApiDataSourceUseCase: GetCurrentApiDataSourceUseCase
+
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
     private val currentCategory = MutableLiveData(CategoryType.NONE)
+    val apiLiveData: MutableLiveData<ValuesType> = MutableLiveData()
 
     init {
         App.instance.dagger.inject(this)
@@ -41,4 +47,9 @@ class SelectionsFragmentViewModel : ViewModel() {
         this.currentCategory.postValue(this.currentCategory.value)
     }
 
+    fun setApiType() {
+        val newApi = getCurrentApiDataSourceUseCase.execute()
+        if (newApi == apiLiveData.value) return
+        else apiLiveData.value = newApi
+    }
 }

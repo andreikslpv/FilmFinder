@@ -13,9 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
-import com.andreikslpv.filmfinder.domain.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategories
+import com.andreikslpv.filmfinder.domain.types.CategoryType
+import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
@@ -41,7 +42,8 @@ class SelectionsFragment : Fragment() {
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
 
     @Inject
-    lateinit var getAvailableCategories: GetAvailableCategories
+    lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
+
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }
@@ -69,6 +71,24 @@ class SelectionsFragment : Fragment() {
         initSpinner()
         setupSwipeToRefresh()
         initFilmListRecycler()
+        observeApiType()
+        initSettingsButton()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setApiType()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // меняем background MainActivity на background фрагмента
+        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun initSpinner() {
@@ -103,18 +123,20 @@ class SelectionsFragment : Fragment() {
         val resultList = emptyList<String>().toMutableList()
         for (entity in inputList) {
             when (entity) {
-                CategoryType.POPULAR -> {
+                CategoryType.POPULAR ->
                     resultList.add(getString(R.string.category_popular))
-                }
-                CategoryType.TOP_RATED -> {
+                CategoryType.TOP_RATED ->
                     resultList.add(getString(R.string.category_top_rated))
-                }
-                CategoryType.NOW_PLAYING -> {
+                CategoryType.NOW_PLAYING ->
                     resultList.add(getString(R.string.category_now_playing))
-                }
-                CategoryType.UPCOMING -> {
+                CategoryType.UPCOMING ->
                     resultList.add(getString(R.string.category_upcoming))
-                }
+                CategoryType.TOP_250 ->
+                    resultList.add(getString(R.string.category_top_250))
+                CategoryType.BOXOFFICE_WEEKEND ->
+                    resultList.add(getString(R.string.category_boxoffice_weekend))
+                CategoryType.BOXOFFICE_ALLTIME ->
+                    resultList.add(getString(R.string.category_boxoffice_alltime))
                 else -> {}
             }
         }
@@ -174,15 +196,15 @@ class SelectionsFragment : Fragment() {
             .map { it.refresh }
     }
 
-    override fun onPause() {
-        super.onPause()
-        // меняем background MainActivity на background фрагмента
-        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
+    private fun observeApiType() {
+        viewModel.apiLiveData.observe(viewLifecycleOwner) {
+            viewModel.refresh()
+            when (it) {
+                ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                else -> {}
+            }
+        }
     }
 
     private fun setupSwipeToRefresh() {
@@ -192,6 +214,13 @@ class SelectionsFragment : Fragment() {
                 delay(1000L)
                 binding.selectionsSwipeRefreshLayout.isRefreshing = false
             }
+        }
+    }
+
+    private fun initSettingsButton() {
+        binding.selectionsToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {
+            (requireActivity() as MainActivity).launchSettingsFragment()
+            true
         }
     }
 }

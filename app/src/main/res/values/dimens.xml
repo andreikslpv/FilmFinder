@@ -28,5 +28,7 @@
     <dimen name="margin_of_text_top">32dp</dimen>
     <dimen name="rating_donut_dimens_det">56dp</dimen>
 
+    <!-- settings -->
+    <dimen name="margin_of_elements">8dp</dimen>
 
 </resources>

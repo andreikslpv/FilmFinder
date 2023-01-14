@@ -18,4 +18,10 @@
     <string name="retry_button">Tap to Retry</string>
     <string name="welcome_text">To searching for a movie, start typing its name into the search bar</string>
     <string name="error_category">Error when getting a list of available categories</string>
+    <string name="category_top_250">Top 250</string>
+    <string name="category_boxoffice_weekend">Weekend Box Office</string>
+    <string name="category_boxoffice_alltime">Box Office in all times</string>
+    <string name="settings_api_title">Use data from the website:</string>
+    <string name="settings_api_tmdb">themoviedb.org</string>
+    <string name="settings_api_imdb">imdb-api.com</string>
 </resources>
