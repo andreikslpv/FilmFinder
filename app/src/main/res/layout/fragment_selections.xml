@@ -25,7 +25,6 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:menu="@menu/toolbar_menu"
-            app:navigationIcon="@drawable/ic_logo_imdb"
             app:title="@string/main.menu_selections_title"
             app:titleTextColor="?attr/itemTextColor">
 

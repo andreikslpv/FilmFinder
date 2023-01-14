@@ -46,11 +46,20 @@ class SettingsFragment : Fragment() {
         initApiChips()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     private fun initApiChips() {
         viewModel.apiLiveData.observe(viewLifecycleOwner) {
             when (it) {
-                ValuesType.TMDB -> binding.settingsApiChipGroup.check(R.id.settingsApiChipTmdb)
-                ValuesType.IMDB -> binding.settingsApiChipGroup.check(R.id.settingsApiChipImdb)
+                ValuesType.TMDB -> {
+                    binding.settingsApiChipGroup.check(R.id.settingsApiChipTmdb)
+                }
+                ValuesType.IMDB -> {
+                    binding.settingsApiChipGroup.check(R.id.settingsApiChipImdb)
+                }
                 else -> {}
             }
         }
@@ -60,11 +69,6 @@ class SettingsFragment : Fragment() {
                 R.id.settingsApiChipImdb -> viewModel.setApiType(ValuesType.IMDB)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private fun setBackground() {

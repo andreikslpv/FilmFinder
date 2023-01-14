@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
-import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.CategoryType
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
@@ -42,6 +43,7 @@ class SelectionsFragment : Fragment() {
 
     @Inject
     lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
+
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }
@@ -69,7 +71,24 @@ class SelectionsFragment : Fragment() {
         initSpinner()
         setupSwipeToRefresh()
         initFilmListRecycler()
+        observeApiType()
         initSettingsButton()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setApiType()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // меняем background MainActivity на background фрагмента
+        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun initSpinner() {
@@ -177,15 +196,15 @@ class SelectionsFragment : Fragment() {
             .map { it.refresh }
     }
 
-    override fun onPause() {
-        super.onPause()
-        // меняем background MainActivity на background фрагмента
-        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
+    private fun observeApiType() {
+        viewModel.apiLiveData.observe(viewLifecycleOwner) {
+            viewModel.refresh()
+            when (it) {
+                ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                else -> {}
+            }
+        }
     }
 
     private fun setupSwipeToRefresh() {

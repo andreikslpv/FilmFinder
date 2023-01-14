@@ -66,6 +66,12 @@ class DomainModule {
 
     @Provides
     @Singleton
+    fun provideGetCurrentApiDataSourceUseCase(filmsRepository: FilmsRepository): GetCurrentApiDataSourceUseCase {
+        return GetCurrentApiDataSourceUseCase(filmsRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideGetAllSettingValue(settingsRepository: SettingsRepository): GetAllSettingValueUseCase {
         return GetAllSettingValueUseCase(settingsRepository)
     }
