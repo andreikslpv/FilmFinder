@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.domain
+package com.andreikslpv.filmfinder.domain.types
 
 enum class CategoryType {
     POPULAR,

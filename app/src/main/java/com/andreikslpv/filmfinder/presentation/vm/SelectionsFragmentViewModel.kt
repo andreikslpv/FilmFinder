@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.GetPagedFilmsByCategoryUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi

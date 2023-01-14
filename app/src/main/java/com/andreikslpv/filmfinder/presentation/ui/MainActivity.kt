@@ -12,12 +12,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
+import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.SettingsType
+import com.andreikslpv.filmfinder.domain.usecase.GetSettingValueUseCase
+import com.andreikslpv.filmfinder.domain.usecase.SetApiDataSourceUseCase
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
+import javax.inject.Inject
 
 
 const val TIME_INTERVAL = 2000
@@ -41,7 +46,13 @@ class MainActivity : AppCompatActivity() {
 
     private val detailsFragment = DetailsFragment()
 
+    @Inject
+    lateinit var getSettingValueUseCase: GetSettingValueUseCase
+    @Inject
+    lateinit var setApiDataSourceUseCase: SetApiDataSourceUseCase
+
     init {
+        App.instance.dagger.inject(this)
         // задание анимации для shared elements - imageview с постером и textview с описанием
         val detailsTransition = TransitionSet()
         detailsTransition.apply {
@@ -59,6 +70,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // устанавливаем ApiDataSource
+        val api = getSettingValueUseCase.execute(SettingsType.API_TYPE)
+        setApiDataSourceUseCase.execute(api)
 
         initBottomNavigationMenu()
 

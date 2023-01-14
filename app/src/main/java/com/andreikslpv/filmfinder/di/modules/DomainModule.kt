@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder.di.modules
 
 import com.andreikslpv.filmfinder.domain.FilmsRepository
+import com.andreikslpv.filmfinder.domain.SettingsRepository
 import com.andreikslpv.filmfinder.domain.usecase.*
 import dagger.Module
 import dagger.Provides
@@ -53,7 +54,31 @@ class DomainModule {
 
     @Provides
     @Singleton
-    fun provideGetAvailableCategories(filmsRepository: FilmsRepository): GetAvailableCategories {
-        return GetAvailableCategories(filmsRepository)
+    fun provideGetAvailableCategories(filmsRepository: FilmsRepository): GetAvailableCategoriesUseCase {
+        return GetAvailableCategoriesUseCase(filmsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSetApiDataSourceUseCase(filmsRepository: FilmsRepository): SetApiDataSourceUseCase {
+        return SetApiDataSourceUseCase(filmsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetAllSettingValue(settingsRepository: SettingsRepository): GetAllSettingValueUseCase {
+        return GetAllSettingValueUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSettingValue(settingsRepository: SettingsRepository): GetSettingValueUseCase {
+        return GetSettingValueUseCase(settingsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSetSettingValue(settingsRepository: SettingsRepository): SetSettingValueUseCase {
+        return SetSettingValueUseCase(settingsRepository)
     }
 }

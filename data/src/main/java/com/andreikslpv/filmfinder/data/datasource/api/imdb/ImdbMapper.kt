@@ -24,15 +24,15 @@ object ImdbCategoryItemToDomainModel :
     }
 }
 
-object ImdbSearchItemToDomainModel : BaseMapper<List<ImdbDtoSearchItem>, List<FilmDomainModel>> {
-    override fun map(type: List<ImdbDtoSearchItem>?): List<FilmDomainModel> {
+object ImdbSearchItemToDomainModel : BaseMapper<List<ImdbDtoSearchItem?>, List<FilmDomainModel>> {
+    override fun map(type: List<ImdbDtoSearchItem?>?): List<FilmDomainModel> {
         return type?.map {
             FilmDomainModel(
-                id = it.id ?: "",
-                title = it.title ?: "",
-                posterPreview = it.image ?: "",
-                posterDetails = it.image ?: "",
-                description = it.description ?: "",
+                id = it?.id ?: "",
+                title = it?.title ?: "",
+                posterPreview = it?.image ?: "",
+                posterDetails = it?.image ?: "",
+                description = it?.description ?: "",
                 rating = 0.0,
                 isFavorite = false,
                 isWatchLater = false

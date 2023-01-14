@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategories
+import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
@@ -41,7 +41,7 @@ class SelectionsFragment : Fragment() {
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
 
     @Inject
-    lateinit var getAvailableCategories: GetAvailableCategories
+    lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }

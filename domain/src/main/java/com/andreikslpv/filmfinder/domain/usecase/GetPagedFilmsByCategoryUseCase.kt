@@ -1,7 +1,7 @@
 package com.andreikslpv.filmfinder.domain.usecase
 
 import androidx.paging.PagingData
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import kotlinx.coroutines.flow.Flow

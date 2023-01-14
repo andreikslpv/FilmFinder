@@ -34,7 +34,7 @@ class ImdbPagingSourceSearchResult(
                 if (response.body()!!.errorMessage.isNullOrEmpty()) {
                     val totalPages: Int = response.body()!!.results!!.size / PAGE_SIZE
                     LoadResult.Page(
-                        data = ImdbSearchItemToDomainModel.map(response.body()!!.results as List<ImdbDtoSearchItem>?),
+                        data = ImdbSearchItemToDomainModel.map(response.body()!!.results),
                         prevKey = if (pageNumber > ImdbConstants.START_PAGE) pageNumber - step else null,
                         nextKey = if (pageNumber < totalPages) pageNumber + step else null
                     )

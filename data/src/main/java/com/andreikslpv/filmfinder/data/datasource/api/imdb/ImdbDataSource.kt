@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -30,7 +31,6 @@ class ImdbDataSource @Inject constructor(
         //Указываем базовый URL из констант
         .baseUrl(ImdbConstants.BASE_URL)
         //Добавляем конвертер
-        //.addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .addConverterFactory(GsonConverterFactory.create())
         //Добавляем кастомный клиент
         .client(okHttpClient)
@@ -58,5 +58,9 @@ class ImdbDataSource @Inject constructor(
 
     override fun getPathFromCategory(category: CategoryType): String {
         return categoryMap[category] ?: ""
+    }
+
+    override fun getApiType(): ValuesType {
+        return ValuesType.IMDB
     }
 }

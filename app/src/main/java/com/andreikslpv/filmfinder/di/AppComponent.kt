@@ -1,13 +1,12 @@
 package com.andreikslpv.filmfinder.di
 
  import android.content.Context
+ import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
  import com.andreikslpv.filmfinder.di.modules.DataModule
  import com.andreikslpv.filmfinder.di.modules.DomainModule
  import com.andreikslpv.filmfinder.di.modules.RemoteModule
- import com.andreikslpv.filmfinder.presentation.ui.fragments.FavoritesFragment
- import com.andreikslpv.filmfinder.presentation.ui.fragments.HomeFragment
- import com.andreikslpv.filmfinder.presentation.ui.fragments.SelectionsFragment
- import com.andreikslpv.filmfinder.presentation.ui.fragments.WatchLaterFragment
+ import com.andreikslpv.filmfinder.presentation.ui.MainActivity
+ import com.andreikslpv.filmfinder.presentation.ui.fragments.*
  import com.andreikslpv.filmfinder.presentation.vm.*
  import dagger.BindsInstance
  import dagger.Component
@@ -28,8 +27,12 @@ interface AppComponent {
     fun inject(watchLaterFragmentViewModel: WatchLaterFragmentViewModel)
     fun inject(selectionsFragmentViewModel: SelectionsFragmentViewModel)
     fun inject(detailsFragmentViewModel: DetailsFragmentViewModel)
+    fun inject(settingsFragmentViewModel: SettingsFragmentViewModel)
+    fun inject(mainActivity: MainActivity)
     fun inject(homeFragment: HomeFragment)
     fun inject(favoritesFragment: FavoritesFragment)
     fun inject(watchLaterFragment: WatchLaterFragment)
     fun inject(selectionsFragment: SelectionsFragment)
+    fun inject(settingsFragment: SettingsFragment)
+    fun inject(filmsRepositoryImpl: FilmsRepositoryImpl)
 }

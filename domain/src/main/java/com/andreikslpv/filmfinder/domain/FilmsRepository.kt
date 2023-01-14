@@ -2,6 +2,8 @@ package com.andreikslpv.filmfinder.domain
 
 import androidx.paging.PagingData
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.CategoryType
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 import kotlinx.coroutines.flow.Flow
 
 interface FilmsRepository {
@@ -16,4 +18,7 @@ interface FilmsRepository {
 
     fun saveFilmToLocal(film: FilmDomainModel)
 
+    fun setApiDataSource(api: ValuesType)
+
+    fun getCurrentApiDataSource(): ValuesType
 }

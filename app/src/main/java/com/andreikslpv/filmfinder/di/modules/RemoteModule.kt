@@ -8,7 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-const val TIMEOUT = 5L
+const val TIMEOUT = 30L
 
 @Module
 class RemoteModule {
@@ -17,8 +17,8 @@ class RemoteModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         //Настраиваем таймауты для медленного интернета
-//        .callTimeout(TIMEOUT, TimeUnit.SECONDS)
-//        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+        .callTimeout(TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         //Добавляем логгер
         .addInterceptor(HttpLoggingInterceptor().apply {
             if (BuildConfig.DEBUG) {

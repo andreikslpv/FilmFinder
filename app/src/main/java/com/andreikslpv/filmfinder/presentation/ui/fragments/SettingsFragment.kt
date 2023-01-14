@@ -1,23 +1,34 @@
 package com.andreikslpv.filmfinder.presentation.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
-import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.databinding.FragmentSettingsBinding
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
+import com.andreikslpv.filmfinder.presentation.vm.SettingsFragmentViewModel
 
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding
         get() = _binding!!
     private lateinit var type: FragmentsType
+    private val viewModel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(SettingsFragmentViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.instance.dagger.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +43,23 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setBackground()
+        initApiChips()
+    }
+
+    private fun initApiChips() {
+        viewModel.apiLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                ValuesType.TMDB -> binding.settingsApiChipGroup.check(R.id.settingsApiChipTmdb)
+                ValuesType.IMDB -> binding.settingsApiChipGroup.check(R.id.settingsApiChipImdb)
+                else -> {}
+            }
+        }
+        binding.settingsApiChipGroup.setOnCheckedStateChangeListener { group, _ ->
+            when (group.checkedChipId) {
+                R.id.settingsApiChipTmdb -> viewModel.setApiType(ValuesType.TMDB)
+                R.id.settingsApiChipImdb -> viewModel.setApiType(ValuesType.IMDB)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -40,7 +68,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setBackground() {
-        // устанавливаем background в зависимости от типа фрагмента, из которого вызван фрагмент Details
+        // устанавливаем background в зависимости от типа фрагмента, из которого вызван фрагмент Settings
         when (type) {
             FragmentsType.HOME -> binding.settingsFragmentRoot.background =
                 ResourcesCompat.getDrawable(resources, R.drawable.background_home, null)

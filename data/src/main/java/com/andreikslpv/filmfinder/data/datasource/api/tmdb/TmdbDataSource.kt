@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.domain.CategoryType
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.ValuesType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -54,5 +55,9 @@ class TmdbDataSource @Inject constructor(
 
     override fun getPathFromCategory(category: CategoryType): String {
         return categoryMap[category] ?: ""
+    }
+
+    override fun getApiType(): ValuesType {
+        return ValuesType.TMDB
     }
 }
