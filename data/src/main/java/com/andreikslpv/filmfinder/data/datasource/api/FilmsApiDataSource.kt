@@ -13,7 +13,7 @@ interface FilmsApiDataSource {
 
     fun getAvailableCategories(): List<CategoryType>
 
-    fun getPathFromCategory(category: CategoryType): String
-
     fun getApiType(): ValuesType
+
+    fun changeNetworkAvailability(newStatus: Boolean)
 }

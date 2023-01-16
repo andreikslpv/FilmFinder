@@ -1,7 +1,5 @@
 package com.andreikslpv.filmfinder.di.modules
 
-import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.data.datasource.api.imdb.ImdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.JsonDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
@@ -15,9 +13,6 @@ import javax.inject.Singleton
 
 @Module
 abstract class DataModule {
-//    @Binds
-//    @Singleton
-//    abstract fun bindFilmsApiDataSource(imdbDataSource: ImdbDataSource): FilmsApiDataSource
 
     @Binds
     @Singleton
