@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
@@ -18,6 +19,7 @@ import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.SaveFilmsToCacheUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -44,8 +46,55 @@ class SelectionsFragment : Fragment() {
     @Inject
     lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
 
+    @Inject
+    lateinit var saveFilmsToCacheUseCase: SaveFilmsToCacheUseCase
+
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
+    }
+    private lateinit var adapter: FilmPagingAdapter
+    private val adapterDataObserver by lazy {
+        object : RecyclerView.AdapterDataObserver() {
+            // при изменении данных в адаптере делаем их слепок и отправляем их для кеширования в репозиторий
+//            override fun onChanged() {
+//                println("!!! onChanged")
+//                super.onChanged()
+//
+//            }
+
+//            override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+//                println("!!! onItemRangeChanged")
+//                super.onItemRangeChanged(positionStart, itemCount)
+//            }
+
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                println("!!! onItemRangeInserted")
+                super.onItemRangeInserted(positionStart, itemCount)
+            //                viewModel.apiLiveData.value?.let { api ->
+//                    viewModel.currentCategory.value?.let { category ->
+//                        saveFilmsToCacheUseCase.execute(
+//                            adapter.snapshot().items,
+//                            api, category
+//                        )
+//                    }
+//                }
+            }
+
+//            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+//                println("!!! onItemRangeMoved")
+//                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+//            }
+//
+//            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+//                println("!!! onItemRangeRemoved")
+//                super.onItemRangeRemoved(positionStart, itemCount)
+//            }
+//
+//            override fun onStateRestorationPolicyChanged() {
+//                println("!!! onStateRestorationPolicyChanged")
+//                super.onStateRestorationPolicyChanged()
+//            }
+        }
     }
     private lateinit var spinnerList: List<String>
     private lateinit var categoryList: List<CategoryType>
@@ -88,11 +137,15 @@ class SelectionsFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        // отменяем регистрацию обозревателя изменений данных в адаптере RV
+        adapter.unregisterAdapterDataObserver(adapterDataObserver)
         _binding = null
     }
 
     private fun initSpinner() {
+        // получаем список категорий, жоступных для текущего апи
         categoryList = getAvailableCategories.execute()
+        // формируем на основе списка категорий, список пунктов выпадающего меню
         spinnerList = convertCategoryListToSpinnerList(categoryList)
 
         val spinnerAdapter = ArrayAdapter(
@@ -144,7 +197,7 @@ class SelectionsFragment : Fragment() {
     }
 
     private fun initFilmListRecycler() {
-        val adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
+        adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
             override fun click(
                 film: FilmDomainModel,
                 image: ImageView,
@@ -159,6 +212,8 @@ class SelectionsFragment : Fragment() {
                 )
             }
         })
+        // регистрируем обозревателя изменений данных в адаптере RV
+        adapter.registerAdapterDataObserver(adapterDataObserver)
         binding.selectionsRecycler.layoutManager = LinearLayoutManager(requireContext())
         //binding.selectionsRecycler.setHasFixedSize(true)
 
@@ -167,11 +222,11 @@ class SelectionsFragment : Fragment() {
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
 
-        observeFilms(adapter)
-        handleScrollingToTopWhenSearching(adapter)
+        observeFilms()
+        handleScrollingToTopWhenChangeCategory()
     }
 
-    private fun observeFilms(adapter: FilmPagingAdapter) {
+    private fun observeFilms() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
@@ -179,10 +234,10 @@ class SelectionsFragment : Fragment() {
         }
     }
 
-    // Когда пользователь меняет поисковой запрос, то отслеживаем этот момент и прокручиваем в начало списка
-    private fun handleScrollingToTopWhenSearching(adapter: FilmPagingAdapter) =
+    // Когда пользователь меняет категорию, то отслеживаем этот момент и прокручиваем в начало списка
+    private fun handleScrollingToTopWhenChangeCategory() =
         this.lifecycleScope.launch {
-            getRefreshLoadStateFlow(adapter)
+            getRefreshLoadStateFlow()
                 .simpleScan(count = 2)
                 .collectLatest { (previousState, currentState) ->
                     if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
@@ -191,9 +246,8 @@ class SelectionsFragment : Fragment() {
                 }
         }
 
-    private fun getRefreshLoadStateFlow(adapter: FilmPagingAdapter): Flow<LoadState> {
-        return adapter.loadStateFlow
-            .map { it.refresh }
+    private fun getRefreshLoadStateFlow(): Flow<LoadState> {
+        return adapter.loadStateFlow.map { it.refresh }
     }
 
     private fun observeApiType() {

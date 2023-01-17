@@ -4,11 +4,8 @@ import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.data.datasource.api.cache.CachePagingSourceFilmsByCategory
-import com.andreikslpv.filmfinder.data.datasource.api.cache.CachePagingSourceSearchResult
-import com.andreikslpv.filmfinder.data.datasource.local.db.DatabaseHelper
-import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -20,9 +17,7 @@ import javax.inject.Singleton
 class ImdbDataSource @Inject constructor(
     private val context: Context,
     okHttpClient: OkHttpClient,
-    private val databaseHelper: DatabaseHelper,
 ) : FilmsApiDataSource {
-    private var isNetworkAvailable = true
 
     private val categoryMap = mapOf(
         Pair(CategoryType.POPULAR, ImdbConstants.CATEGORY_POPULAR),
@@ -43,19 +38,19 @@ class ImdbDataSource @Inject constructor(
         .build()
 
     override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
-        return if (isNetworkAvailable) ImdbPagingSourceFilmsByCategory(
+        return ImdbPagingSourceFilmsByCategory(
             retrofit.create(ImdbServiceFilmsByCategory::class.java),
             context.getString(R.string.imdb_language),
             getPathFromCategory(category)
-        ) else CachePagingSourceFilmsByCategory(databaseHelper, ValuesType.IMDB, category)
+        )
     }
 
     override fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel> {
-        return if (isNetworkAvailable) ImdbPagingSourceSearchResult(
+        return ImdbPagingSourceSearchResult(
             retrofit.create(ImdbServiceSearchResult::class.java),
             context.getString(R.string.imdb_language),
             query
-        ) else CachePagingSourceSearchResult(databaseHelper, ValuesType.IMDB, query)
+        )
     }
 
     override fun getAvailableCategories(): List<CategoryType> {
@@ -70,7 +65,4 @@ class ImdbDataSource @Inject constructor(
         return ValuesType.IMDB
     }
 
-    override fun changeNetworkAvailability(newStatus: Boolean) {
-        isNetworkAvailable = newStatus
-    }
 }

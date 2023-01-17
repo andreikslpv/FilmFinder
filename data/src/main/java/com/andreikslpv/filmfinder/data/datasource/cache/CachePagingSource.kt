@@ -1,17 +1,17 @@
-package com.andreikslpv.filmfinder.data.datasource.api.cache
+package com.andreikslpv.filmfinder.data.datasource.cache
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.andreikslpv.filmfinder.data.datasource.local.db.DatabaseHelper
 import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.types.CategoryType
-import com.andreikslpv.filmfinder.domain.types.ValuesType
 
-class CachePagingSourceFilmsByCategory(
+const val START_PAGE = 0
+
+class CachePagingSource(
     databaseHelper: DatabaseHelper,
-    private val api: ValuesType,
-    private val category: CategoryType
+    private val sqlQuery: String,
+    private val arrayArgs: Array<String>
 ) : PagingSource<Int, FilmDomainModel>() {
     private val step = 1
     //Инициализируем объект для взаимодействия с БД
@@ -28,13 +28,9 @@ class CachePagingSourceFilmsByCategory(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
         try {
-            val pageNumber = params.key ?: CacheConstants.START_PAGE
+            val pageNumber = params.key ?: START_PAGE
             //Создаем курсор на основании запроса "Получить из таблицы записи для указанных апи и категории"
-            val cursor = sqlDb.rawQuery(
-                "SELECT * FROM ${DatabaseHelper.TABLE_CACHE} "
-                        + "WHERE ${DatabaseHelper.COLUMN_API} = ? AND ${DatabaseHelper.COLUMN_CATEGORY} = ?",
-                arrayOf(api.value, category.name)
-            )
+            val cursor = sqlDb.rawQuery(sqlQuery, arrayArgs)
             val totalPages = cursor.count / PAGE_SIZE
             //Сюда будем сохранять результат получения данных
             val result = mutableListOf<FilmDomainModel>()
@@ -64,7 +60,7 @@ class CachePagingSourceFilmsByCategory(
             cursor.close()
             return LoadResult.Page(
                 data = result,
-                prevKey = if (pageNumber > CacheConstants.START_PAGE) pageNumber - step else null,
+                prevKey = if (pageNumber > START_PAGE) pageNumber - step else null,
                 nextKey = if (pageNumber < totalPages) pageNumber + step else null
             )
         } catch (e: Exception) {

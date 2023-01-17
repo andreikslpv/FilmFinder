@@ -4,11 +4,8 @@ import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.data.datasource.api.cache.CachePagingSourceFilmsByCategory
-import com.andreikslpv.filmfinder.data.datasource.api.cache.CachePagingSourceSearchResult
-import com.andreikslpv.filmfinder.data.datasource.local.db.DatabaseHelper
-import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -20,9 +17,7 @@ import javax.inject.Singleton
 class TmdbDataSource @Inject constructor(
     private val context: Context,
     okHttpClient: OkHttpClient,
-    private val databaseHelper: DatabaseHelper,
 ) : FilmsApiDataSource {
-    private var isNetworkAvailable = true
 
     private val categoryMap = mapOf(
         Pair(CategoryType.POPULAR, TmdbConstants.CATEGORY_POPULAR),
@@ -40,19 +35,19 @@ class TmdbDataSource @Inject constructor(
         .build()
 
     override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
-        return if (isNetworkAvailable) TmdbPagingSourceFilmsByCategory(
+        return TmdbPagingSourceFilmsByCategory(
             retrofit.create(TmdbServiceFilmsByCategory::class.java),
             context.getString(R.string.tmdb_language),
             getPathFromCategory(category)
-        ) else CachePagingSourceFilmsByCategory(databaseHelper, ValuesType.TMDB, category)
+        )
     }
 
     override fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel> {
-        return if (isNetworkAvailable) TmdbPagingSourceSearchResult(
+        return TmdbPagingSourceSearchResult(
             retrofit.create(TmdbServiceSearchResult::class.java),
             context.getString(R.string.tmdb_language),
             query
-        ) else CachePagingSourceSearchResult(databaseHelper, ValuesType.TMDB, query)
+        )
     }
 
     override fun getAvailableCategories(): List<CategoryType> {
@@ -67,7 +62,4 @@ class TmdbDataSource @Inject constructor(
         return ValuesType.TMDB
     }
 
-    override fun changeNetworkAvailability(newStatus: Boolean) {
-        isNetworkAvailable = newStatus
-    }
 }

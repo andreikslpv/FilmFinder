@@ -15,5 +15,4 @@ interface FilmsApiDataSource {
 
     fun getApiType(): ValuesType
 
-    fun changeNetworkAvailability(newStatus: Boolean)
 }

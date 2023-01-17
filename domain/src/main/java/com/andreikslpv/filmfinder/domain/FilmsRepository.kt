@@ -14,11 +14,19 @@ interface FilmsRepository {
 
     fun getAvailableCategories(): List<CategoryType>
 
+    fun setApiDataSource(api: ValuesType)
+
+    fun getCurrentApiDataSource(): ValuesType
+
+    fun saveFilmsToCache(films: List<FilmDomainModel>, api: ValuesType, category: CategoryType)
+
+    fun deleteAllCachedFilms()
+
+    fun changeNetworkAvailability(newStatus: Boolean)
+
     fun getAllLocalSavedFilms(): List<FilmDomainModel>
 
     fun saveFilmToLocal(film: FilmDomainModel)
 
-    fun setApiDataSource(api: ValuesType)
 
-    fun getCurrentApiDataSource(): ValuesType
 }
