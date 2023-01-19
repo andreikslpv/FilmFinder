@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.database.Cursor
 
 class DatabasePrinter(private val databaseHelper: DatabaseHelper) {
-    fun printDb() {
+    fun printDb(message: String = "") {
         val sqlDb = databaseHelper.readableDatabase
         val cursor = sqlDb.rawQuery("SELECT * FROM ${DatabaseHelper.TABLE_CACHE} ORDER BY ${DatabaseHelper.COLUMN_API} AND ${DatabaseHelper.COLUMN_CATEGORY};", null)
         cursor.moveToFirst()
-        cursorToString(cursor)
+        cursorToString(cursor, message)
         cursor.close()
         sqlDb.close()
     }
 
     @SuppressLint("Range")
-    private fun cursorToString(cursor: Cursor) {
-        println("!!!--------------------------------------------------")
+    private fun cursorToString(cursor: Cursor, message: String = "") {
+        println("!!!--------------------------------$message--------------------------------")
         var headers = "!!!"
         var line = "!!!"
         if (cursor.moveToFirst()) {

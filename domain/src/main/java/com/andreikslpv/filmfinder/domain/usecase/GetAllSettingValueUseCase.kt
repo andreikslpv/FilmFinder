@@ -8,6 +8,7 @@ class GetAllSettingValueUseCase(private val settingsRepository: SettingsReposito
     fun execute(): Map<SettingsType, ValuesType> {
         val map = mutableMapOf<SettingsType, ValuesType>()
         map[SettingsType.API_TYPE] = settingsRepository.getSettingValue(SettingsType.API_TYPE)
+        map[SettingsType.CACHE_MODE] = settingsRepository.getSettingValue(SettingsType.CACHE_MODE)
         return map
     }
 }

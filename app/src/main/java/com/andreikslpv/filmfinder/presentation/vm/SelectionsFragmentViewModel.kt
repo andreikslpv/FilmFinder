@@ -26,7 +26,7 @@ class SelectionsFragmentViewModel : ViewModel() {
     lateinit var getCurrentApiDataSourceUseCase: GetCurrentApiDataSourceUseCase
 
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
-    val currentCategory = MutableLiveData(CategoryType.NONE)
+    private val currentCategory = MutableLiveData(CategoryType.NONE)
     val apiLiveData: MutableLiveData<ValuesType> = MutableLiveData()
 
     init {

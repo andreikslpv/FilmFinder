@@ -20,13 +20,17 @@ class SettingsRepositoryImpl @Inject constructor(context: Context) : SettingsRep
             preference.edit()
                 .putString(SettingsType.API_TYPE.key, SettingsType.API_TYPE.defaultValue.value)
                 .apply()
+            preference.edit()
+                .putString(SettingsType.CACHE_MODE.key, SettingsType.CACHE_MODE.defaultValue.value)
+                .apply()
             preference.edit().putBoolean(SettingsType.FIRST_LAUNCH.key, false).apply()
         }
     }
 
     override fun getSettingValue(setting: SettingsType): ValuesType {
         return getValuesTypeByValue(
-            preference.getString(setting.key, setting.defaultValue.value)?: setting.defaultValue.value
+            preference.getString(setting.key, setting.defaultValue.value)
+                ?: setting.defaultValue.value
         )
     }
 
@@ -34,6 +38,9 @@ class SettingsRepositoryImpl @Inject constructor(context: Context) : SettingsRep
         return when (value) {
             ValuesType.TMDB.value -> ValuesType.TMDB
             ValuesType.IMDB.value -> ValuesType.IMDB
+            ValuesType.AUTO.value -> ValuesType.AUTO
+            ValuesType.ALWAYS.value -> ValuesType.ALWAYS
+            ValuesType.NEVER.value -> ValuesType.NEVER
             else -> ValuesType.NONE
         }
     }

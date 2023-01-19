@@ -7,7 +7,7 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 
 interface FilmsApiDataSource {
 
-    fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel>
+    fun getFilmsByCategoryPagingSource(category: CategoryType, callback: ApiCallback): PagingSource<Int, FilmDomainModel>
 
     fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel>
 

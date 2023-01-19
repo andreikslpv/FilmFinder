@@ -18,7 +18,7 @@ interface FilmsRepository {
 
     fun getCurrentApiDataSource(): ValuesType
 
-    fun saveFilmsToCache(films: List<FilmDomainModel>, api: ValuesType, category: CategoryType)
+    fun setCacheMode(mode: ValuesType)
 
     fun deleteAllCachedFilms()
 

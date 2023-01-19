@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.data.datasource.api.imdb.ImdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbDataSource
@@ -28,6 +29,7 @@ class FilmsRepositoryImpl @Inject constructor(
     private val cacheDataSource: FilmsCacheDataSource,
 ) : FilmsRepository {
     private var isNetworkAvailable = true
+    private var currentCacheMode = ValuesType.AUTO
     private lateinit var apiDataSource: FilmsApiDataSource
     private var isApiDataSourceInitialized = false
 
@@ -40,7 +42,17 @@ class FilmsRepositoryImpl @Inject constructor(
 
     override fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>> {
         return getFlowFromPagingSource(
-            if (isNetworkAvailable) apiDataSource.getFilmsByCategoryPagingSource(category)
+            if (isNetworkAvailable) apiDataSource.getFilmsByCategoryPagingSource(
+                category,
+                object : ApiCallback {
+                    override fun onSuccess(films: List<FilmDomainModel>) {
+                        cacheDataSource.deleteCachedFilms(getCurrentApiDataSource(), category)
+                        cacheDataSource.saveFilmsToCache(films, getCurrentApiDataSource(), category)
+                    }
+
+                    override fun onFailure() {
+                    }
+                })
             else cacheDataSource.getFilmsByCategoryPagingSource(getCurrentApiDataSource(), category)
         )
     }
@@ -87,14 +99,10 @@ class FilmsRepositoryImpl @Inject constructor(
         else ValuesType.NONE
     }
 
-    override fun saveFilmsToCache(
-        films: List<FilmDomainModel>,
-        api: ValuesType,
-        category: CategoryType
-    ) {
-        if (isNetworkAvailable) {
-            cacheDataSource.deleteCachedFilms(api, category)
-            cacheDataSource.saveFilmsToCache(films, api, category)
+    override fun setCacheMode(mode: ValuesType) {
+        when (mode) {
+            ValuesType.AUTO, ValuesType.ALWAYS, ValuesType.NEVER -> currentCacheMode = mode
+            else -> {}
         }
     }
 

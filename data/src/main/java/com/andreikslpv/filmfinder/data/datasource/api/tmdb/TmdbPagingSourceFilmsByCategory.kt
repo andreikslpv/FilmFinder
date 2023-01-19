@@ -2,13 +2,15 @@ package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import retrofit2.HttpException
 
 class TmdbPagingSourceFilmsByCategory(
     private val categoryService: TmdbServiceFilmsByCategory,
     private val language: String,
-    private val category: String
+    private val category: String,
+    private val callback: ApiCallback,
 ) : PagingSource<Int, FilmDomainModel>() {
     private val step = 1
 
@@ -23,6 +25,7 @@ class TmdbPagingSourceFilmsByCategory(
             )
 
             return if (response.isSuccessful) {
+                callback.onSuccess(TmdbToDomainModel.map(response.body()!!.results))
                 LoadResult.Page(
                     data = TmdbToDomainModel.map(response.body()!!.results),
                     prevKey = if (pageNumber > TmdbConstants.START_PAGE) pageNumber - step else null,

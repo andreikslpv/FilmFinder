@@ -3,6 +3,7 @@ package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
+import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
@@ -34,11 +35,15 @@ class TmdbDataSource @Inject constructor(
         .client(okHttpClient)
         .build()
 
-    override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
+    override fun getFilmsByCategoryPagingSource(
+        category: CategoryType,
+        callback: ApiCallback
+    ): PagingSource<Int, FilmDomainModel> {
         return TmdbPagingSourceFilmsByCategory(
             retrofit.create(TmdbServiceFilmsByCategory::class.java),
             context.getString(R.string.tmdb_language),
-            getPathFromCategory(category)
+            getPathFromCategory(category),
+            callback,
         )
     }
 

@@ -86,8 +86,8 @@ class DomainModule {
 
     @Provides
     @Singleton
-    fun provideSaveFilmsToCacheUseCase(filmsRepository: FilmsRepository): SaveFilmsToCacheUseCase {
-        return SaveFilmsToCacheUseCase(filmsRepository)
+    fun provideSetCacheModeUseCase(filmsRepository: FilmsRepository): SetCacheModeUseCase {
+        return SetCacheModeUseCase(filmsRepository)
     }
 
     // usecase для работы с репозиторием настроек

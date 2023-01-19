@@ -11,10 +11,12 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSettingsBinding
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.DeleteAllCachedFilmsUseCase
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
 import com.andreikslpv.filmfinder.presentation.vm.SettingsFragmentViewModel
+import javax.inject.Inject
 
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
@@ -24,6 +26,9 @@ class SettingsFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SettingsFragmentViewModel::class.java)
     }
+
+    @Inject
+    lateinit var deleteAllCachedFilmsUseCase: DeleteAllCachedFilmsUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +49,8 @@ class SettingsFragment : Fragment() {
 
         setBackground()
         initApiChips()
+        initCacheChips()
+        initClearCacheButton()
     }
 
     override fun onDestroy() {
@@ -54,12 +61,8 @@ class SettingsFragment : Fragment() {
     private fun initApiChips() {
         viewModel.apiLiveData.observe(viewLifecycleOwner) {
             when (it) {
-                ValuesType.TMDB -> {
-                    binding.settingsApiChipGroup.check(R.id.settingsApiChipTmdb)
-                }
-                ValuesType.IMDB -> {
-                    binding.settingsApiChipGroup.check(R.id.settingsApiChipImdb)
-                }
+                ValuesType.TMDB -> binding.settingsApiChipGroup.check(R.id.settingsApiChipTmdb)
+                ValuesType.IMDB -> binding.settingsApiChipGroup.check(R.id.settingsApiChipImdb)
                 else -> {}
             }
         }
@@ -68,6 +71,31 @@ class SettingsFragment : Fragment() {
                 R.id.settingsApiChipTmdb -> viewModel.setApiType(ValuesType.TMDB)
                 R.id.settingsApiChipImdb -> viewModel.setApiType(ValuesType.IMDB)
             }
+        }
+    }
+
+    private fun initCacheChips() {
+        viewModel.cacheModeLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                ValuesType.AUTO -> binding.settingsCacheChipGroup.check(R.id.settingsCacheChipAuto)
+                ValuesType.ALWAYS -> binding.settingsCacheChipGroup.check(R.id.settingsCacheChipAlways)
+                ValuesType.NEVER -> binding.settingsCacheChipGroup.check(R.id.settingsCacheChipNever)
+                else -> {}
+            }
+            (activity as MainActivity).updateMessageBoard(it)
+        }
+        binding.settingsCacheChipGroup.setOnCheckedStateChangeListener { group, _ ->
+            when (group.checkedChipId) {
+                R.id.settingsCacheChipAuto -> viewModel.setCacheMode(ValuesType.AUTO)
+                R.id.settingsCacheChipAlways -> viewModel.setCacheMode(ValuesType.ALWAYS)
+                R.id.settingsCacheChipNever -> viewModel.setCacheMode(ValuesType.NEVER)
+            }
+        }
+    }
+
+    private fun initClearCacheButton() {
+        binding.settingsCacheClear.setOnClickListener {
+            deleteAllCachedFilmsUseCase.execute()
         }
     }
 

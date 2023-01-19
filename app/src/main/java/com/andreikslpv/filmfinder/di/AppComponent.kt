@@ -2,10 +2,7 @@ package com.andreikslpv.filmfinder.di
 
  import android.content.Context
  import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
- import com.andreikslpv.filmfinder.di.modules.DataModule
- import com.andreikslpv.filmfinder.di.modules.DatabaseModule
- import com.andreikslpv.filmfinder.di.modules.DomainModule
- import com.andreikslpv.filmfinder.di.modules.RemoteModule
+ import com.andreikslpv.filmfinder.di.modules.*
  import com.andreikslpv.filmfinder.presentation.ui.MainActivity
  import com.andreikslpv.filmfinder.presentation.ui.fragments.*
  import com.andreikslpv.filmfinder.presentation.vm.*
@@ -14,7 +11,7 @@ package com.andreikslpv.filmfinder.di
  import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [DomainModule::class, DataModule::class, RemoteModule::class, DatabaseModule::class])
+@Component(modules = [AppModule::class, DomainModule::class, DataModule::class, RemoteModule::class, DatabaseModule::class])
 interface AppComponent {
 
     @Component.Factory

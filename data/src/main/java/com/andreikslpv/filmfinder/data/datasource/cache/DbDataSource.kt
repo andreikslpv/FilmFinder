@@ -11,6 +11,7 @@ import javax.inject.Inject
 
 class DbDataSource @Inject constructor(private val databaseHelper: DatabaseHelper) :
     FilmsCacheDataSource {
+
     override fun saveFilmsToCache(
         films: List<FilmDomainModel>,
         api: ValuesType,
@@ -32,30 +33,22 @@ class DbDataSource @Inject constructor(private val databaseHelper: DatabaseHelpe
             sqlDb.insert(DatabaseHelper.TABLE_CACHE, null, contentValues)
         }
         sqlDb.close()
-//        val printer = DatabasePrinter(databaseHelper)
-//        printer.printDb()
     }
 
     override fun deleteCachedFilms(api: ValuesType, category: CategoryType) {
-        val sqlDb = databaseHelper.readableDatabase
-        val cursor = sqlDb.rawQuery(
-            "DELETE FROM ${DatabaseHelper.TABLE_CACHE} "
-                    + "WHERE ${DatabaseHelper.COLUMN_API} = ? AND ${DatabaseHelper.COLUMN_CATEGORY} = ?;",
+        val sqlDb = databaseHelper.writableDatabase
+        sqlDb.delete(
+            DatabaseHelper.TABLE_CACHE,
+            DatabaseHelper.COLUMN_API + " = ? AND " + DatabaseHelper.COLUMN_CATEGORY + " = ?",
             arrayOf(api.value, category.name)
         )
-        cursor.close()
         sqlDb.close()
     }
 
     override fun deleteAllCachedFilms() {
-        val sqlDb = databaseHelper.readableDatabase
-        val cursor = sqlDb.rawQuery(
-            "DELETE FROM ${DatabaseHelper.TABLE_CACHE};",
-            null
-        )
-        cursor.close()
+        val sqlDb = databaseHelper.writableDatabase
+        sqlDb.delete(DatabaseHelper.TABLE_CACHE, DatabaseHelper.COLUMN_ID + " > ?", arrayOf("-1"))
         sqlDb.close()
-        //"DELETE FROM ${DatabaseHelper.TABLE_CACHE} WHERE ${DatabaseHelper.COLUMN_ID} > -1;"
     }
 
     override fun getFilmsByCategoryPagingSource(
