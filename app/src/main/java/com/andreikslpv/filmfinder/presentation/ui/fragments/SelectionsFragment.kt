@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
@@ -26,7 +27,6 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
 import com.andreikslpv.filmfinder.presentation.vm.SelectionsFragmentViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -46,6 +46,7 @@ class SelectionsFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
     }
+    private lateinit var adapter: FilmPagingAdapter
     private lateinit var spinnerList: List<String>
     private lateinit var categoryList: List<CategoryType>
 
@@ -145,7 +146,7 @@ class SelectionsFragment : Fragment() {
     }
 
     private fun initFilmListRecycler() {
-        val adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
+        adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
             override fun click(
                 film: FilmDomainModel,
                 image: ImageView,
@@ -168,22 +169,23 @@ class SelectionsFragment : Fragment() {
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
 
-        observeFilms(adapter)
-        handleScrollingToTopWhenChangeCategory(adapter)
+        observeFilms()
+        handleScrollingToTopWhenChangeCategory()
     }
 
-    private fun observeFilms(adapter: FilmPagingAdapter) {
+    private fun observeFilms() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
+//                adapter.refresh()
             }
         }
     }
 
     // Когда пользователь меняет категорию, то отслеживаем этот момент и прокручиваем в начало списка
-    private fun handleScrollingToTopWhenChangeCategory(adapter: FilmPagingAdapter) =
+    private fun handleScrollingToTopWhenChangeCategory() =
         this.lifecycleScope.launch {
-            getRefreshLoadStateFlow(adapter)
+            getRefreshLoadStateFlow()
                 .simpleScan(count = 2)
                 .collectLatest { (previousState, currentState) ->
                     if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
@@ -192,13 +194,15 @@ class SelectionsFragment : Fragment() {
                 }
         }
 
-    private fun getRefreshLoadStateFlow(adapter: FilmPagingAdapter): Flow<LoadState> {
+    private fun getRefreshLoadStateFlow(): Flow<LoadState> {
         return adapter.loadStateFlow.map { it.refresh }
     }
 
     private fun observeApiType() {
         viewModel.apiLiveData.observe(viewLifecycleOwner) {
-            viewModel.refresh()
+            this.lifecycleScope.launch {
+                refreshSelectionsFilmList()
+            }
             when (it) {
                 ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
                 ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
@@ -209,12 +213,16 @@ class SelectionsFragment : Fragment() {
 
     private fun setupSwipeToRefresh() {
         binding.selectionsSwipeRefreshLayout.setOnRefreshListener {
-            viewModel.refresh()
             this.lifecycleScope.launch {
-                delay(1000L)
+                refreshSelectionsFilmList()
                 binding.selectionsSwipeRefreshLayout.isRefreshing = false
             }
         }
+    }
+
+    private suspend fun refreshSelectionsFilmList() {
+        adapter.submitData(PagingData.empty())
+        viewModel.refresh()
     }
 
     private fun initSettingsButton() {

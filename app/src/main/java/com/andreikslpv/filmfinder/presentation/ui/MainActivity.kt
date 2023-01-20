@@ -264,6 +264,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeNetworkAvailability() {
         viewModel.connectionLiveData.observe(this) {
+            changeNetworkAvailabilityUseCase.execute(it)
             updateMessageBoard()
         }
     }

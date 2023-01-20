@@ -77,6 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_of_elements"
+        android:layout_marginTop="@dimen/margin_of_elements"
         android:layout_marginEnd="@dimen/margin_of_elements"
         android:text="@string/settings_cache_title"
         android:textAlignment="textStart"

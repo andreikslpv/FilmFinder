@@ -8,7 +8,7 @@
     <string name="main.menu_settings_title">Настройки</string>
     <string name="main_backpress_message">Нажмите дважды для выхода</string>
     <string name="main_message_offline">Интернет недоступен.</string>
-    <string name="main_message_cache">Данные загружены из кеша</string>
+    <string name="main_message_cache">Данные загружаются из кеша</string>
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
     <string name="category_now_playing">Сейчас в кино</string>

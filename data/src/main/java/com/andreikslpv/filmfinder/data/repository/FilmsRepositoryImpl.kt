@@ -42,12 +42,21 @@ class FilmsRepositoryImpl @Inject constructor(
 
     override fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>> {
         return getFlowFromPagingSource(
-            if (isNetworkAvailable) apiDataSource.getFilmsByCategoryPagingSource(
+            if (getResultOfChoiceSource()) apiDataSource.getFilmsByCategoryPagingSource(
                 category,
                 object : ApiCallback {
                     override fun onSuccess(films: List<FilmDomainModel>) {
-                        cacheDataSource.deleteCachedFilms(getCurrentApiDataSource(), category)
-                        cacheDataSource.saveFilmsToCache(films, getCurrentApiDataSource(), category)
+                        if (isNetworkAvailable) {
+                            cacheDataSource.deleteCachedFilms(
+                                getCurrentApiDataSource(),
+                                category
+                            )
+                            cacheDataSource.saveFilmsToCache(
+                                films,
+                                getCurrentApiDataSource(),
+                                category
+                            )
+                        }
                     }
 
                     override fun onFailure() {
@@ -59,9 +68,19 @@ class FilmsRepositoryImpl @Inject constructor(
 
     override fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>> {
         return getFlowFromPagingSource(
-            if (isNetworkAvailable) apiDataSource.getSearchResultPagingSource(query)
+            if (getResultOfChoiceSource()) apiDataSource.getSearchResultPagingSource(query)
             else cacheDataSource.getSearchResultPagingSource(getCurrentApiDataSource(), query)
         )
+    }
+
+    private fun getResultOfChoiceSource(): Boolean {
+        // возвращает true если данные надо брать из апи, false - если из кеша
+        return when (currentCacheMode) {
+            ValuesType.AUTO -> isNetworkAvailable
+            ValuesType.ALWAYS -> false
+            ValuesType.NEVER -> true
+            else -> false
+        }
     }
 
     private fun getFlowFromPagingSource(pagingSource: PagingSource<Int, FilmDomainModel>): Flow<PagingData<FilmDomainModel>> {

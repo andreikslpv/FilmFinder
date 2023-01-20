@@ -30,5 +30,5 @@
     <string name="settings_cache_title">Load data from the cache:</string>
     <string name="settings_cache_auto">auto (when the network is unavailable)</string>
     <string name="main_message_offline">Internet is not available.</string>
-    <string name="main_message_cache">Data loaded from cache</string>
+    <string name="main_message_cache">Data is loaded from the cache</string>
 </resources>
