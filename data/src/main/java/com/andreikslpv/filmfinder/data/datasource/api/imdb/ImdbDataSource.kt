@@ -3,9 +3,10 @@ package com.andreikslpv.filmfinder.data.datasource.api.imdb
 import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
+import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -18,6 +19,7 @@ class ImdbDataSource @Inject constructor(
     private val context: Context,
     okHttpClient: OkHttpClient,
 ) : FilmsApiDataSource {
+
     private val categoryMap = mapOf(
         Pair(CategoryType.POPULAR, ImdbConstants.CATEGORY_POPULAR),
         Pair(CategoryType.TOP_250, ImdbConstants.CATEGORY_TOP_250),
@@ -36,11 +38,15 @@ class ImdbDataSource @Inject constructor(
         .client(okHttpClient)
         .build()
 
-    override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
+    override fun getFilmsByCategoryPagingSource(
+        category: CategoryType,
+        callback: ApiCallback
+    ): PagingSource<Int, FilmDomainModel> {
         return ImdbPagingSourceFilmsByCategory(
             retrofit.create(ImdbServiceFilmsByCategory::class.java),
             context.getString(R.string.imdb_language),
-            getPathFromCategory(category)
+            getPathFromCategory(category),
+            callback
         )
     }
 
@@ -56,11 +62,12 @@ class ImdbDataSource @Inject constructor(
         return categoryMap.keys.toList()
     }
 
-    override fun getPathFromCategory(category: CategoryType): String {
+    private fun getPathFromCategory(category: CategoryType): String {
         return categoryMap[category] ?: ""
     }
 
     override fun getApiType(): ValuesType {
         return ValuesType.IMDB
     }
+
 }

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
@@ -38,6 +39,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding
         get() = _binding!!
+
+    private lateinit var adapter: FilmPagingAdapter
 
     @Inject
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
@@ -88,7 +91,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initFilmListRecycler() {
-        val adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
+        adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
             override fun click(
                 film: FilmDomainModel,
                 image: ImageView,
@@ -111,12 +114,12 @@ class HomeFragment : Fragment() {
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
 
-        observeFilms(adapter)
-        handleScrollingToTopWhenSearching(adapter)
-        handleListVisibility(adapter)
+        observeFilms()
+        handleScrollingToTopWhenSearching()
+        handleListVisibility()
     }
 
-    private fun observeFilms(adapter: FilmPagingAdapter) {
+    private fun observeFilms() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
@@ -125,9 +128,9 @@ class HomeFragment : Fragment() {
     }
 
     // Когда пользователь меняет поисковой запрос, то отслеживаем этот момент и прокручиваем в начало списка
-    private fun handleScrollingToTopWhenSearching(adapter: FilmPagingAdapter) =
+    private fun handleScrollingToTopWhenSearching() =
         this.lifecycleScope.launch {
-            getRefreshLoadStateFlow(adapter)
+            getRefreshLoadStateFlow()
                 .simpleScan(count = 2)
                 .collectLatest { (previousState, currentState) ->
                     if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
@@ -137,9 +140,9 @@ class HomeFragment : Fragment() {
         }
 
     // Если данные не загружены, то прячем список
-    private fun handleListVisibility(adapter: FilmPagingAdapter) =
+    private fun handleListVisibility() =
         this.lifecycleScope.launch {
-            getRefreshLoadStateFlow(adapter)
+            getRefreshLoadStateFlow()
                 .simpleScan(count = 3)
                 .collectLatest { (beforePrevious, previous, current) ->
                     binding.homeRecycler.isInvisible = current is LoadState.Error
@@ -149,14 +152,16 @@ class HomeFragment : Fragment() {
                 }
         }
 
-    private fun getRefreshLoadStateFlow(adapter: FilmPagingAdapter): Flow<LoadState> {
+    private fun getRefreshLoadStateFlow(): Flow<LoadState> {
         return adapter.loadStateFlow
             .map { it.refresh }
     }
 
     private fun observeApiType() {
         viewModel.apiLiveData.observe(viewLifecycleOwner) {
-            viewModel.refresh()
+            this.lifecycleScope.launch {
+                refreshHomeFilmList()
+            }
             when (it) {
                 ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
                 ValuesType.IMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
@@ -190,12 +195,16 @@ class HomeFragment : Fragment() {
 
     private fun setupSwipeToRefresh() {
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
-            viewModel.refresh()
             this.lifecycleScope.launch {
-                delay(1000L)
+                refreshHomeFilmList()
                 binding.homeSwipeRefreshLayout.isRefreshing = false
             }
         }
+    }
+
+    private suspend fun refreshHomeFilmList() {
+        adapter.submitData(PagingData.empty())
+        viewModel.refresh()
     }
 
     private fun initSettingsButton() {

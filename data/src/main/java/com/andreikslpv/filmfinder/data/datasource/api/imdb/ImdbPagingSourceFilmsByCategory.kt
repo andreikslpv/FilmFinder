@@ -2,6 +2,7 @@ package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import retrofit2.HttpException
@@ -9,7 +10,8 @@ import retrofit2.HttpException
 class ImdbPagingSourceFilmsByCategory(
     private val categoryService: ImdbServiceFilmsByCategory,
     private val language: String,
-    private val category: String
+    private val category: String,
+    private val callback: ApiCallback,
 ) : PagingSource<Int, FilmDomainModel>() {
     private val step = 1
 
@@ -33,6 +35,7 @@ class ImdbPagingSourceFilmsByCategory(
             return if (response.isSuccessful) {
                 if (response.body()!!.errorMessage.isNullOrEmpty()) {
                     val totalPages: Int = response.body()!!.items!!.size / PAGE_SIZE
+                    callback.onSuccess(ImdbCategoryItemToDomainModel.map(response.body()!!.items))
                     LoadResult.Page(
                         data = ImdbCategoryItemToDomainModel.map(response.body()!!.items),
                         prevKey = if (pageNumber > ImdbConstants.START_PAGE) pageNumber - step else null,

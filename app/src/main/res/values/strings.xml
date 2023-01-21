@@ -7,6 +7,8 @@
     <string name="main.menu_selections_title">Подборки</string>
     <string name="main.menu_settings_title">Настройки</string>
     <string name="main_backpress_message">Нажмите дважды для выхода</string>
+    <string name="main_message_offline">Интернет недоступен.</string>
+    <string name="main_message_cache">Данные загружаются из кеша</string>
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
     <string name="category_now_playing">Сейчас в кино</string>
@@ -22,5 +24,10 @@
     <string name="settings_api_title">Использовать данные с сайта:</string>
     <string name="settings_api_tmdb">themoviedb.org</string>
     <string name="settings_api_imdb">imdb-api.com</string>
+    <string name="settings_cache_title">Загружать данные из кеша:</string>
+    <string name="settings_cache_auto">авто (когда сеть недоступна)</string>
+    <string name="settings_cache_always">всегда</string>
+    <string name="settings_cache_never">никогда</string>
+    <string name="settings_cache_clear">Очистить кеш</string>
 
 </resources>

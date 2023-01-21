@@ -18,12 +18,14 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.SettingsType
-import com.andreikslpv.filmfinder.domain.usecase.GetAllSettingValueUseCase
-import com.andreikslpv.filmfinder.domain.usecase.SetApiDataSourceUseCase
+import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.*
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
+import com.andreikslpv.filmfinder.presentation.ui.utils.visible
 import com.andreikslpv.filmfinder.presentation.vm.MainActivityViewModel
+import com.andreikslpv.filmfinder.presentation.vm.MainActivityViewModelFactory
 import javax.inject.Inject
 
 
@@ -41,14 +43,24 @@ class MainActivity : AppCompatActivity() {
 
     private val detailsFragment = DetailsFragment()
 
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(MainActivityViewModel::class.java)
-    }
+    @Inject
+    lateinit var viewModelFactory: MainActivityViewModelFactory
+    private lateinit var viewModel: MainActivityViewModel
 
     @Inject
     lateinit var getAllSettingValueUseCase: GetAllSettingValueUseCase
+
+    @Inject
+    lateinit var getSettingValueUseCase: GetSettingValueUseCase
+
     @Inject
     lateinit var setApiDataSourceUseCase: SetApiDataSourceUseCase
+
+    @Inject
+    lateinit var setCacheModeUseCase: SetCacheModeUseCase
+
+    @Inject
+    lateinit var changeNetworkAvailabilityUseCase: ChangeNetworkAvailabilityUseCase
 
     init {
         App.instance.dagger.inject(this)
@@ -70,9 +82,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
+
         initApplicationSettings()
         observeCurrentFragment()
         initBottomNavigationMenu()
+        observeNetworkAvailability()
 
         // если первый, то запускаем фрагмент Home
         if (savedInstanceState == null)
@@ -83,10 +98,12 @@ class MainActivity : AppCompatActivity() {
         // устанавливаем сохраненные настройки приложения
         val settingsMap = getAllSettingValueUseCase.execute()
         for (entity in settingsMap)
-            when(entity.key) {
+            when (entity.key) {
                 SettingsType.API_TYPE -> setApiDataSourceUseCase.execute(entity.value)
+                SettingsType.CACHE_MODE -> setCacheModeUseCase.execute(entity.value)
                 else -> {}
             }
+        updateMessageBoard()
     }
 
     private fun initBottomNavigationMenu() {
@@ -241,6 +258,40 @@ class MainActivity : AppCompatActivity() {
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
                 selections.setIcon(R.drawable.ic_baseline_selections_border)
+            }
+        }
+    }
+
+    private fun observeNetworkAvailability() {
+        viewModel.connectionLiveData.observe(this) {
+            changeNetworkAvailabilityUseCase.execute(it)
+            updateMessageBoard()
+        }
+    }
+
+    fun updateMessageBoard(_cacheMode: ValuesType? = null) {
+        val cacheMode = _cacheMode ?: getSettingValueUseCase.execute(SettingsType.CACHE_MODE)
+        val isNetworkAvailable = viewModel.connectionLiveData.value
+        isNetworkAvailable?.let {
+            if (isNetworkAvailable) {
+                if (cacheMode == ValuesType.ALWAYS) {
+                    binding.networkStatus.visible(true)
+                    binding.networkStatus.text = getString(R.string.main_message_cache)
+                } else {
+                    binding.networkStatus.visible(false)
+                    binding.networkStatus.text = ""
+                }
+            } else {
+                binding.networkStatus.visible(true)
+                when (cacheMode) {
+                    ValuesType.AUTO, ValuesType.ALWAYS ->
+                        "${getString(R.string.main_message_offline)} ${getString(R.string.main_message_cache)}".also {
+                            binding.networkStatus.text = it
+                        }
+                    ValuesType.NEVER -> binding.networkStatus.text =
+                        getString(R.string.main_message_offline)
+                    else -> {}
+                }
             }
         }
     }

@@ -3,9 +3,10 @@ package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 import android.content.Context
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.R
+import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -16,8 +17,9 @@ import javax.inject.Singleton
 @Singleton
 class TmdbDataSource @Inject constructor(
     private val context: Context,
-    okHttpClient: OkHttpClient
+    okHttpClient: OkHttpClient,
 ) : FilmsApiDataSource {
+
     private val categoryMap = mapOf(
         Pair(CategoryType.POPULAR, TmdbConstants.CATEGORY_POPULAR),
         Pair(CategoryType.TOP_RATED, TmdbConstants.CATEGORY_TOP_RATED),
@@ -33,11 +35,15 @@ class TmdbDataSource @Inject constructor(
         .client(okHttpClient)
         .build()
 
-    override fun getFilmsByCategoryPagingSource(category: CategoryType): PagingSource<Int, FilmDomainModel> {
+    override fun getFilmsByCategoryPagingSource(
+        category: CategoryType,
+        callback: ApiCallback
+    ): PagingSource<Int, FilmDomainModel> {
         return TmdbPagingSourceFilmsByCategory(
             retrofit.create(TmdbServiceFilmsByCategory::class.java),
             context.getString(R.string.tmdb_language),
-            getPathFromCategory(category)
+            getPathFromCategory(category),
+            callback,
         )
     }
 
@@ -53,11 +59,12 @@ class TmdbDataSource @Inject constructor(
         return categoryMap.keys.toList()
     }
 
-    override fun getPathFromCategory(category: CategoryType): String {
+    private fun getPathFromCategory(category: CategoryType): String {
         return categoryMap[category] ?: ""
     }
 
     override fun getApiType(): ValuesType {
         return ValuesType.TMDB
     }
+
 }

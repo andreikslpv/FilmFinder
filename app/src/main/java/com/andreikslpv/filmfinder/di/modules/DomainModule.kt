@@ -70,6 +70,27 @@ class DomainModule {
         return GetCurrentApiDataSourceUseCase(filmsRepository)
     }
 
+    // usecase для задания состояния (filmsRepository)
+    @Provides
+    @Singleton
+    fun provideChangeNetworkAvailabilityUseCase(filmsRepository: FilmsRepository): ChangeNetworkAvailabilityUseCase {
+        return ChangeNetworkAvailabilityUseCase(filmsRepository)
+    }
+
+    // usecase для работы с кешем (filmsRepository)
+    @Provides
+    @Singleton
+    fun provideDeleteAllCachedFilmsUseCase(filmsRepository: FilmsRepository): DeleteAllCachedFilmsUseCase {
+        return DeleteAllCachedFilmsUseCase(filmsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSetCacheModeUseCase(filmsRepository: FilmsRepository): SetCacheModeUseCase {
+        return SetCacheModeUseCase(filmsRepository)
+    }
+
+    // usecase для работы с репозиторием настроек
     @Provides
     @Singleton
     fun provideGetAllSettingValue(settingsRepository: SettingsRepository): GetAllSettingValueUseCase {

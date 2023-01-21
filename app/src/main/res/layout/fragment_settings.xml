@@ -62,5 +62,75 @@
 
     </com.google.android.material.chip.ChipGroup>
 
+    <View
+        android:id="@+id/settingsApiDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="@dimen/margin_of_elements"
+        android:background="#ff888888"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsApiChipGroup" />
+
+    <TextView
+        android:id="@+id/settingsCacheTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_of_elements"
+        android:layout_marginTop="@dimen/margin_of_elements"
+        android:layout_marginEnd="@dimen/margin_of_elements"
+        android:text="@string/settings_cache_title"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsApiDivider" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/settingsCacheChipGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_of_elements"
+        android:layout_marginEnd="@dimen/margin_of_elements"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsCacheTitle"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/settingsCacheChipAuto"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_cache_auto" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/settingsCacheChipAlways"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_cache_always" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/settingsCacheChipNever"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_cache_never" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <Button
+        android:id="@+id/settingsCacheClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_cache_clear"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsCacheChipGroup" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
