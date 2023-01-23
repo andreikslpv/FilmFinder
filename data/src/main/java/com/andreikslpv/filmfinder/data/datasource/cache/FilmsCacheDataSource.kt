@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder.data.datasource.cache
 
 import androidx.paging.PagingSource
+import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
@@ -11,7 +12,9 @@ interface FilmsCacheDataSource {
 
     fun deleteCachedFilms(api: ValuesType, category: CategoryType)
 
-    fun deleteAllCachedFilms()
+    fun putCategoryToCache(api: ValuesType, category: CategoryType, films: List<FilmDomainModel>)
+
+    fun deleteCache()
 
     fun getFilmsByCategoryPagingSource(
         api: ValuesType,

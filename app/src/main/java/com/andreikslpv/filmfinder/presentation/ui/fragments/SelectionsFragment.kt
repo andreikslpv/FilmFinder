@@ -177,7 +177,6 @@ class SelectionsFragment : Fragment() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
-//                adapter.refresh()
             }
         }
     }

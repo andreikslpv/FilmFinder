@@ -3,7 +3,6 @@ package com.andreikslpv.filmfinder.data.datasource.cache
 import android.content.ContentValues
 import androidx.paging.PagingSource
 import com.andreikslpv.filmfinder.data.datasource.local.db.DatabaseHelper
-import com.andreikslpv.filmfinder.data.datasource.local.db.DatabasePrinter
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
@@ -45,7 +44,11 @@ class DbDataSource @Inject constructor(private val databaseHelper: DatabaseHelpe
         sqlDb.close()
     }
 
-    override fun deleteAllCachedFilms() {
+    override fun putCategoryToCache(api: ValuesType, category: CategoryType, films: List<FilmDomainModel>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun deleteCache() {
         val sqlDb = databaseHelper.writableDatabase
         sqlDb.delete(DatabaseHelper.TABLE_CACHE, DatabaseHelper.COLUMN_ID + " > ?", arrayOf("-1"))
         sqlDb.close()

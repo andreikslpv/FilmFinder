@@ -11,7 +11,7 @@ import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.DomainToLocalMapper
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
-import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainMapper
+import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainListMapper
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
@@ -47,14 +47,10 @@ class FilmsRepositoryImpl @Inject constructor(
                 object : ApiCallback {
                     override fun onSuccess(films: List<FilmDomainModel>) {
                         if (isNetworkAvailable) {
-                            cacheDataSource.deleteCachedFilms(
+                            cacheDataSource.putCategoryToCache(
                                 getCurrentApiDataSource(),
-                                category
-                            )
-                            cacheDataSource.saveFilmsToCache(
+                                category,
                                 films,
-                                getCurrentApiDataSource(),
-                                category
                             )
                         }
                     }
@@ -126,7 +122,7 @@ class FilmsRepositoryImpl @Inject constructor(
     }
 
     override fun deleteAllCachedFilms() {
-        cacheDataSource.deleteAllCachedFilms()
+        cacheDataSource.deleteCache()
     }
 
     override fun changeNetworkAvailability(newStatus: Boolean) {
@@ -134,7 +130,7 @@ class FilmsRepositoryImpl @Inject constructor(
     }
 
     override fun getAllLocalSavedFilms(): List<FilmDomainModel> {
-        return LocalToDomainMapper.map(localDataSource.getItems())
+        return LocalToDomainListMapper.map(localDataSource.getItems())
     }
 
     override fun saveFilmToLocal(film: FilmDomainModel) {

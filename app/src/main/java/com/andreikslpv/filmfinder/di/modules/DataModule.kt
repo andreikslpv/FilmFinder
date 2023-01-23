@@ -22,7 +22,7 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindFilmsCacheDataSource(dbDataSource: DbDataSource): FilmsCacheDataSource
+    abstract fun bindFilmsCacheDataSource(RoomDataSource: DbDataSource): FilmsCacheDataSource
 
     @Binds
     @Singleton
