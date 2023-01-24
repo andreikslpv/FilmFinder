@@ -3,15 +3,16 @@ package com.andreikslpv.filmfinder.data.datasource.local.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.andreikslpv.filmfinder.data.datasource.local.db.DbConstants
+import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants
 import com.andreikslpv.filmfinder.data.datasource.local.models.CategoryAndFilmModel
 
 @Dao
 interface CategoryDao {
     @Transaction
     @Query(
-        "SELECT * FROM ${DbConstants.TABLE_CACHED_CATEGORY} "
-                + "WHERE ${DbConstants.COLUMN_API} = :api AND ${DbConstants.COLUMN_CATEGORY} = :category"
+        "SELECT * FROM ${RoomConstants.TABLE_CACHED_CATEGORY}"
+                + " WHERE ${RoomConstants.COLUMN_API} = :api AND ${RoomConstants.COLUMN_CATEGORY} = :category"
+                + " ORDER BY ${RoomConstants.COLUMN_CATEGORY_ID}"
     )
-    fun getCategoryWithFilms(api: String, category: String): List<CategoryAndFilmModel>
+    suspend fun getCategoryWithFilms(api: String, category: String): List<CategoryAndFilmModel>
 }

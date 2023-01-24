@@ -168,7 +168,6 @@ class SelectionsFragment : Fragment() {
             header = FilmLoadStateAdapter { adapter.retry() },
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
-
         observeFilms()
         handleScrollingToTopWhenChangeCategory()
     }

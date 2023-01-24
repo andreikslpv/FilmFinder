@@ -3,17 +3,13 @@ package com.andreikslpv.filmfinder.di.modules
 import android.content.Context
 import androidx.room.Room
 import com.andreikslpv.filmfinder.data.datasource.local.db.AppDatabase
-import com.andreikslpv.filmfinder.data.datasource.local.db.DatabaseHelper
-import com.andreikslpv.filmfinder.data.datasource.local.db.DbConstants
+import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
 @Module
 class DatabaseModule {
-    @Singleton
-    @Provides
-    fun provideDatabaseHelper(context: Context) = DatabaseHelper(context)
 
     @Singleton
     @Provides
@@ -21,7 +17,7 @@ class DatabaseModule {
         Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            DbConstants.DATABASE_NAME
+            RoomConstants.DATABASE_NAME
         ).build()
 
     @Singleton

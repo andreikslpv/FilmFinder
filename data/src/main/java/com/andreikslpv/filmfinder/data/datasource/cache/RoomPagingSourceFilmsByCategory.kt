@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.andreikslpv.filmfinder.data.datasource.local.CategoryAndFilmToDomainMapper
 import com.andreikslpv.filmfinder.data.datasource.local.dao.CategoryDao
+import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants.START_PAGE
 import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
@@ -18,8 +19,11 @@ class RoomPagingSourceFilmsByCategory(
         return try {
             val pageNumber = params.key ?: START_PAGE
             //Создаем курсор на основании запроса "Получить из таблицы записи для указанных апи и категории"
+            val temp = categoryDao.getCategoryWithFilms(api, category)
+            println("!!! $temp")
             val films =
-                CategoryAndFilmToDomainMapper.map(categoryDao.getCategoryWithFilms(api, category))
+                CategoryAndFilmToDomainMapper.map(temp)
+            println("!!! $films")
             val totalPages = films.size / PAGE_SIZE
 
             LoadResult.Page(

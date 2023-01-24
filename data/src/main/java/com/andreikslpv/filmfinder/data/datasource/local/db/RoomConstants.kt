@@ -1,6 +1,8 @@
 package com.andreikslpv.filmfinder.data.datasource.local.db
 
-object DbConstants {
+object RoomConstants {
+
+    const val START_PAGE = 0
 
     const val DATABASE_NAME = "film_db"
     const val TABLE_CACHED_FILMS = "cached_films"

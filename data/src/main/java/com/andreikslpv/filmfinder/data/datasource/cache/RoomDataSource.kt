@@ -18,18 +18,6 @@ class RoomDataSource @Inject constructor(
     ) :
     FilmsCacheDataSource {
 
-    override fun saveFilmsToCache(
-        films: List<FilmDomainModel>,
-        api: ValuesType,
-        category: CategoryType
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun deleteCachedFilms(api: ValuesType, category: CategoryType) {
-        TODO("Not yet implemented")
-    }
-
     override fun putCategoryToCache(api: ValuesType, category: CategoryType, films: List<FilmDomainModel>) {
         Executors.newSingleThreadExecutor().execute {
             categoryFilmDao.putCategoryToCache(api.value, category.name, DomainToLocalListMapper.map(films))
