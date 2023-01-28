@@ -7,11 +7,14 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 
 interface FilmsCacheDataSource {
 
-    fun saveFilmsToCache(films: List<FilmDomainModel>, api: ValuesType, category: CategoryType)
+    fun putCategoryToCache(
+        api: ValuesType,
+        category: CategoryType,
+        films: List<FilmDomainModel>,
+        currentIndex: Int
+    )
 
-    fun deleteCachedFilms(api: ValuesType, category: CategoryType)
-
-    fun deleteAllCachedFilms()
+    fun deleteCache()
 
     fun getFilmsByCategoryPagingSource(
         api: ValuesType,

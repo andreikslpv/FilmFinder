@@ -26,6 +26,14 @@ class SelectionsFragmentViewModel : ViewModel() {
     lateinit var getCurrentApiDataSourceUseCase: GetCurrentApiDataSourceUseCase
 
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
+
+//    val filmsFlow by lazy {
+//        currentCategory
+//            .asFlow()
+//            .flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }
+//            .cachedIn(viewModelScope)
+//    }
+
     private val currentCategory = MutableLiveData(CategoryType.NONE)
     val apiLiveData: MutableLiveData<ValuesType> = MutableLiveData()
 
@@ -39,7 +47,7 @@ class SelectionsFragmentViewModel : ViewModel() {
     }
 
     fun setCategory(newCategory: CategoryType) {
-        if (this.currentCategory.value == newCategory) return
+        if (this.currentCategory.value == newCategory || newCategory == CategoryType.NONE) return
         else this.currentCategory.value = newCategory
     }
 

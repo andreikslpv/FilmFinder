@@ -168,7 +168,6 @@ class SelectionsFragment : Fragment() {
             header = FilmLoadStateAdapter { adapter.retry() },
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
-
         observeFilms()
         handleScrollingToTopWhenChangeCategory()
     }
@@ -177,7 +176,6 @@ class SelectionsFragment : Fragment() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
-//                adapter.refresh()
             }
         }
     }

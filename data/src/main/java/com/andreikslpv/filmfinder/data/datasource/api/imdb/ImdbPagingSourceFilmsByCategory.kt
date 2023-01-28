@@ -35,7 +35,7 @@ class ImdbPagingSourceFilmsByCategory(
             return if (response.isSuccessful) {
                 if (response.body()!!.errorMessage.isNullOrEmpty()) {
                     val totalPages: Int = response.body()!!.items!!.size / PAGE_SIZE
-                    callback.onSuccess(ImdbCategoryItemToDomainModel.map(response.body()!!.items))
+                    callback.onSuccess(ImdbCategoryItemToDomainModel.map(response.body()!!.items), 0)
                     LoadResult.Page(
                         data = ImdbCategoryItemToDomainModel.map(response.body()!!.items),
                         prevKey = if (pageNumber > ImdbConstants.START_PAGE) pageNumber - step else null,
