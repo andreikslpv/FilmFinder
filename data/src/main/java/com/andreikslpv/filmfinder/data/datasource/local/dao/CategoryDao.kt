@@ -12,7 +12,7 @@ interface CategoryDao {
     @Query(
         "SELECT * FROM ${RoomConstants.TABLE_CACHED_CATEGORY}"
                 + " WHERE ${RoomConstants.COLUMN_API} = :api AND ${RoomConstants.COLUMN_CATEGORY} = :category"
-                + " ORDER BY ${RoomConstants.COLUMN_CATEGORY_ID}"
+                + " ORDER BY ${RoomConstants.COLUMN_RANK}"
     )
     suspend fun getCategoryWithFilms(api: String, category: String): List<CategoryAndFilmModel>
 }

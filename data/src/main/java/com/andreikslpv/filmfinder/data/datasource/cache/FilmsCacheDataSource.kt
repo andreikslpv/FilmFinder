@@ -7,7 +7,12 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 
 interface FilmsCacheDataSource {
 
-    fun putCategoryToCache(api: ValuesType, category: CategoryType, films: List<FilmDomainModel>)
+    fun putCategoryToCache(
+        api: ValuesType,
+        category: CategoryType,
+        films: List<FilmDomainModel>,
+        currentIndex: Int
+    )
 
     fun deleteCache()
 

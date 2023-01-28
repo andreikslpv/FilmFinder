@@ -45,12 +45,13 @@ class FilmsRepositoryImpl @Inject constructor(
             if (getResultOfChoiceSource()) apiDataSource.getFilmsByCategoryPagingSource(
                 category,
                 object : ApiCallback {
-                    override fun onSuccess(films: List<FilmDomainModel>) {
+                    override fun onSuccess(films: List<FilmDomainModel>, currentIndex: Int) {
                         if (isNetworkAvailable) {
                             cacheDataSource.putCategoryToCache(
                                 getCurrentApiDataSource(),
                                 category,
                                 films,
+                                currentIndex,
                             )
                         }
                     }

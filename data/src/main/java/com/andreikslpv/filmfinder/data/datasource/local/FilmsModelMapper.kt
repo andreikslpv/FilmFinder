@@ -56,18 +56,31 @@ object DomainToLocalMapper : BaseMapper<FilmDomainModel, FilmLocalModel> {
 }
 
 object LocalToCategoryMapper {
-    fun map(api: String, category: String, type: List<FilmLocalModel>): List<CategoryModel> {
-        return type.map {
-            CategoryModel(
-                api = api,
-                category = category,
-                filmId = it.id
+    fun map(
+        api: String,
+        category: String,
+        input: List<FilmLocalModel>,
+        currentIndex: Int
+    ): List<CategoryModel> {
+        val result = mutableListOf<CategoryModel>()
+        var i = currentIndex
+        for (entity in input) {
+            result.add(
+                CategoryModel(
+                    api = api,
+                    category = category,
+                    rank = i,
+                    filmId = entity.id
+                )
             )
+            i++
         }
+        return result
     }
 }
 
-object CategoryAndFilmToDomainMapper : BaseMapper<List<CategoryAndFilmModel>, List<FilmDomainModel>> {
+object CategoryAndFilmToDomainMapper :
+    BaseMapper<List<CategoryAndFilmModel>, List<FilmDomainModel>> {
     override fun map(type: List<CategoryAndFilmModel>?): List<FilmDomainModel> {
         return type?.map {
             FilmDomainModel(

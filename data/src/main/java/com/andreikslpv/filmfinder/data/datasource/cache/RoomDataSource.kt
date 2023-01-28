@@ -15,12 +15,21 @@ class RoomDataSource @Inject constructor(
     private val filmDao: FilmDao,
     private val categoryDao: CategoryDao,
     private val categoryFilmDao: CategoryFilmDao,
-    ) :
-    FilmsCacheDataSource {
+) : FilmsCacheDataSource {
 
-    override fun putCategoryToCache(api: ValuesType, category: CategoryType, films: List<FilmDomainModel>) {
+    override fun putCategoryToCache(
+        api: ValuesType,
+        category: CategoryType,
+        films: List<FilmDomainModel>,
+        currentIndex: Int
+    ) {
         Executors.newSingleThreadExecutor().execute {
-            categoryFilmDao.putCategoryToCache(api.value, category.name, DomainToLocalListMapper.map(films))
+            categoryFilmDao.putCategoryToCache(
+                api.value,
+                category.name,
+                DomainToLocalListMapper.map(films),
+                currentIndex,
+            )
         }
     }
 
@@ -41,6 +50,6 @@ class RoomDataSource @Inject constructor(
         api: ValuesType,
         query: String
     ): PagingSource<Int, FilmDomainModel> {
-        return RoomPagingSourceSearchResult(filmDao, query)
+        return RoomPagingSourceSearchResult(filmDao, api.value, query)
     }
 }

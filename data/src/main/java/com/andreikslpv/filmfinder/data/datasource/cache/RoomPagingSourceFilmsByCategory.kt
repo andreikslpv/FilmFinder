@@ -4,8 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.andreikslpv.filmfinder.data.datasource.local.CategoryAndFilmToDomainMapper
 import com.andreikslpv.filmfinder.data.datasource.local.dao.CategoryDao
-import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants.START_PAGE
-import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class RoomPagingSourceFilmsByCategory(
@@ -17,19 +15,13 @@ class RoomPagingSourceFilmsByCategory(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
         return try {
-            val pageNumber = params.key ?: START_PAGE
-            //Создаем курсор на основании запроса "Получить из таблицы записи для указанных апи и категории"
-            val temp = categoryDao.getCategoryWithFilms(api, category)
-            println("!!! $temp")
             val films =
-                CategoryAndFilmToDomainMapper.map(temp)
-            println("!!! $films")
-            val totalPages = films.size / PAGE_SIZE
+                CategoryAndFilmToDomainMapper.map(categoryDao.getCategoryWithFilms(api, category))
 
             LoadResult.Page(
                 data = films,
-                prevKey = if (pageNumber > START_PAGE) pageNumber - step else null,
-                nextKey = if (pageNumber < totalPages) pageNumber + step else null
+                prevKey = null,
+                nextKey = null
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

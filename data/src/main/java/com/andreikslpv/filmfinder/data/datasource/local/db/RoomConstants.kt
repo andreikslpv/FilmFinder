@@ -16,9 +16,9 @@ object RoomConstants {
     const val COLUMN_IS_WATCH_LATER = "is_watch_later"
 
     const val TABLE_CACHED_CATEGORY = "cached_category"
-    const val COLUMN_CATEGORY_ID = "category_id"
     const val COLUMN_API = "api"
     const val COLUMN_CATEGORY = "category"
+    const val COLUMN_RANK = "rank"
     const val COLUMN_FILM = "film"
 
 }
