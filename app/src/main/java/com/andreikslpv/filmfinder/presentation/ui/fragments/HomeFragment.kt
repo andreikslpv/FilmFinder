@@ -26,7 +26,9 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
+import com.andreikslpv.filmfinder.presentation.ui.utils.makeToast
 import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
+import com.andreikslpv.filmfinder.presentation.ui.utils.visible
 import com.andreikslpv.filmfinder.presentation.vm.HomeFragmentViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -65,8 +67,9 @@ class HomeFragment : Fragment() {
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 1)
 
         initSearchView()
-        setupSwipeToRefresh()
         initFilmListRecycler()
+        observeFilmFlowStatus()
+        setupSwipeToRefresh()
         observeApiType()
         initSettingsButton()
     }
@@ -85,6 +88,13 @@ class HomeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun observeFilmFlowStatus() {
+        viewModel.filmsFlowInitStatus.observe(viewLifecycleOwner) {
+            if (it)
+                observeFilms()
+        }
     }
 
     private fun initFilmListRecycler() {
@@ -111,15 +121,51 @@ class HomeFragment : Fragment() {
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
 
-        observeFilms()
+        initLoadStateListening()
         handleScrollingToTopWhenSearching()
-        handleListVisibility()
+        //handleListVisibility()
     }
 
     private fun observeFilms() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
+            }
+        }
+    }
+
+    private fun initLoadStateListening() {
+        this.lifecycleScope.launch {
+            adapter.loadStateFlow.collect {
+                if (it.source.prepend is LoadState.NotLoading) {
+                    binding.homeProgressBar.visible(true)
+                }
+                if (it.source.prepend is LoadState.Error) {
+                    (it.source.prepend as LoadState.Error).error.message?.makeToast(requireContext())
+                }
+                if (it.source.append is LoadState.Error) {
+                    (it.source.append as LoadState.Error).error.message?.makeToast(requireContext())
+                }
+                if (it.source.refresh is LoadState.NotLoading) {
+                    binding.homeProgressBar.visible(false)
+                }
+                if (it.source.refresh is LoadState.Error) {
+                    binding.homeProgressBar.visible(false)
+                    (it.source.refresh as LoadState.Error).error.message?.makeToast(requireContext())
+                }
+                /* скрытие/показ homeRecycler и loadStateView*/
+                // если добавление завершено, тогда мы уже закончили с показом начальной заставки,
+                // и поэтому прячем homeRecycler и показываем loadStateView
+//                if (it.prepend is LoadState.NotLoading && it.prepend.endOfPaginationReached) {
+//                    binding.homeRecycler.isInvisible = false
+//                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
+//                }
+//                // если добавление завершено, а количество элементов адаптера равно нулю,
+//                // это означает, что показывать нечего, поэтому прячем homeRecycler и показываем loadStateView
+//                if (it.source.append is LoadState.NotLoading && it.append.endOfPaginationReached) {
+//                    binding.homeRecycler.isInvisible = adapter.itemCount < 1
+//                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
+//                }
             }
         }
     }
@@ -182,9 +228,15 @@ class HomeFragment : Fragment() {
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isNotBlank()) {
+                    binding.homeRecycler.isInvisible = false
+                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
                     viewModel.setQuery(newText)
                     return true
+                } else {
+                    binding.homeRecycler.isInvisible = true
+                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
                 }
+
                 return true
             }
         })

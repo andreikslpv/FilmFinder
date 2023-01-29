@@ -55,8 +55,15 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_of_RV"
             tools:listitem="@layout/item_film" />
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/homeProgressBar"
+        android:layout_width="@dimen/progress_bar_dimen"
+        android:layout_height="@dimen/progress_bar_dimen"
+        android:layout_gravity="center"
+        android:elevation="@dimen/progress_bar_elevation"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/loadStateView"

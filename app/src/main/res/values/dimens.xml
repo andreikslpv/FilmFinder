@@ -18,6 +18,10 @@
     <dimen name="rating_donut_z">11dp</dimen>
     <dimen name="progress_bar_size">32dp</dimen>
 
+    <!-- for ProgressBar -->
+    <dimen name="progress_bar_dimen">50dp</dimen>
+    <dimen name="progress_bar_elevation">12dp</dimen>
+
     <!-- details -->
     <dimen name="height_of_appbar">200dp</dimen>
     <dimen name="min_height_of_toolbar">60dp</dimen>

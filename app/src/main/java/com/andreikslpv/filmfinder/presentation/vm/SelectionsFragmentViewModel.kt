@@ -1,9 +1,6 @@
 package com.andreikslpv.filmfinder.presentation.vm
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
@@ -25,23 +22,24 @@ class SelectionsFragmentViewModel : ViewModel() {
     @Inject
     lateinit var getCurrentApiDataSourceUseCase: GetCurrentApiDataSourceUseCase
 
-    val filmsFlow: Flow<PagingData<FilmDomainModel>>
+    lateinit var filmsFlow: Flow<PagingData<FilmDomainModel>>
+    // для отслеживания момента инициализации filmsFlow
+    private val _filmsFlowInitStatus = MutableLiveData(false)
+    val filmsFlowInitStatus: LiveData<Boolean> = _filmsFlowInitStatus
+
     private val currentCategory = MutableLiveData(CategoryType.NONE)
     val apiLiveData: MutableLiveData<ValuesType> = MutableLiveData()
 
     init {
         App.instance.dagger.inject(this)
-        filmsFlow = currentCategory
-            .asFlow()
-            .flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }
-            .cachedIn(viewModelScope)
     }
 
     fun setCategory(newCategory: CategoryType) {
         if (this.currentCategory.value == newCategory) return
         else {
-            println("!!! $newCategory")
             this.currentCategory.value = newCategory
+            if (_filmsFlowInitStatus.value == false)
+                initFilmFlow()
         }
     }
 
@@ -53,5 +51,13 @@ class SelectionsFragmentViewModel : ViewModel() {
         val newApi = getCurrentApiDataSourceUseCase.execute()
         if (newApi == apiLiveData.value) return
         else apiLiveData.value = newApi
+    }
+
+    private fun initFilmFlow() {
+        filmsFlow = currentCategory
+            .asFlow()
+            .flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }
+            .cachedIn(viewModelScope)
+        _filmsFlowInitStatus.value = true
     }
 }

@@ -1,7 +1,9 @@
 package com.andreikslpv.filmfinder.presentation.ui.utils
 
+import android.content.Context
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.scan
@@ -16,6 +18,14 @@ fun ImageView.loadImage(url: String) {
             .load(url)
             .centerCrop()
             .into(this)
+}
+
+fun String.makeToast(context: Context) {
+    Toast.makeText(
+        context,
+        this,
+        Toast.LENGTH_SHORT
+    ).show()
 }
 
 
