@@ -53,7 +53,14 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_of_RV"
             tools:listitem="@layout/item_film" />
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/selectionsProgressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:elevation="12dp"
+        android:visibility="invisible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

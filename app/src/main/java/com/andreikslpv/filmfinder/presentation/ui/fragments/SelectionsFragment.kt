@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -26,6 +26,7 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListe
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
+import com.andreikslpv.filmfinder.presentation.ui.utils.visible
 import com.andreikslpv.filmfinder.presentation.vm.SelectionsFragmentViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -40,12 +41,11 @@ class SelectionsFragment : Fragment() {
 
     @Inject
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+
     @Inject
     lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
 
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(SelectionsFragmentViewModel::class.java)
-    }
+    private val viewModel: SelectionsFragmentViewModel by viewModels()
     private lateinit var adapter: FilmPagingAdapter
     private lateinit var spinnerList: List<String>
     private lateinit var categoryList: List<CategoryType>
@@ -69,8 +69,8 @@ class SelectionsFragment : Fragment() {
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 4)
 
         initSpinner()
-        setupSwipeToRefresh()
         initFilmListRecycler()
+        setupSwipeToRefresh()
         observeApiType()
         initSettingsButton()
     }
@@ -161,6 +161,7 @@ class SelectionsFragment : Fragment() {
                 )
             }
         })
+
         binding.selectionsRecycler.layoutManager = LinearLayoutManager(requireContext())
         //binding.selectionsRecycler.setHasFixedSize(true)
 
@@ -169,6 +170,7 @@ class SelectionsFragment : Fragment() {
             footer = FilmLoadStateAdapter { adapter.retry() }
         )
         observeFilms()
+        initLoadStateListening()
         handleScrollingToTopWhenChangeCategory()
     }
 
@@ -176,6 +178,61 @@ class SelectionsFragment : Fragment() {
         this.lifecycleScope.launch {
             viewModel.filmsFlow.collectLatest { pagedData ->
                 adapter.submitData(pagedData)
+            }
+        }
+    }
+
+    private fun initLoadStateListening() {
+        this.lifecycleScope.launch {
+            adapter.loadStateFlow.collect {
+//                if (it.source.prepend is LoadState.Loading) {
+//                    println("!!! prepend LoadState.Loading")
+//                }
+                if (it.source.prepend is LoadState.NotLoading) {
+                    binding.selectionsProgressBar.visible(true)
+                    //println("!!! prepend LoadState.NotLoading")
+                }
+                if (it.source.prepend is LoadState.Error) {
+                    Toast.makeText(
+                        requireContext(),
+                        (it.source.prepend as LoadState.Error).error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+//                if (it.source.append is LoadState.Loading) {
+//                    println("!!! append LoadState.Loading")
+//                }
+//                if (it.source.append is LoadState.NotLoading) {
+//                    println("!!! append LoadState.NotLoading")
+//                }
+                if (it.source.append is LoadState.Error) {
+                    Toast.makeText(
+                        requireContext(),
+                        (it.source.append as LoadState.Error).error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    //println("!!! append LoadState.Error")
+                }
+
+//                if (it.source.refresh is LoadState.Loading) {
+//                    println("!!! refresh LoadState.Loading")
+//                }
+                if (it.source.refresh is LoadState.NotLoading) {
+                    binding.selectionsProgressBar.visible(false)
+                    //println("!!! refresh LoadState.NotLoading")
+                }
+                if (it.source.refresh is LoadState.Error) {
+                    binding.selectionsProgressBar.visible(false)
+                    val message = (it.source.refresh as LoadState.Error).error.message
+                    message?.let {
+                        Toast.makeText(
+                            requireContext(),
+                            message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }

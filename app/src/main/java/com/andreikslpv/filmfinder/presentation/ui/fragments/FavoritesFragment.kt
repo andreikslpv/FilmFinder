@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
@@ -35,9 +35,7 @@ class FavoritesFragment : Fragment() {
     @Inject
     lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
     private lateinit var filmsAdapter: FilmRecyclerAdapter
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(FavoritesFragmentViewModel::class.java)
-    }
+    private val viewModel: FavoritesFragmentViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

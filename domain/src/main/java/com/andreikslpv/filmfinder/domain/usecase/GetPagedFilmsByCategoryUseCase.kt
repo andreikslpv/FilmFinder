@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetPagedFilmsByCategoryUseCase(private val filmsRepository: FilmsRepository) {
     fun execute(category: CategoryType): Flow<PagingData<FilmDomainModel>> {
+        println("!!! init vm ${category}")
         return filmsRepository.getPagedFilmsByCategory(category)
     }
 }

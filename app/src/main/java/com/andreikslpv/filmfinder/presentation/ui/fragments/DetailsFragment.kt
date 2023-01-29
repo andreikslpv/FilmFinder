@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
@@ -27,9 +27,7 @@ class DetailsFragment : Fragment() {
     private var currentId: String = ""
     private var message: String = ""
     private lateinit var type: FragmentsType
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(DetailsFragmentViewModel::class.java)
-    }
+    private val viewModel: DetailsFragmentViewModel by viewModels()
 
     init {
         enterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }

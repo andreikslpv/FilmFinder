@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSettingsBinding
@@ -23,9 +23,7 @@ class SettingsFragment : Fragment() {
     private val binding
         get() = _binding!!
     private lateinit var type: FragmentsType
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(SettingsFragmentViewModel::class.java)
-    }
+    private val viewModel: SettingsFragmentViewModel by viewModels()
 
     @Inject
     lateinit var deleteAllCachedFilmsUseCase: DeleteAllCachedFilmsUseCase
