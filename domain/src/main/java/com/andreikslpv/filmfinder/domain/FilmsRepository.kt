@@ -1,5 +1,6 @@
 package com.andreikslpv.filmfinder.domain
 
+import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
@@ -24,7 +25,11 @@ interface FilmsRepository {
 
     fun changeNetworkAvailability(newStatus: Boolean)
 
-    fun getAllLocalSavedFilms(): List<FilmDomainModel>
+    fun getWatchLaterFilms(): LiveData<List<FilmDomainModel>>
+
+    fun getFavoritesFilms(): LiveData<List<FilmDomainModel>>
+
+    fun getFilmLocalState(film: FilmDomainModel): FilmDomainModel
 
     fun saveFilmToLocal(film: FilmDomainModel)
 

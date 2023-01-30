@@ -16,7 +16,7 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentWatchLaterBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
@@ -61,7 +61,7 @@ class WatchLaterFragment : Fragment() {
             filmsAdapter.changeItems(it)
             filmsAdapter.notifyDataSetChanged()
         }
-        initSearchView()
+//        initSearchView()
         initSettingsButton()
     }
 
@@ -106,30 +106,30 @@ class WatchLaterFragment : Fragment() {
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
         }
-        //Кладем нашу БД в RV
-        viewModel.getWatchLaterFilms()
+//        //Кладем нашу БД в RV
+//        viewModel.getWatchLaterFilms()
     }
 
-    private fun initSearchView() {
-        binding.watchLaterSearchView.setOnClickListener {
-            binding.watchLaterSearchView.isIconified = false
-        }
-
-        //Подключаем слушателя изменений введенного текста в поиска
-        binding.watchLaterSearchView.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            //Этот метод отрабатывает на каждое изменения текста
-            override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.getSearchResult(newText)
-                return true
-            }
-        })
-    }
+//    private fun initSearchView() {
+//        binding.watchLaterSearchView.setOnClickListener {
+//            binding.watchLaterSearchView.isIconified = false
+//        }
+//
+//        //Подключаем слушателя изменений введенного текста в поиска
+//        binding.watchLaterSearchView.setOnQueryTextListener(object :
+//            SearchView.OnQueryTextListener {
+//            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return true
+//            }
+//
+//            //Этот метод отрабатывает на каждое изменения текста
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                viewModel.getSearchResult(newText)
+//                return true
+//            }
+//        })
+//    }
 
     private fun initSettingsButton() {
         binding.watchLaterToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {

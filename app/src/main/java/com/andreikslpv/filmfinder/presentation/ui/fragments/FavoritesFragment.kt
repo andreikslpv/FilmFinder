@@ -16,7 +16,7 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentFavoritesBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
@@ -61,7 +61,7 @@ class FavoritesFragment : Fragment() {
             filmsAdapter.changeItems(it)
             filmsAdapter.notifyDataSetChanged()
         }
-        initSearchView()
+//        initSearchView()
         initSettingsButton()
     }
 
@@ -106,29 +106,29 @@ class FavoritesFragment : Fragment() {
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
         }
-        //Кладем нашу БД в RV
-        viewModel.getFavoritesFilms()
+//        //Кладем нашу БД в RV
+//        viewModel.getFavoritesFilms()
     }
 
-    private fun initSearchView() {
-        binding.favoritesSearchView.setOnClickListener {
-            binding.favoritesSearchView.isIconified = false
-        }
-
-        //Подключаем слушателя изменений введенного текста в поиска
-        binding.favoritesSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            //Этот метод отрабатывает на каждое изменения текста
-            override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.getSearchResult(newText)
-                return true
-            }
-        })
-    }
+//    private fun initSearchView() {
+//        binding.favoritesSearchView.setOnClickListener {
+//            binding.favoritesSearchView.isIconified = false
+//        }
+//
+//        //Подключаем слушателя изменений введенного текста в поиска
+//        binding.favoritesSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return true
+//            }
+//
+//            //Этот метод отрабатывает на каждое изменения текста
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                viewModel.getSearchResult(newText)
+//                return true
+//            }
+//        })
+//    }
 
     private fun initSettingsButton() {
         binding.favoritesToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {

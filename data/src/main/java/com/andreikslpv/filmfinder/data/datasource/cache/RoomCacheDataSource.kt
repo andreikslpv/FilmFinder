@@ -11,7 +11,7 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
-class RoomDataSource @Inject constructor(
+class RoomCacheDataSource @Inject constructor(
     private val filmDao: FilmDao,
     private val categoryDao: CategoryDao,
     private val categoryFilmDao: CategoryFilmDao,

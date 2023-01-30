@@ -55,6 +55,21 @@ object DomainToLocalMapper : BaseMapper<FilmDomainModel, FilmLocalModel> {
     }
 }
 
+object LocalToDomainMapper : BaseMapper<FilmLocalModel, FilmDomainModel> {
+    override fun map(type: FilmLocalModel?): FilmDomainModel {
+        return FilmDomainModel(
+            id = type?.id ?: "",
+            title = type?.title ?: "",
+            posterPreview = type?.posterPreview ?: "",
+            posterDetails = type?.posterDetails ?: "",
+            description = type?.description ?: "",
+            rating = type?.rating ?: 0.0,
+            isFavorite = type?.isFavorite ?: false,
+            isWatchLater = type?.isWatchLater ?: false
+        )
+    }
+}
+
 object LocalToCategoryMapper {
     fun map(
         api: String,

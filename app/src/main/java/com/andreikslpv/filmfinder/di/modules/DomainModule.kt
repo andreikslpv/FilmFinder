@@ -3,6 +3,10 @@ package com.andreikslpv.filmfinder.di.modules
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.SettingsRepository
 import com.andreikslpv.filmfinder.domain.usecase.*
+import com.andreikslpv.filmfinder.domain.usecase.local.ChangeFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.GetFavoritesFilmsUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.GetWatchLaterFilmsUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -1,12 +1,11 @@
-package com.andreikslpv.filmfinder.domain.usecase
+package com.andreikslpv.filmfinder.domain.usecase.local
 
+import androidx.lifecycle.LiveData
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class GetWatchLaterFilmsUseCase(private val filmsRepository: FilmsRepository) {
-    fun execute() : List<FilmDomainModel> {
-        return filmsRepository.getAllLocalSavedFilms().filter {
-            it.isWatchLater
-        }
+    fun execute(): LiveData<List<FilmDomainModel>> {
+        return filmsRepository.getWatchLaterFilms()
     }
 }

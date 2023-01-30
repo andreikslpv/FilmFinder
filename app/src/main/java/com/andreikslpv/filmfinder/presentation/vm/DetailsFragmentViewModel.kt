@@ -4,13 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.ChangeFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.ChangeFilmLocalStateUseCase
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 class DetailsFragmentViewModel : ViewModel() {
     val filmLiveData: MutableLiveData<FilmDomainModel> = MutableLiveData()
 
-    //Инициализируем usecases
     @Inject
     lateinit var changeFilmLocalStateUseCase: ChangeFilmLocalStateUseCase
 
@@ -26,13 +26,17 @@ class DetailsFragmentViewModel : ViewModel() {
         val film: FilmDomainModel = filmLiveData.value!!
         film.isWatchLater = !film.isWatchLater
         filmLiveData.value = film
-        changeFilmLocalStateUseCase.execute(filmLiveData.value!!)
+        Executors.newSingleThreadExecutor().execute {
+            changeFilmLocalStateUseCase.execute(filmLiveData.value!!)
+        }
     }
 
     fun changeFavoritesField() {
         val film: FilmDomainModel = filmLiveData.value!!
         film.isFavorite = !film.isFavorite
         filmLiveData.value = film
-        changeFilmLocalStateUseCase.execute(filmLiveData.value!!)
+        Executors.newSingleThreadExecutor().execute {
+            changeFilmLocalStateUseCase.execute(filmLiveData.value!!)
+        }
     }
 }

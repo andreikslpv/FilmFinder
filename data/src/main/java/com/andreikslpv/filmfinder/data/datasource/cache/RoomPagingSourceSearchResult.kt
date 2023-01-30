@@ -15,8 +15,8 @@ class RoomPagingSourceSearchResult(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
         return try {
-            val films = LocalToDomainListMapper.map(filmDao.searchFilmByName(query))
-
+            val films = LocalToDomainListMapper.map(filmDao.searchFilmByName("%$query%"))
+//            println("!!! query_$films")
             LoadResult.Page(
                 data = films,
                 prevKey = null,

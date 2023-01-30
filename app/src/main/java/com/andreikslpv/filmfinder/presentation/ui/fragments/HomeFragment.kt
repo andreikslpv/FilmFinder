@@ -19,7 +19,7 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -123,7 +123,6 @@ class HomeFragment : Fragment() {
 
         initLoadStateListening()
         handleScrollingToTopWhenSearching()
-        //handleListVisibility()
     }
 
     private fun observeFilms() {
@@ -153,19 +152,6 @@ class HomeFragment : Fragment() {
                     binding.homeProgressBar.visible(false)
                     (it.source.refresh as LoadState.Error).error.message?.makeToast(requireContext())
                 }
-                /* скрытие/показ homeRecycler и loadStateView*/
-                // если добавление завершено, тогда мы уже закончили с показом начальной заставки,
-                // и поэтому прячем homeRecycler и показываем loadStateView
-//                if (it.prepend is LoadState.NotLoading && it.prepend.endOfPaginationReached) {
-//                    binding.homeRecycler.isInvisible = false
-//                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
-//                }
-//                // если добавление завершено, а количество элементов адаптера равно нулю,
-//                // это означает, что показывать нечего, поэтому прячем homeRecycler и показываем loadStateView
-//                if (it.source.append is LoadState.NotLoading && it.append.endOfPaginationReached) {
-//                    binding.homeRecycler.isInvisible = adapter.itemCount < 1
-//                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
-//                }
             }
         }
     }
@@ -179,19 +165,6 @@ class HomeFragment : Fragment() {
                     if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
                         binding.homeRecycler.scrollToPosition(0)
                     }
-                }
-        }
-
-    // Если данные не загружены, то прячем список
-    private fun handleListVisibility() =
-        this.lifecycleScope.launch {
-            getRefreshLoadStateFlow()
-                .simpleScan(count = 3)
-                .collectLatest { (beforePrevious, previous, current) ->
-                    binding.homeRecycler.isInvisible = current is LoadState.Error
-                            || previous is LoadState.Error
-                            || (beforePrevious is LoadState.Error && previous is LoadState.NotLoading && current is LoadState.Loading)
-                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
                 }
         }
 

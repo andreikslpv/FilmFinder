@@ -1,9 +1,9 @@
 package com.andreikslpv.filmfinder.di.modules
 
 import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.data.datasource.cache.RoomDataSource
+import com.andreikslpv.filmfinder.data.datasource.cache.RoomCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
-import com.andreikslpv.filmfinder.data.datasource.local.JsonDataSource
+import com.andreikslpv.filmfinder.data.datasource.local.RoomLocalDataSource
 import com.andreikslpv.filmfinder.data.repository.FilmsRepositoryImpl
 import com.andreikslpv.filmfinder.data.repository.SettingsRepositoryImpl
 import com.andreikslpv.filmfinder.domain.FilmsRepository
@@ -18,11 +18,11 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindFilmsLocalDataSource(jsonDataSource: JsonDataSource): FilmsLocalDataSource
+    abstract fun bindFilmsLocalDataSource(roomLocalDataSource: RoomLocalDataSource): FilmsLocalDataSource
 
     @Binds
     @Singleton
-    abstract fun bindFilmsCacheDataSource(roomDataSource: RoomDataSource): FilmsCacheDataSource
+    abstract fun bindFilmsCacheDataSource(roomCacheDataSource: RoomCacheDataSource): FilmsCacheDataSource
 
     @Binds
     @Singleton

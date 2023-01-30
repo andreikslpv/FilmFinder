@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.domain.usecase
+package com.andreikslpv.filmfinder.domain.usecase.local
 
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel

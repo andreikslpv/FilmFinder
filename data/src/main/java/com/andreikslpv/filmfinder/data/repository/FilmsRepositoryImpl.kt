@@ -1,5 +1,7 @@
 package com.andreikslpv.filmfinder.data.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -12,6 +14,7 @@ import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.DomainToLocalMapper
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainListMapper
+import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainMapper
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
@@ -130,12 +133,30 @@ class FilmsRepositoryImpl @Inject constructor(
         isNetworkAvailable = newStatus
     }
 
-    override fun getAllLocalSavedFilms(): List<FilmDomainModel> {
-        return LocalToDomainListMapper.map(localDataSource.getItems())
+    // --------------- work with local
+
+    override fun getWatchLaterFilms(): LiveData<List<FilmDomainModel>> {
+        return localDataSource.getWatchLaterFilms().map {
+            LocalToDomainListMapper.map(it)
+        }
+    }
+
+    override fun getFavoritesFilms(): LiveData<List<FilmDomainModel>> {
+        return localDataSource.getFavoritesFilms().map {
+            LocalToDomainListMapper.map(it)
+        }
+    }
+
+    override fun getFilmLocalState(film: FilmDomainModel): FilmDomainModel {
+        return LocalToDomainMapper.map(
+            localDataSource.getFilmLocalState(
+                DomainToLocalMapper.map(film)
+            )
+        )
     }
 
     override fun saveFilmToLocal(film: FilmDomainModel) {
-        localDataSource.saveItem(DomainToLocalMapper.map(film))
+        localDataSource.saveFilm(DomainToLocalMapper.map(film))
     }
 
 

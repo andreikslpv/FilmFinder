@@ -1,10 +1,15 @@
 package com.andreikslpv.filmfinder.data.datasource.local
 
+import androidx.lifecycle.LiveData
 import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
 
 interface FilmsLocalDataSource {
 
-    fun getItems(): List<FilmLocalModel>
+    fun getFavoritesFilms(): LiveData<List<FilmLocalModel>>
 
-    fun saveItem(item: FilmLocalModel)
+    fun getWatchLaterFilms(): LiveData<List<FilmLocalModel>>
+
+    fun getFilmLocalState(film: FilmLocalModel): FilmLocalModel
+
+    fun saveFilm(film: FilmLocalModel)
 }
