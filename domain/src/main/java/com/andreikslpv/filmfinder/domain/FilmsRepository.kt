@@ -29,7 +29,7 @@ interface FilmsRepository {
 
     fun getFavoritesFilms(): LiveData<List<FilmDomainModel>>
 
-    fun getFilmLocalState(film: FilmDomainModel): FilmDomainModel
+    fun getFilmLocalState(filmId: String): FilmDomainModel
 
     fun saveFilmToLocal(film: FilmDomainModel)
 

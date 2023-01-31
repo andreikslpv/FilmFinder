@@ -31,6 +31,7 @@ interface AppComponent {
     fun inject(favoritesFragment: FavoritesFragment)
     fun inject(watchLaterFragment: WatchLaterFragment)
     fun inject(selectionsFragment: SelectionsFragment)
+    fun inject(detailsFragment: DetailsFragment)
     fun inject(settingsFragment: SettingsFragment)
     fun inject(filmsRepositoryImpl: FilmsRepositoryImpl)
 }

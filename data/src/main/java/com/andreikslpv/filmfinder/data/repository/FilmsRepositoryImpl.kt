@@ -1,7 +1,7 @@
 package com.andreikslpv.filmfinder.data.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.Transformations
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -136,28 +136,31 @@ class FilmsRepositoryImpl @Inject constructor(
     // --------------- work with local
 
     override fun getWatchLaterFilms(): LiveData<List<FilmDomainModel>> {
-        return localDataSource.getWatchLaterFilms().map {
-            LocalToDomainListMapper.map(it)
-        }
+        val result: LiveData<List<FilmDomainModel>> = Transformations.distinctUntilChanged(
+            Transformations.map(localDataSource.getWatchLaterFilms()) {
+                LocalToDomainListMapper.map(it)
+            }
+        )
+        return result
     }
 
     override fun getFavoritesFilms(): LiveData<List<FilmDomainModel>> {
-        return localDataSource.getFavoritesFilms().map {
-            LocalToDomainListMapper.map(it)
-        }
+        val result: LiveData<List<FilmDomainModel>> = Transformations.distinctUntilChanged(
+            Transformations.map(localDataSource.getFavoritesFilms()) {
+                LocalToDomainListMapper.map(it)
+            }
+        )
+        return result
     }
 
-    override fun getFilmLocalState(film: FilmDomainModel): FilmDomainModel {
+    override fun getFilmLocalState(filmId: String): FilmDomainModel {
         return LocalToDomainMapper.map(
-            localDataSource.getFilmLocalState(
-                DomainToLocalMapper.map(film)
-            )
+            localDataSource.getFilmLocalState(filmId)
         )
     }
 
     override fun saveFilmToLocal(film: FilmDomainModel) {
         localDataSource.saveFilm(DomainToLocalMapper.map(film))
     }
-
 
 }

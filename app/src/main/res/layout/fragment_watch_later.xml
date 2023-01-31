@@ -26,17 +26,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:menu="@menu/toolbar_menu"
             app:title="@string/main.menu_watch_later_title"
-            app:titleTextColor="?attr/itemTextColor">
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/watchLaterSearchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_of_search"
-                android:background="@android:color/transparent"
-                android:layoutDirection="rtl"
-                app:layout_constraintTop_toTopOf="parent" />
-        </com.google.android.material.appbar.MaterialToolbar>
+            app:titleTextColor="?attr/itemTextColor"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView

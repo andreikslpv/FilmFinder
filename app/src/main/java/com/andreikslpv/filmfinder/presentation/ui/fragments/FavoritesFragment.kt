@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,7 +15,6 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentFavoritesBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
@@ -25,15 +23,12 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration.TopSp
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.vm.FavoritesFragmentViewModel
-import javax.inject.Inject
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding
         get() = _binding!!
 
-    @Inject
-    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
     private lateinit var filmsAdapter: FilmRecyclerAdapter
     private val viewModel: FavoritesFragmentViewModel by viewModels()
 
@@ -61,7 +56,6 @@ class FavoritesFragment : Fragment() {
             filmsAdapter.changeItems(it)
             filmsAdapter.notifyDataSetChanged()
         }
-//        initSearchView()
         initSettingsButton()
     }
 
@@ -88,7 +82,7 @@ class FavoritesFragment : Fragment() {
                         rating: RatingDonutView
                     ) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            getFilmLocalStateUseCase.execute(film),
+                            film.id,
                             image,
                             text,
                             rating
@@ -106,29 +100,7 @@ class FavoritesFragment : Fragment() {
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
         }
-//        //Кладем нашу БД в RV
-//        viewModel.getFavoritesFilms()
     }
-
-//    private fun initSearchView() {
-//        binding.favoritesSearchView.setOnClickListener {
-//            binding.favoritesSearchView.isIconified = false
-//        }
-//
-//        //Подключаем слушателя изменений введенного текста в поиска
-//        binding.favoritesSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return true
-//            }
-//
-//            //Этот метод отрабатывает на каждое изменения текста
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                viewModel.getSearchResult(newText)
-//                return true
-//            }
-//        })
-//    }
 
     private fun initSettingsButton() {
         binding.favoritesToolbar.menu.findItem(R.id.settingsButton).setOnMenuItemClickListener {

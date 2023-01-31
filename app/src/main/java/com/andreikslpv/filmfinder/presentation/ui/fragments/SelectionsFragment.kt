@@ -40,8 +40,8 @@ class SelectionsFragment : Fragment() {
     private val binding
         get() = _binding!!
 
-    @Inject
-    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+//    @Inject
+//    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
 
     @Inject
     lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
@@ -163,7 +163,7 @@ class SelectionsFragment : Fragment() {
                 rating: RatingDonutView
             ) {
                 (requireActivity() as MainActivity).launchDetailsFragment(
-                    getFilmLocalStateUseCase.execute(film),
+                    film.id,
                     image,
                     text,
                     rating

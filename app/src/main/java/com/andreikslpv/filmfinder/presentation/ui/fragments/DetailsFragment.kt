@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
-import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
@@ -39,7 +38,7 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
-        viewModel.setFilm(arguments?.get(BUNDLE_KEY_FILM) as FilmDomainModel)
+        viewModel.setFilm(arguments?.getString(BUNDLE_KEY_FILM)!!)
         type = arguments?.get(BUNDLE_KEY_TYPE) as FragmentsType
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root

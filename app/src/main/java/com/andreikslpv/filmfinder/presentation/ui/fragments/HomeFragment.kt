@@ -43,8 +43,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var adapter: FilmPagingAdapter
 
-    @Inject
-    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
+//    @Inject
+//    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
 
     private val viewModel: HomeFragmentViewModel by viewModels()
 
@@ -106,7 +106,7 @@ class HomeFragment : Fragment() {
                 rating: RatingDonutView
             ) {
                 (requireActivity() as MainActivity).launchDetailsFragment(
-                    getFilmLocalStateUseCase.execute(film),
+                    film.id,
                     image,
                     text,
                     rating

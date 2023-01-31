@@ -20,6 +20,7 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.SettingsType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.domain.usecase.*
+import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
@@ -160,7 +161,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun launchDetailsFragment(
-        film: FilmDomainModel,
+        filmId: String,
         image: ImageView,
         text: TextView,
         rating: RatingDonutView
@@ -168,7 +169,7 @@ class MainActivity : AppCompatActivity() {
         //Создаем "посылку"
         val bundle = Bundle()
         //Кладем переданный фильм в "посылку"
-        bundle.putParcelable(BUNDLE_KEY_FILM, film)
+        bundle.putString(BUNDLE_KEY_FILM, filmId)
         //Кладем тип фрагмента из которого происходит вызов в "посылку"
         bundle.putParcelable(BUNDLE_KEY_TYPE, viewModel.getCurrentFragment())
         //Прикрепляем "посылку" к фрагменту
@@ -181,7 +182,7 @@ class MainActivity : AppCompatActivity() {
             .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
             .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
             .addSharedElement(rating, TRANSITION_NAME_FOR_RATING)
-            .replace(R.id.fragmentPlaceholder, detailsFragment, "details")
+            .replace(R.id.fragmentPlaceholder, detailsFragment, FragmentsType.DETAILS.tag)
             .addToBackStack(null)
             .commit()
         viewModel.setCurrentFragment(FragmentsType.DETAILS)
