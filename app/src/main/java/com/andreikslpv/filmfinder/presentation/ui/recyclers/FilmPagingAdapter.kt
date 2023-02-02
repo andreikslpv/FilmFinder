@@ -15,7 +15,7 @@ class FilmPagingAdapter(private val clickListener: FilmOnItemClickListener) :
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
         getItem(position)?.let { holder.bind(it) }
         // Обрабатываем нажатие на весь элемент целиком и вызываем метод листенера,
-        // который получаем изконструктора адаптера
+        // который получаем из конструктора адаптера
         holder.binding.itemContainer.setOnClickListener {
             holder.binding.poster.transitionName = TRANSITION_NAME_FOR_IMAGE
             holder.binding.description.transitionName = TRANSITION_NAME_FOR_TEXT

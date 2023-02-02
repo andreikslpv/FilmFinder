@@ -82,7 +82,7 @@ class FavoritesFragment : Fragment() {
                         rating: RatingDonutView
                     ) {
                         (requireActivity() as MainActivity).launchDetailsFragment(
-                            film.id,
+                            film,
                             image,
                             text,
                             rating

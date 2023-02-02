@@ -15,7 +15,7 @@ class RoomLocalDataSource @Inject constructor(private val filmDao: FilmDao) : Fi
         return filmDao.getWatchLaterFilms()
     }
 
-    override fun getFilmLocalState(filmId: String): FilmLocalModel {
+    override fun getFilmLocalState(filmId: String): LiveData<FilmLocalModel> {
         return filmDao.getFilmById(filmId)
     }
 

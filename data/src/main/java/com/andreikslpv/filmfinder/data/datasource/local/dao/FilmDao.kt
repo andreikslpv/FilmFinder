@@ -21,7 +21,7 @@ interface FilmDao {
     fun getWatchLaterFilms(): LiveData<List<FilmLocalModel>>
 
     @Query("SELECT * FROM ${RoomConstants.TABLE_CACHED_FILMS} WHERE ${RoomConstants.COLUMN_FILM_ID} = :id")
-    fun getFilmById(id: String): FilmLocalModel
+    fun getFilmById(id: String): LiveData<FilmLocalModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertFilm(film: FilmLocalModel)

@@ -42,10 +42,6 @@ class HomeFragment : Fragment() {
         get() = _binding!!
 
     private lateinit var adapter: FilmPagingAdapter
-
-//    @Inject
-//    lateinit var getFilmLocalStateUseCase: GetFilmLocalStateUseCase
-
     private val viewModel: HomeFragmentViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +102,7 @@ class HomeFragment : Fragment() {
                 rating: RatingDonutView
             ) {
                 (requireActivity() as MainActivity).launchDetailsFragment(
-                    film.id,
+                    film,
                     image,
                     text,
                     rating

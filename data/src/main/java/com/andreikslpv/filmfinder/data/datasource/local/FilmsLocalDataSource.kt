@@ -9,7 +9,7 @@ interface FilmsLocalDataSource {
 
     fun getWatchLaterFilms(): LiveData<List<FilmLocalModel>>
 
-    fun getFilmLocalState(filmId: String): FilmLocalModel
+    fun getFilmLocalState(filmId: String): LiveData<FilmLocalModel>
 
     fun saveFilm(film: FilmLocalModel)
 }

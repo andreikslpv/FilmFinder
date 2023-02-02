@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
+import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
@@ -23,7 +24,6 @@ class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
     private val binding
         get() = _binding!!
-    private var currentId: String = ""
     private var message: String = ""
     private lateinit var type: FragmentsType
     private val viewModel: DetailsFragmentViewModel by viewModels()
@@ -38,7 +38,7 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
-        viewModel.setFilm(arguments?.getString(BUNDLE_KEY_FILM)!!)
+        viewModel.setFilm(arguments?.get(BUNDLE_KEY_FILM) as FilmDomainModel)
         type = arguments?.get(BUNDLE_KEY_TYPE) as FragmentsType
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,48 +49,33 @@ class DetailsFragment : Fragment() {
 
         //Приостанавливаем воспроизведение Transition до загрузки данных
         postponeEnterTransition()
-
-        viewModel.filmLiveData.observe(viewLifecycleOwner) {
-            binding.detailsFabFavorites.setImageResource(
-                if (it.isFavorite) R.drawable.ic_baseline_favorite
-                else R.drawable.ic_baseline_favorite_border
-            )
-            binding.detailsFabWatchLater.setImageResource(
-                if (it.isWatchLater) R.drawable.ic_baseline_watch_later
-                else R.drawable.ic_baseline_watch_later_border
-            )
-            // для того, чтобы при смене значений полей isFavorites & isWatchlater
-            // не переустанавливать все ресурсы проверяем сменился ли фильм (поменялся его id)
-            if (currentId != it.id) {
-                currentId = it.id
-                // формируем сообщение, которое будет использоваться при share
-                message = resources.getString(R.string.details_share_message) + it.title
-                //Устанавливаем заголовок
-                binding.detailsToolbar.title = it.title
-                // Устанавливаем постер фильма (большой)
-                binding.detailsPoster.loadImage(it.posterDetails)
-                //Устанавливаем описание
-                binding.detailsDescription.text = it.description
-                //Устанавливаем рейтинг
-                binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
-            }
-        }
+        observeFilmLocalState()
         setBackground()
+        initIcons()
         //Данные загружены, запускаем анимацию перехода
         startPostponedEnterTransition()
-        initIcons()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // сбрасываем сохраненный id для того чтобы данные фильма загрузились
-        // в случае backpress и повторного вызова данного фильма
-        currentId = ""
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun observeFilmLocalState() {
+        viewModel.filmLocalStateLiveData.observe(viewLifecycleOwner) {
+            setFavoritesIcon(it.isFavorite)
+            setWatchLaterIcon(it.isWatchLater)
+            // формируем сообщение, которое будет использоваться при share
+            message = resources.getString(R.string.details_share_message) + it.title
+            //Устанавливаем заголовок
+            binding.detailsToolbar.title = it.title
+            // Устанавливаем постер фильма (большой)
+            binding.detailsPoster.loadImage(it.posterDetails)
+            //Устанавливаем описание
+            binding.detailsDescription.text = it.description
+            //Устанавливаем рейтинг
+            binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
+        }
     }
 
     private fun setBackground() {
@@ -113,12 +98,28 @@ class DetailsFragment : Fragment() {
         }
     }
 
+    private fun setFavoritesIcon(isEnable: Boolean) {
+        binding.detailsFabFavorites.setImageResource(
+            if (isEnable) R.drawable.ic_baseline_favorite
+            else R.drawable.ic_baseline_favorite_border
+        )
+    }
+
+    private fun setWatchLaterIcon(isEnable: Boolean) {
+        binding.detailsFabWatchLater.setImageResource(
+            if (isEnable) R.drawable.ic_baseline_watch_later
+            else R.drawable.ic_baseline_watch_later_border
+        )
+    }
+
     private fun initIcons() {
         binding.detailsFabFavorites.setOnClickListener {
             viewModel.changeFavoritesField()
+            setFavoritesIcon(viewModel.filmLocalStateLiveData.value?.isFavorite ?: false)
         }
         binding.detailsFabWatchLater.setOnClickListener {
             viewModel.changeWatchLaterField()
+            setWatchLaterIcon(viewModel.filmLocalStateLiveData.value?.isWatchLater ?: false)
         }
         binding.detailsFabShare.setOnClickListener {
             //Создаем интент

@@ -153,10 +153,13 @@ class FilmsRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun getFilmLocalState(filmId: String): FilmDomainModel {
-        return LocalToDomainMapper.map(
-            localDataSource.getFilmLocalState(filmId)
+    override fun getFilmLocalState(filmId: String): LiveData<FilmDomainModel> {
+        val result: LiveData<FilmDomainModel> = Transformations.distinctUntilChanged(
+            Transformations.map(localDataSource.getFilmLocalState(filmId)) {
+                LocalToDomainMapper.map(it)
+            }
         )
+        return result
     }
 
     override fun saveFilmToLocal(film: FilmDomainModel) {
