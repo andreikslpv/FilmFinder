@@ -28,6 +28,7 @@
     <dimen name="margin_of_FAB">8dp</dimen>
     <dimen name="margin_end_of_FAB_2">80dp</dimen>
     <dimen name="margin_end_of_FAB_3">152dp</dimen>
+    <dimen name="margin_end_of_FAB_4">224dp</dimen>
     <dimen name="margin_of_text">8dp</dimen>
     <dimen name="margin_of_text_top">32dp</dimen>
     <dimen name="rating_donut_dimens_det">56dp</dimen>

@@ -31,4 +31,8 @@
     <string name="settings_cache_auto">auto (when the network is unavailable)</string>
     <string name="main_message_offline">Internet is not available.</string>
     <string name="main_message_cache">Data is loaded from the cache</string>
+    <string name="details_permission_storage">There is no permission. Please provide permission</string>
+    <string name="details_downloaded_to_gallery">Saved to Gallery</string>
+    <string name="details_open">To the gallery</string>
+    <string name="details_allow_later_in_settings">Access to photos, media and files on your device is prohibited for the application. To be able to save the poster to your device, enable access in the settings for the app</string>
 </resources>
