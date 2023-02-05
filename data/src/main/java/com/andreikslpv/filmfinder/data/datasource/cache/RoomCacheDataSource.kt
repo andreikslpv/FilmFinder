@@ -47,9 +47,9 @@ class RoomCacheDataSource @Inject constructor(
     }
 
     override fun getSearchResultPagingSource(
-        api: ValuesType,
+        function: (string: String) -> Boolean,
         query: String
     ): PagingSource<Int, FilmDomainModel> {
-        return RoomPagingSourceSearchResult(filmDao, api.value, query)
+        return RoomPagingSourceSearchResult(filmDao, function, query)
     }
 }

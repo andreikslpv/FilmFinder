@@ -15,4 +15,6 @@ interface FilmsApiDataSource {
 
     fun getApiType(): ValuesType
 
+    fun checkComplianceApi(filmId: String): Boolean
+
 }

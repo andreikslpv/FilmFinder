@@ -69,7 +69,7 @@ class FilmsRepositoryImpl @Inject constructor(
     override fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>> {
         return getFlowFromPagingSource(
             if (getResultOfChoiceSource()) apiDataSource.getSearchResultPagingSource(query)
-            else cacheDataSource.getSearchResultPagingSource(getCurrentApiDataSource(), query)
+            else cacheDataSource.getSearchResultPagingSource(apiDataSource::checkComplianceApi, query)
         )
     }
 

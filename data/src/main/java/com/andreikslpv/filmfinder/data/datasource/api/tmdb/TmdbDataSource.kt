@@ -67,4 +67,8 @@ class TmdbDataSource @Inject constructor(
         return ValuesType.TMDB
     }
 
+    override fun checkComplianceApi(filmId: String): Boolean {
+        return filmId.toDoubleOrNull() != null
+    }
+
 }

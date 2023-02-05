@@ -8,14 +8,17 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 
 class RoomPagingSourceSearchResult(
     private val filmDao: FilmDao,
-    private val api: String,
+    private val function: (string: String) -> Boolean,
     private val query: String,
 ) : PagingSource<Int, FilmDomainModel>() {
     private val step = 1
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
         return try {
-            val films = LocalToDomainListMapper.map(filmDao.searchFilmByName("%$query%"))
+            val filmsLocal = filmDao.searchFilmByName("%$query%").filter {
+                function(it.id)
+            }
+            val films = LocalToDomainListMapper.map(filmsLocal)
 //            println("!!! query_$films")
             LoadResult.Page(
                 data = films,
