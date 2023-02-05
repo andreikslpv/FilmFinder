@@ -35,4 +35,5 @@
     <string name="details_downloaded_to_gallery">Saved to Gallery</string>
     <string name="details_open">To the gallery</string>
     <string name="details_allow_later_in_settings">Access to photos, media and files on your device is prohibited for the application. To be able to save the poster to your device, enable access in the settings for the app</string>
+    <string name="main_message_search_cache">The search is conducted among cached movies</string>
 </resources>
