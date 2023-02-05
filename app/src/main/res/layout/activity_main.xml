@@ -11,15 +11,16 @@
         android:id="@+id/fragmentPlaceholder"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/networkStatus"
+        app:layout_constraintBottom_toTopOf="@+id/messageBoard"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/networkStatus"
+        android:id="@+id/messageBoard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#888888"
         android:paddingStart="@dimen/item_padding"
+        android:paddingEnd="@dimen/item_padding"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintTop_toBottomOf="@+id/fragmentPlaceholder" />
 

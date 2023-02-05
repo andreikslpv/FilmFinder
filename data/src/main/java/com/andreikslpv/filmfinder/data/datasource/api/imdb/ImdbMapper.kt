@@ -11,7 +11,7 @@ object ImdbCategoryItemToDomainModel :
                 id = it?.id ?: "",
                 title = it?.title ?: "",
                 posterPreview = it?.image ?: "",
-                posterDetails = it?.image ?: "",
+                posterDetails = (ImdbConstants.IMAGES_URL + ImdbKey.KEY + ImdbConstants.IMAGES_RES + it?.image),
                 description = it?.crew ?: "",
                 rating = it?.imDbRating.let { newRating ->
                     if (newRating.isNullOrBlank()) 0.0
@@ -31,7 +31,7 @@ object ImdbSearchItemToDomainModel : BaseMapper<List<ImdbDtoSearchItem?>, List<F
                 id = it?.id ?: "",
                 title = it?.title ?: "",
                 posterPreview = it?.image ?: "",
-                posterDetails = it?.image ?: "",
+                posterDetails = (ImdbConstants.IMAGES_URL + ImdbKey.KEY + ImdbConstants.IMAGES_RES + it?.image),
                 description = it?.description ?: "",
                 rating = 0.0,
                 isFavorite = false,

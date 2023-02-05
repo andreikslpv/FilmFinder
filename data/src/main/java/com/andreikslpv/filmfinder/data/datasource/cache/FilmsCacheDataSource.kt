@@ -22,7 +22,7 @@ interface FilmsCacheDataSource {
     ): PagingSource<Int, FilmDomainModel>
 
     fun getSearchResultPagingSource(
-        api: ValuesType,
+        function: (string: String) -> Boolean,
         query: String
     ): PagingSource<Int, FilmDomainModel>
 }

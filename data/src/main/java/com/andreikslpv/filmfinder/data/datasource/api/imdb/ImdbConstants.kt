@@ -2,6 +2,8 @@ package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
 object ImdbConstants {
     const val BASE_URL = "https://imdb-api.com/"
+    const val IMAGES_URL = "https://imdb-api.com/API/ResizeImage?apiKey="
+    const val IMAGES_RES = "&size=780x1170&url="
     const val API = "API"
     const val SEARCH = "SearchMovie"
     const val START_PAGE = 0

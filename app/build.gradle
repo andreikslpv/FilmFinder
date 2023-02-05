@@ -61,6 +61,9 @@ dependencies {
     implementation "androidx.paging:paging-runtime:3.2.0-alpha03"
     // Kotlin extensions for 'fragment' artifact
     implementation "androidx.fragment:fragment-ktx:1.5.5"
+    //Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     // pull-to-refresh
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     //Room

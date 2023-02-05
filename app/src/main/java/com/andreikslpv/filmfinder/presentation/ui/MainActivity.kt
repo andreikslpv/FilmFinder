@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         initApplicationSettings()
         observeCurrentFragment()
         initBottomNavigationMenu()
+        observeMessage()
         observeNetworkAvailability()
 
         // если первый, то запускаем фрагмент Home
@@ -220,6 +221,7 @@ class MainActivity : AppCompatActivity() {
     private fun observeCurrentFragment() {
         viewModel.currentFragmentLiveData.observe(this) {
             setBottomNavigationIcon(it)
+            updateMessageBoard()
         }
     }
 
@@ -262,6 +264,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeMessage() {
+        viewModel.messageLiveData.observe(this) {
+            if (it.isNullOrBlank()) {
+                binding.messageBoard.visible(false)
+            }
+            else {
+                binding.messageBoard.text = it
+                binding.messageBoard.visible(true)
+            }
+        }
+    }
+
     private fun observeNetworkAvailability() {
         viewModel.connectionLiveData.observe(this) {
             changeNetworkAvailabilityUseCase.execute(it)
@@ -270,30 +284,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateMessageBoard(_cacheMode: ValuesType? = null) {
-        val cacheMode = _cacheMode ?: getSettingValueUseCase.execute(SettingsType.CACHE_MODE)
+        var result = ""
         val isNetworkAvailable = viewModel.connectionLiveData.value
-        isNetworkAvailable?.let {
-            if (isNetworkAvailable) {
-                if (cacheMode == ValuesType.ALWAYS) {
-                    binding.networkStatus.visible(true)
-                    binding.networkStatus.text = getString(R.string.main_message_cache)
-                } else {
-                    binding.networkStatus.visible(false)
-                    binding.networkStatus.text = ""
-                }
-            } else {
-                binding.networkStatus.visible(true)
-                when (cacheMode) {
-                    ValuesType.AUTO, ValuesType.ALWAYS ->
-                        "${getString(R.string.main_message_offline)} ${getString(R.string.main_message_cache)}".also {
-                            binding.networkStatus.text = it
-                        }
-                    ValuesType.NEVER -> binding.networkStatus.text =
-                        getString(R.string.main_message_offline)
-                    else -> {}
-                }
+        if (isNetworkAvailable == false)
+            result = "${getString(R.string.main_message_offline)} "
+        val currentFragment = viewModel.currentFragmentLiveData.value
+        val cacheMode = _cacheMode ?: getSettingValueUseCase.execute(SettingsType.CACHE_MODE)
+        when (currentFragment) {
+            FragmentsType.HOME -> {
+                if ((isNetworkAvailable == false && cacheMode == ValuesType.AUTO) || cacheMode == ValuesType.ALWAYS)
+                    result += getString(R.string.main_message_search_cache)
             }
+            FragmentsType.SELECTIONS, FragmentsType.DETAILS, FragmentsType.SETTINGS -> {
+                if ((isNetworkAvailable == false && cacheMode == ValuesType.AUTO) || cacheMode == ValuesType.ALWAYS)
+                    result += getString(R.string.main_message_cache)
+            }
+           else -> {}
         }
+        viewModel.setMessage(result)
     }
 
     fun setBackground(newBackground: Drawable?) {

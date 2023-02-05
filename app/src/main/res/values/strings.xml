@@ -9,8 +9,12 @@
     <string name="main_backpress_message">Нажмите дважды для выхода</string>
     <string name="main_message_offline">Интернет недоступен.</string>
     <string name="main_message_cache">Данные загружаются из кеша</string>
+    <string name="main_message_search_cache">Поиск ведется среди кэшированных фильмов</string>
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
+    <string name="details_permission_storage">Нет разрешения. Пожалуйста, предоставьте разрешение</string>
+    <string name="details_downloaded_to_gallery">"Сохранено в галерею"</string>
+    <string name="details_open">В галерею</string>
     <string name="category_now_playing">Сейчас в кино</string>
     <string name="category_popular">Популярные фильмы</string>
     <string name="category_top_rated">Лучшие фильмы</string>
@@ -29,5 +33,6 @@
     <string name="settings_cache_always">всегда</string>
     <string name="settings_cache_never">никогда</string>
     <string name="settings_cache_clear">Очистить кеш</string>
+    <string name="details_allow_later_in_settings">"Доступ к фотографиям, мультимедиа и файлам на вашем устройстве для приложения запрещен. Для возможности сохранения постера на устройство включите доступ в настройках для приложения "</string>
 
 </resources>

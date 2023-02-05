@@ -70,4 +70,8 @@ class ImdbDataSource @Inject constructor(
         return ValuesType.IMDB
     }
 
+    override fun checkComplianceApi(filmId: String): Boolean {
+        return filmId.startsWith("tt",true)
+    }
+
 }

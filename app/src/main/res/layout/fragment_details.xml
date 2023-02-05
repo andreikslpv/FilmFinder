@@ -66,7 +66,7 @@
         android:id="@+id/detailsFabFavorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_end_of_FAB_3"
+        android:layout_marginEnd="@dimen/margin_end_of_FAB_4"
         app:backgroundTint="?attr/colorPrimary"
         app:layout_anchor="@id/detailsAppBar"
         app:layout_anchorGravity="bottom|end"
@@ -78,13 +78,34 @@
         android:id="@+id/detailsFabWatchLater"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_end_of_FAB_2"
+        android:layout_marginEnd="@dimen/margin_end_of_FAB_3"
         app:backgroundTint="?attr/colorPrimary"
         app:layout_anchor="@id/detailsAppBar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_baseline_watch_later_border"
         app:tint="?attr/itemIconTint"
         tools:ignore="ContentDescription" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/detailsFabDownloadPoster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_end_of_FAB_2"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_anchor="@id/detailsAppBar"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_baseline_cloud_download"
+        app:tint="?attr/itemIconTint"
+        tools:ignore="ContentDescription" />
+
+    <ProgressBar
+        android:id="@+id/detailsProgressBar"
+        android:visibility="invisible"
+        android:layout_width="@dimen/rating_donut_dimens_det"
+        android:layout_height="@dimen/rating_donut_dimens_det"
+        android:translationZ="@dimen/progress_bar_elevation"
+        app:layout_anchor="@id/detailsFabDownloadPoster"
+        app:layout_anchorGravity="center"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/detailsFabShare"
