@@ -51,9 +51,9 @@ class HomeFragmentViewModel : ViewModel() {
     }
 
     fun setApiType() {
-        val newApi = getCurrentApiDataSourceUseCase.execute()
-        if (newApi == apiLiveData.value) return
-        else apiLiveData.value = newApi
+//        val newApi = getCurrentApiDataSourceUseCase.execute()
+//        if (newApi == apiLiveData.value) return
+//        else apiLiveData.value = newApi
     }
 
     private fun initFilmFlow() {

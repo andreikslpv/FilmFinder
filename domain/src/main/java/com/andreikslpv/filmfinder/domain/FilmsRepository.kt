@@ -6,6 +6,7 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 interface FilmsRepository {
 
@@ -13,11 +14,11 @@ interface FilmsRepository {
 
     fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>>
 
-    fun getAvailableCategories(): List<CategoryType>
+    fun getAvailableCategories(): Flow<List<CategoryType>>
 
     fun setApiDataSource(api: ValuesType)
 
-    fun getCurrentApiDataSource(): ValuesType
+    fun getCurrentApiDataSource(): MutableStateFlow<ValuesType>
 
     fun setCacheMode(mode: ValuesType)
 

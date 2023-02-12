@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
@@ -17,7 +18,6 @@ import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -32,24 +32,58 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class SelectionsFragment : Fragment() {
     private var _binding: FragmentSelectionsBinding? = null
     private val binding
         get() = _binding!!
 
-    @Inject
-    lateinit var getAvailableCategories: GetAvailableCategoriesUseCase
-
     private val viewModel: SelectionsFragmentViewModel by viewModels()
     private lateinit var adapter: FilmPagingAdapter
-    private lateinit var spinnerList: List<String>
-    private lateinit var categoryList: List<CategoryType>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.instance.dagger.inject(this)
+
+        this.lifecycleScope.launch {
+            // Suspend the coroutine until the lifecycle is DESTROYED.
+            // repeatOnLifecycle launches the block in a new coroutine every time the
+            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                // Safely collect from source when the lifecycle is STARTED
+                // and stop collecting when the lifecycle is STOPPED
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.filmsFlow
+                        .collectLatest(adapter::submitData)
+                }
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.currentApiFlow
+                        .collect {
+                            when (it) {
+                                ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                                ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                                else -> {}
+                            }
+                            if (!viewModel.isOldApi(it)) {
+                                viewModel.setCategoryList()
+                                initSpinner()
+                                adapter.refresh()
+                            }
+                        }
+                }
+
+//                viewLifecycleOwner.lifecycleScope.launch {
+//                    viewModel.currentCategoryList
+//                        .collect {
+//                            initSpinner()
+//                            adapter.refresh()
+//                        }
+//                }
+
+            }
+            // Note: at this point, the lifecycle is DESTROYED!
+        }
     }
 
     override fun onCreateView(
@@ -67,15 +101,8 @@ class SelectionsFragment : Fragment() {
 
         initSpinner()
         initFilmListRecycler()
-        observeFilmFlowStatus()
         setupSwipeToRefresh()
-        observeApiType()
         initSettingsButton()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.setApiType()
     }
 
     override fun onPause() {
@@ -90,10 +117,9 @@ class SelectionsFragment : Fragment() {
     }
 
     private fun initSpinner() {
-        // получаем список категорий, жоступных для текущего апи
-        categoryList = getAvailableCategories.execute()
-        // формируем на основе списка категорий, список пунктов выпадающего меню
-        spinnerList = convertCategoryListToSpinnerList(categoryList)
+        // из списка категорий, доступных для текущего апи,
+        // формируем список пунктов выпадающего меню
+        val spinnerList = convertCategoryListToSpinnerList(viewModel.currentCategoryList.value)
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
@@ -105,8 +131,9 @@ class SelectionsFragment : Fragment() {
         binding.selectionsSpinner.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (p2 >= 0 && p2 < categoryList.size) {
-                    viewModel.setCategory(categoryList[p2])
+                if (p2 >= 0 && p2 < viewModel.currentCategoryList.value.size) {
+                    viewModel.setCategory(viewModel.currentCategoryList.value[p2])
+                    println("I/o choose spinner item")
                 } else {
                     Toast.makeText(requireContext(), R.string.error_category, Toast.LENGTH_SHORT)
                         .show()
@@ -143,13 +170,6 @@ class SelectionsFragment : Fragment() {
         return resultList
     }
 
-    private fun observeFilmFlowStatus() {
-        viewModel.filmsFlowInitStatus.observe(viewLifecycleOwner) {
-            if (it)
-                observeFilms()
-        }
-    }
-
     private fun initFilmListRecycler() {
         adapter = FilmPagingAdapter(object : FilmOnItemClickListener {
             override fun click(
@@ -177,14 +197,6 @@ class SelectionsFragment : Fragment() {
 
         initLoadStateListening()
         handleScrollingToTopWhenChangeCategory()
-    }
-
-    private fun observeFilms() {
-        this.lifecycleScope.launch {
-            viewModel.filmsFlow.collectLatest { pagedData ->
-                adapter.submitData(pagedData)
-            }
-        }
     }
 
     private fun initLoadStateListening() {
@@ -226,31 +238,13 @@ class SelectionsFragment : Fragment() {
         return adapter.loadStateFlow.map { it.refresh }
     }
 
-    private fun observeApiType() {
-        viewModel.apiLiveData.observe(viewLifecycleOwner) {
-            this.lifecycleScope.launch {
-                refreshSelectionsFilmList()
-            }
-            when (it) {
-                ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
-                ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
-                else -> {}
-            }
-        }
-    }
-
     private fun setupSwipeToRefresh() {
         binding.selectionsSwipeRefreshLayout.setOnRefreshListener {
             this.lifecycleScope.launch {
-                refreshSelectionsFilmList()
+                adapter.refresh()
                 binding.selectionsSwipeRefreshLayout.isRefreshing = false
             }
         }
-    }
-
-    private suspend fun refreshSelectionsFilmList() {
-        adapter.submitData(PagingData.empty())
-        viewModel.refresh()
     }
 
     private fun initSettingsButton() {

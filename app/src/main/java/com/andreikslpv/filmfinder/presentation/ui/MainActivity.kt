@@ -97,13 +97,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initApplicationSettings() {
         // устанавливаем сохраненные настройки приложения
-        val settingsMap = getAllSettingValueUseCase.execute()
-        for (entity in settingsMap)
-            when (entity.key) {
-                SettingsType.API_TYPE -> setApiDataSourceUseCase.execute(entity.value)
-                SettingsType.CACHE_MODE -> setCacheModeUseCase.execute(entity.value)
-                else -> {}
-            }
+        getAllSettingValueUseCase.execute()
+//        for (entity in settingsMap)
+//            when (entity.key) {
+//                SettingsType.API_TYPE -> setApiDataSourceUseCase.execute(entity.value)
+//                SettingsType.CACHE_MODE -> setCacheModeUseCase.execute(entity.value)
+//                else -> {}
+//            }
         updateMessageBoard()
     }
 

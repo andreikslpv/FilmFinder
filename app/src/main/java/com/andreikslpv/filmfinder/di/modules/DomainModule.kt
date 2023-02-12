@@ -97,8 +97,11 @@ class DomainModule {
     // usecase для работы с репозиторием настроек
     @Provides
     @Singleton
-    fun provideGetAllSettingValue(settingsRepository: SettingsRepository): GetAllSettingValueUseCase {
-        return GetAllSettingValueUseCase(settingsRepository)
+    fun provideGetAllSettingValue(
+        settingsRepository: SettingsRepository,
+        filmsRepository: FilmsRepository
+    ): GetAllSettingValueUseCase {
+        return GetAllSettingValueUseCase(settingsRepository, filmsRepository)
     }
 
     @Provides
