@@ -11,10 +11,8 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetCurrentApiDataSourceUseCase
 import com.andreikslpv.filmfinder.domain.usecase.GetPagedFilmsByCategoryUseCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -36,45 +34,24 @@ class SelectionsFragmentViewModel : ViewModel() {
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
 
     private var previousApi = ValuesType.NONE
-
-    //arrayOf(ValuesType.NONE, ValuesType.NONE)
     val currentApiFlow: StateFlow<ValuesType> by lazy {
         getCurrentApiDataSourceUseCase.execute().asStateFlow()
     }
 
-    private val _currentCategoryList = MutableStateFlow(emptyList<CategoryType>())
-    val currentCategoryList: StateFlow<List<CategoryType>> = _currentCategoryList.asStateFlow()
-
-
     init {
         App.instance.dagger.inject(this)
 
-        setCategoryList()
-        //categoryList = getAvailableCategoriesUseCase.execute()
-        if (_currentCategoryList.value.isNotEmpty())
-            _category.tryEmit(_currentCategoryList.value[0])
+        viewModelScope.launch {
+            getAvailableCategoriesUseCase.execute().asStateFlow().collect {
+                categoryList = it
+            }
+        }
+        if (categoryList.isNotEmpty())
+            _category.tryEmit(categoryList[0])
 
         filmsFlow = category
             .flatMapLatest { getPagedFilmsByCategoryUseCase.execute(it) }
             .cachedIn(viewModelScope)
-    }
-
-    fun setCategoryList() {
-        viewModelScope.launch {
-            getAvailableCategoriesUseCase.execute().collect {
-//                println("!!! ${it}")
-//                categoryList = it
-//                println("!!! ${categoryList}")
-//                if (it.isNotEmpty())
-//                    _category.tryEmit(it[0])
-                //viewModelScope.launch {
-//                val job = scope.async {
-//                    viewModel.loadWallpaper(viewModel.filmLocalStateLiveData.value!!.posterDetails)
-//                }
-                _currentCategoryList.tryEmit(it)
-                //}
-            }
-        }
     }
 
     fun setCategory(newCategory: CategoryType) {

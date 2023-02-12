@@ -105,11 +105,8 @@ class FilmsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAvailableCategories(): Flow<List<CategoryType>> {
-        return flow {
-//            println("!!! ${apiDataSource.getAvailableCategories()}")
-            emit(apiDataSource.getAvailableCategories())
-        }
+    override fun getAvailableCategories(): MutableStateFlow<List<CategoryType>> {
+        return _currentCategoryList
     }
 
     override fun setApiDataSource(api: ValuesType) {
@@ -130,9 +127,9 @@ class FilmsRepositoryImpl @Inject constructor(
         CoroutineScope(EmptyCoroutineContext).launch {
             _currentApi.tryEmit(apiDataSource.getApiType())
         }
-//        CoroutineScope(EmptyCoroutineContext).launch {
-//            _currentCategoryList.tryEmit(apiDataSource.getAvailableCategories())
-//        }
+        CoroutineScope(EmptyCoroutineContext).launch {
+            _currentCategoryList.tryEmit(apiDataSource.getAvailableCategories())
+        }
     }
 
     override fun getCurrentApiDataSource(): MutableStateFlow<ValuesType> {

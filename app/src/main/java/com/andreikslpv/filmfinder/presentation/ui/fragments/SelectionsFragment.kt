@@ -66,21 +66,11 @@ class SelectionsFragment : Fragment() {
                                 else -> {}
                             }
                             if (!viewModel.isOldApi(it)) {
-                                viewModel.setCategoryList()
                                 initSpinner()
                                 adapter.refresh()
                             }
                         }
                 }
-
-//                viewLifecycleOwner.lifecycleScope.launch {
-//                    viewModel.currentCategoryList
-//                        .collect {
-//                            initSpinner()
-//                            adapter.refresh()
-//                        }
-//                }
-
             }
             // Note: at this point, the lifecycle is DESTROYED!
         }
@@ -119,7 +109,7 @@ class SelectionsFragment : Fragment() {
     private fun initSpinner() {
         // из списка категорий, доступных для текущего апи,
         // формируем список пунктов выпадающего меню
-        val spinnerList = convertCategoryListToSpinnerList(viewModel.currentCategoryList.value)
+        val spinnerList = convertCategoryListToSpinnerList(viewModel.categoryList)
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
@@ -131,9 +121,8 @@ class SelectionsFragment : Fragment() {
         binding.selectionsSpinner.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (p2 >= 0 && p2 < viewModel.currentCategoryList.value.size) {
-                    viewModel.setCategory(viewModel.currentCategoryList.value[p2])
-                    println("I/o choose spinner item")
+                if (p2 >= 0 && p2 < viewModel.categoryList.size) {
+                    viewModel.setCategory(viewModel.categoryList[p2])
                 } else {
                     Toast.makeText(requireContext(), R.string.error_category, Toast.LENGTH_SHORT)
                         .show()

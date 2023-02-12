@@ -14,7 +14,7 @@ interface FilmsRepository {
 
     fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>>
 
-    fun getAvailableCategories(): Flow<List<CategoryType>>
+    fun getAvailableCategories(): MutableStateFlow<List<CategoryType>>
 
     fun setApiDataSource(api: ValuesType)
 
