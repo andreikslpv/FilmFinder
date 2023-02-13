@@ -11,7 +11,7 @@ interface FilmsApiDataSource {
 
     fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel>
 
-    suspend fun getAvailableCategories(): List<CategoryType>
+    fun getAvailableCategories(): List<CategoryType>
 
     fun getApiType(): ValuesType
 

@@ -55,23 +55,29 @@ class FilmsRepositoryImpl @Inject constructor(
                 initialLoadSize = PAGE_SIZE
             ),
             pagingSourceFactory = {
-                if (getResultOfChoiceSource()) apiDataSource.getFilmsByCategoryPagingSource(
-                    category,
-                    object : ApiCallback {
-                        override fun onSuccess(films: List<FilmDomainModel>, currentIndex: Int) {
-                            if (isNetworkAvailable) {
-                                cacheDataSource.putCategoryToCache(
-                                    apiDataSource.getApiType(),
-                                    category,
-                                    films,
-                                    currentIndex,
-                                )
+                if (getResultOfChoiceSource()) {
+                    println("I/o new PS")
+                    apiDataSource.getFilmsByCategoryPagingSource(
+                        category,
+                        object : ApiCallback {
+                            override fun onSuccess(
+                                films: List<FilmDomainModel>,
+                                currentIndex: Int
+                            ) {
+                                if (isNetworkAvailable) {
+                                    cacheDataSource.putCategoryToCache(
+                                        apiDataSource.getApiType(),
+                                        category,
+                                        films,
+                                        currentIndex,
+                                    )
+                                }
                             }
-                        }
 
-                        override fun onFailure() {
-                        }
-                    })
+                            override fun onFailure() {
+                            }
+                        })
+                }
                 else cacheDataSource.getFilmsByCategoryPagingSource(
                     apiDataSource.getApiType(),
                     category

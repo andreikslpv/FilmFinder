@@ -44,7 +44,40 @@ class SelectionsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.instance.dagger.inject(this)
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSelectionsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 4)
+
+        setCollectors()
+        initSpinner()
+        initFilmListRecycler()
+        setupSwipeToRefresh()
+        initSettingsButton()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // меняем background MainActivity на background фрагмента
+        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    private fun setCollectors() {
         this.lifecycleScope.launch {
             // Suspend the coroutine until the lifecycle is DESTROYED.
             // repeatOnLifecycle launches the block in a new coroutine every time the
@@ -65,7 +98,7 @@ class SelectionsFragment : Fragment() {
                                 ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
                                 else -> {}
                             }
-                            if (!viewModel.isOldApi(it)) {
+                            if (viewModel.isNewApi(it)) {
                                 initSpinner()
                                 adapter.refresh()
                             }
@@ -74,36 +107,6 @@ class SelectionsFragment : Fragment() {
             }
             // Note: at this point, the lifecycle is DESTROYED!
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentSelectionsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 4)
-
-        initSpinner()
-        initFilmListRecycler()
-        setupSwipeToRefresh()
-        initSettingsButton()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // меняем background MainActivity на background фрагмента
-        (activity as MainActivity).setBackground(binding.selectionsFragmentRoot.background)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private fun initSpinner() {
@@ -229,10 +232,8 @@ class SelectionsFragment : Fragment() {
 
     private fun setupSwipeToRefresh() {
         binding.selectionsSwipeRefreshLayout.setOnRefreshListener {
-            this.lifecycleScope.launch {
-                adapter.refresh()
-                binding.selectionsSwipeRefreshLayout.isRefreshing = false
-            }
+            adapter.refresh()
+            binding.selectionsSwipeRefreshLayout.isRefreshing = false
         }
     }
 

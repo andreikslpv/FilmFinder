@@ -13,8 +13,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class TmdbDataSource @Inject constructor(
@@ -57,11 +55,8 @@ class TmdbDataSource @Inject constructor(
         )
     }
 
-    override suspend fun getAvailableCategories(): List<CategoryType> {
-        return suspendCoroutine {
-            it.resume(categoryMap.keys.toList())
-        }
-//        return categoryMap.keys.toList()
+    override fun getAvailableCategories(): List<CategoryType> {
+        return categoryMap.keys.toList()
     }
 
     private fun getPathFromCategory(category: CategoryType): String {

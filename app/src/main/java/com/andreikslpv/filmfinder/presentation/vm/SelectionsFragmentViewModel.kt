@@ -59,10 +59,17 @@ class SelectionsFragmentViewModel : ViewModel() {
         else _category.tryEmit(newCategory)
     }
 
-    fun isOldApi(api: ValuesType): Boolean {
-        return if (api == previousApi) true
-        else {
+    fun refresh() {
+        val temp = category.value
+        _category.tryEmit(CategoryType.NONE)
+        _category.tryEmit(temp)
+    }
+
+    fun isNewApi(api: ValuesType): Boolean {
+        return if (api != previousApi) {
             previousApi = api
+            true
+        } else {
             false
         }
     }
