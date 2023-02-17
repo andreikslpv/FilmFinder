@@ -32,6 +32,8 @@ class HomeFragmentViewModel : ViewModel() {
         getCurrentApiDataSourceUseCase.execute().asStateFlow()
     }
 
+    var isNewError = true
+
     init {
         App.instance.dagger.inject(this)
 
@@ -45,7 +47,10 @@ class HomeFragmentViewModel : ViewModel() {
 
     fun setQuery(newQuery: String) {
         if (currentQuery.value == newQuery) return
-        else _currentQuery.tryEmit(newQuery)
+        else {
+            isNewError = true
+            _currentQuery.tryEmit(newQuery)
+        }
     }
 
     fun isNewApi(api: ValuesType): Boolean {

@@ -20,6 +20,7 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.ChangeNetworkAvailabilityUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -42,6 +44,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var adapter: FilmPagingAdapter
     private val viewModel: HomeFragmentViewModel by viewModels()
+
+    @Inject
+    lateinit var changeNetworkAvailabilityUseCase: ChangeNetworkAvailabilityUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,19 +151,31 @@ class HomeFragment : Fragment() {
                     binding.homeProgressBar.visible(true)
                 }
                 if (it.source.prepend is LoadState.Error) {
-                    (it.source.prepend as LoadState.Error).error.message?.makeToast(requireContext())
+                    catchError((it.source.prepend as LoadState.Error).error.message ?: "")
                 }
                 if (it.source.append is LoadState.Error) {
-                    (it.source.append as LoadState.Error).error.message?.makeToast(requireContext())
+                    catchError((it.source.append as LoadState.Error).error.message ?: "")
                 }
                 if (it.source.refresh is LoadState.NotLoading) {
                     binding.homeProgressBar.visible(false)
                 }
                 if (it.source.refresh is LoadState.Error) {
                     binding.homeProgressBar.visible(false)
-                    (it.source.refresh as LoadState.Error).error.message?.makeToast(requireContext())
+                    catchError((it.source.refresh as LoadState.Error).error.message ?: "")
                 }
             }
+        }
+    }
+
+    private fun catchError(message: String) {
+        if (viewModel.isNewError) {
+            "${getString(R.string.error_failed_download)} $message"
+                .makeToast(requireContext())
+            changeNetworkAvailabilityUseCase.execute(false)
+            adapter.refresh()
+            viewModel.isNewError = false
+            getString(R.string.error_search_from_cache)
+                .makeToast(requireContext())
         }
     }
 
@@ -210,6 +227,7 @@ class HomeFragment : Fragment() {
 
     private fun setupSwipeToRefresh() {
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
+            viewModel.isNewError = true
             adapter.refresh()
             binding.homeSwipeRefreshLayout.isRefreshing = false
         }

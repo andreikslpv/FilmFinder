@@ -55,33 +55,35 @@ class FilmsRepositoryImpl @Inject constructor(
                 initialLoadSize = PAGE_SIZE
             ),
             pagingSourceFactory = {
-                if (getResultOfChoiceSource()) {
-                    println("I/o new PS")
-                    apiDataSource.getFilmsByCategoryPagingSource(
-                        category,
-                        object : ApiCallback {
-                            override fun onSuccess(
-                                films: List<FilmDomainModel>,
-                                currentIndex: Int
-                            ) {
-                                if (isNetworkAvailable) {
-                                    cacheDataSource.putCategoryToCache(
-                                        apiDataSource.getApiType(),
-                                        category,
-                                        films,
-                                        currentIndex,
-                                    )
-                                }
+                if (getResultOfChoiceSource()) apiDataSource.getFilmsByCategoryPagingSource(
+                    category,
+                    object : ApiCallback {
+                        override fun onSuccess(
+                            films: List<FilmDomainModel>,
+                            currentIndex: Int
+                        ) {
+                            if (isNetworkAvailable) {
+                                cacheDataSource.putCategoryToCache(
+                                    apiDataSource.getApiType(),
+                                    category,
+                                    films,
+                                    currentIndex,
+                                )
                             }
+                        }
 
-                            override fun onFailure() {
-                            }
-                        })
+                        override fun onFailure() {
+                        }
+                    })
+                else {
+                    // загружаем данные из кэша и меняем статус доступности апи на true,
+                    // чтобы в следующий раз в режиме авто снова сначала была попытка получить данные из апи
+                    isNetworkAvailable = true
+                    cacheDataSource.getFilmsByCategoryPagingSource(
+                        apiDataSource.getApiType(),
+                        category
+                    )
                 }
-                else cacheDataSource.getFilmsByCategoryPagingSource(
-                    apiDataSource.getApiType(),
-                    category
-                )
             }).flow
     }
 
@@ -94,10 +96,15 @@ class FilmsRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = {
                 if (getResultOfChoiceSource()) apiDataSource.getSearchResultPagingSource(query)
-                else cacheDataSource.getSearchResultPagingSource(
-                    apiDataSource::checkComplianceApi,
-                    query
-                )
+                else {
+                    // загружаем данные из кэша и меняем статус доступности апи на true,
+                    // чтобы в следующий раз в режиме авто снова сначала была попытка получить данные из апи
+                    isNetworkAvailable = true
+                    cacheDataSource.getSearchResultPagingSource(
+                        apiDataSource::checkComplianceApi,
+                        query
+                    )
+                }
             }).flow
     }
 

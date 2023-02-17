@@ -80,7 +80,7 @@ class SettingsFragment : Fragment() {
                 ValuesType.NEVER -> binding.settingsCacheChipGroup.check(R.id.settingsCacheChipNever)
                 else -> {}
             }
-            (activity as MainActivity).updateMessageBoard(it)
+            (activity as MainActivity).updateMessageBoard(_cacheMode = it)
         }
         binding.settingsCacheChipGroup.setOnCheckedStateChangeListener { group, _ ->
             when (group.checkedChipId) {

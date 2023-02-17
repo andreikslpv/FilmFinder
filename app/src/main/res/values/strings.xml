@@ -25,11 +25,14 @@
     <string name="retry_button">Нажмите для перезагрузки</string>
     <string name="welcome_text">Для поиска фильма, начните вводить его название в строку поиска</string>
     <string name="error_category">Ошибка при получении списка доступных категорий</string>
+    <string name="error_failed_download">Не удалось загрузить данные из сети:</string>
+    <string name="error_load_from_cache">Данные загружены из кеша</string>
+    <string name="error_search_from_cache">Поиск выполнен среди кэшированных фильмов</string>
     <string name="settings_api_title">Использовать данные с сайта:</string>
     <string name="settings_api_tmdb">themoviedb.org</string>
     <string name="settings_api_imdb">imdb-api.com</string>
     <string name="settings_cache_title">Загружать данные из кеша:</string>
-    <string name="settings_cache_auto">авто (когда сеть недоступна)</string>
+    <string name="settings_cache_auto">авто (когда не удалась загрузка из сети)</string>
     <string name="settings_cache_always">всегда</string>
     <string name="settings_cache_never">никогда</string>
     <string name="settings_cache_clear">Очистить кеш</string>

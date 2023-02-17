@@ -38,6 +38,8 @@ class SelectionsFragmentViewModel : ViewModel() {
         getCurrentApiDataSourceUseCase.execute().asStateFlow()
     }
 
+    var isNewError = true
+
     init {
         App.instance.dagger.inject(this)
 
@@ -56,13 +58,10 @@ class SelectionsFragmentViewModel : ViewModel() {
 
     fun setCategory(newCategory: CategoryType) {
         if (newCategory == category.value) return
-        else _category.tryEmit(newCategory)
-    }
-
-    fun refresh() {
-        val temp = category.value
-        _category.tryEmit(CategoryType.NONE)
-        _category.tryEmit(temp)
+        else {
+            isNewError = true
+            _category.tryEmit(newCategory)
+        }
     }
 
     fun isNewApi(api: ValuesType): Boolean {
