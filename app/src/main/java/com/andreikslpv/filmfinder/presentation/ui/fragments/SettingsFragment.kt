@@ -11,7 +11,7 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentSettingsBinding
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.DeleteAllCachedFilmsUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.DeleteAllCachedFilmsUseCase
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType

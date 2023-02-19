@@ -8,9 +8,9 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.GetAvailableCategoriesUseCase
-import com.andreikslpv.filmfinder.domain.usecase.GetCurrentApiDataSourceUseCase
-import com.andreikslpv.filmfinder.domain.usecase.GetPagedFilmsByCategoryUseCase
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetAvailableCategoriesUseCase
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetCurrentApiDataSourceUseCase
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetPagedFilmsByCategoryUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject

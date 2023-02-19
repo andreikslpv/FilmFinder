@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.types.SettingsType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.GetSettingValueUseCase
-import com.andreikslpv.filmfinder.domain.usecase.SetApiDataSourceUseCase
-import com.andreikslpv.filmfinder.domain.usecase.SetCacheModeUseCase
-import com.andreikslpv.filmfinder.domain.usecase.SetSettingValueUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.GetSettingValueUseCase
+import com.andreikslpv.filmfinder.domain.usecase.apicache.SetApiDataSourceUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.SetCacheModeUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.SetSettingValueUseCase
 import javax.inject.Inject
 
 class SettingsFragmentViewModel : ViewModel() {

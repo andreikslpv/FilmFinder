@@ -19,7 +19,10 @@ import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.SettingsType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.*
+import com.andreikslpv.filmfinder.domain.usecase.apicache.SetApiDataSourceUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.GetSettingValueUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.InitApplicationSettingsUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.SetCacheModeUseCase
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
     @Inject
-    lateinit var getAllSettingValueUseCase: GetAllSettingValueUseCase
+    lateinit var initApplicationSettingsUseCase: InitApplicationSettingsUseCase
 
     @Inject
     lateinit var getSettingValueUseCase: GetSettingValueUseCase
@@ -93,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initApplicationSettings() {
         // устанавливаем сохраненные настройки приложения
-        getAllSettingValueUseCase.execute()
+        initApplicationSettingsUseCase.execute()
         updateMessageBoard()
     }
 
@@ -279,6 +282,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.setMessage(result)
+    }
+
+    fun updateMessageBoard(message: String) {
+        viewModel.setMessage(message)
     }
 
     fun setBackground(newBackground: Drawable?) {

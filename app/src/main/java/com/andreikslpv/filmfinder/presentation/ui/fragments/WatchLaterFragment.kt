@@ -23,12 +23,15 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration.TopSp
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.vm.WatchLaterFragmentViewModel
+import kotlinx.coroutines.*
 
 
 class WatchLaterFragment : Fragment() {
     private var _binding: FragmentWatchLaterBinding? = null
     private val binding
         get() = _binding!!
+
+    private lateinit var scope: CoroutineScope
     private lateinit var filmsAdapter: FilmRecyclerAdapter
     private val viewModel: WatchLaterFragmentViewModel by viewModels()
 
@@ -45,17 +48,13 @@ class WatchLaterFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 3)
 
         initFilmListRecycler()
-        viewModel.filmsListLiveData.observe(viewLifecycleOwner) {
-            filmsAdapter.changeItems(it)
-            filmsAdapter.notifyDataSetChanged()
-        }
+        observeFilmList()
         initSettingsButton()
     }
 
@@ -63,6 +62,11 @@ class WatchLaterFragment : Fragment() {
         super.onPause()
         // меняем background MainActivity на background фрагмента
         (activity as MainActivity).setBackground(binding.watchLaterFragmentRoot.background)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
     }
 
     override fun onDestroy() {
@@ -99,6 +103,20 @@ class WatchLaterFragment : Fragment() {
             val callback = FilmTouchHelperCallback(adapter as FilmRecyclerAdapter)
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun observeFilmList() {
+        scope = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                viewModel.filmsList.collect {
+                    withContext(Dispatchers.Main) {
+                        filmsAdapter.changeItems(it)
+                        filmsAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
         }
     }
 

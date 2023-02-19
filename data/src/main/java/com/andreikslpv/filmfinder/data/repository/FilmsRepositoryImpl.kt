@@ -1,7 +1,5 @@
 package com.andreikslpv.filmfinder.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -20,7 +18,9 @@ import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,7 +36,7 @@ class FilmsRepositoryImpl @Inject constructor(
     private val _currentApi = MutableStateFlow(ValuesType.NONE)
     private val _currentCategoryList = MutableStateFlow(emptyList<CategoryType>())
 
-    private var isNetworkAvailable = true
+    private var isApiAvailable = true
     private var currentCacheMode = ValuesType.AUTO
     private lateinit var apiDataSource: FilmsApiDataSource
 
@@ -62,7 +62,7 @@ class FilmsRepositoryImpl @Inject constructor(
                             films: List<FilmDomainModel>,
                             currentIndex: Int
                         ) {
-                            if (isNetworkAvailable) {
+                            if (isApiAvailable) {
                                 cacheDataSource.putCategoryToCache(
                                     apiDataSource.getApiType(),
                                     category,
@@ -78,7 +78,7 @@ class FilmsRepositoryImpl @Inject constructor(
                 else {
                     // загружаем данные из кэша и меняем статус доступности апи на true,
                     // чтобы в следующий раз в режиме авто снова сначала была попытка получить данные из апи
-                    isNetworkAvailable = true
+                    isApiAvailable = true
                     cacheDataSource.getFilmsByCategoryPagingSource(
                         apiDataSource.getApiType(),
                         category
@@ -99,7 +99,7 @@ class FilmsRepositoryImpl @Inject constructor(
                 else {
                     // загружаем данные из кэша и меняем статус доступности апи на true,
                     // чтобы в следующий раз в режиме авто снова сначала была попытка получить данные из апи
-                    isNetworkAvailable = true
+                    isApiAvailable = true
                     cacheDataSource.getSearchResultPagingSource(
                         apiDataSource::checkComplianceApi,
                         query
@@ -111,7 +111,7 @@ class FilmsRepositoryImpl @Inject constructor(
     private fun getResultOfChoiceSource(): Boolean {
         // возвращает true если данные надо брать из апи, false - если из кеша
         return when (currentCacheMode) {
-            ValuesType.AUTO -> isNetworkAvailable
+            ValuesType.AUTO -> isApiAvailable
             ValuesType.ALWAYS -> false
             ValuesType.NEVER -> true
             else -> false
@@ -160,37 +160,25 @@ class FilmsRepositoryImpl @Inject constructor(
         cacheDataSource.deleteCache()
     }
 
-    override fun changeNetworkAvailability(newStatus: Boolean) {
-        isNetworkAvailable = newStatus
+    override fun changeApiAvailability(newStatus: Boolean) {
+        isApiAvailable = newStatus
     }
 
     // --------------- work with local
 
-    override fun getWatchLaterFilms(): LiveData<List<FilmDomainModel>> {
-        val result: LiveData<List<FilmDomainModel>> = Transformations.distinctUntilChanged(
-            Transformations.map(localDataSource.getWatchLaterFilms()) {
-                LocalToDomainListMapper.map(it)
-            }
-        )
-        return result
+    override fun getWatchLaterFilms(): Flow<List<FilmDomainModel>> {
+        return localDataSource.getWatchLaterFilms()
+            .map { LocalToDomainListMapper.map(it) }
     }
 
-    override fun getFavoritesFilms(): LiveData<List<FilmDomainModel>> {
-        val result: LiveData<List<FilmDomainModel>> = Transformations.distinctUntilChanged(
-            Transformations.map(localDataSource.getFavoritesFilms()) {
-                LocalToDomainListMapper.map(it)
-            }
-        )
-        return result
+    override fun getFavoritesFilms(): Flow<List<FilmDomainModel>> {
+        return localDataSource.getFavoritesFilms()
+            .map { LocalToDomainListMapper.map(it) }
     }
 
-    override fun getFilmLocalState(filmId: String): LiveData<FilmDomainModel> {
-        val result: LiveData<FilmDomainModel> = Transformations.distinctUntilChanged(
-            Transformations.map(localDataSource.getFilmLocalState(filmId)) {
-                LocalToDomainMapper.map(it)
-            }
-        )
-        return result
+    override fun getFilmLocalState(filmId: String): Flow<FilmDomainModel> {
+        return localDataSource.getFilmLocalState(filmId)
+            .map { LocalToDomainMapper.map(it) }
     }
 
     override fun saveFilmToLocal(film: FilmDomainModel) {

@@ -20,7 +20,7 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.ChangeNetworkAvailabilityUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.ChangeApiAvailabilityUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeFragmentViewModel by viewModels()
 
     @Inject
-    lateinit var changeNetworkAvailabilityUseCase: ChangeNetworkAvailabilityUseCase
+    lateinit var changeApiAvailabilityUseCase: ChangeApiAvailabilityUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,14 +168,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun catchError(message: String) {
-        if (viewModel.isNewError) {
+        if (viewModel.isNewError && !binding.homeSearchView.query.isNullOrBlank()) {
             "${getString(R.string.error_failed_download)} $message"
                 .makeToast(requireContext())
-            changeNetworkAvailabilityUseCase.execute(false)
+            changeApiAvailabilityUseCase.execute(false)
             adapter.refresh()
             viewModel.isNewError = false
-            getString(R.string.error_search_from_cache)
-                .makeToast(requireContext())
+            (activity as MainActivity).updateMessageBoard(getString(R.string.error_search_from_cache))
         }
     }
 

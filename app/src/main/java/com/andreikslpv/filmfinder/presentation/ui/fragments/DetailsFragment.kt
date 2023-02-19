@@ -34,15 +34,19 @@ class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
     private val binding
         get() = _binding!!
+
+    private val viewModel: DetailsFragmentViewModel by viewModels()
+
     private var message: String = ""
     private lateinit var type: FragmentsType
-    private val viewModel: DetailsFragmentViewModel by viewModels()
-    private val scope = CoroutineScope(Dispatchers.IO)
+
+    private lateinit var scope: CoroutineScope
+
     private val singlePermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             when {
                 granted -> {
-                    // доступ к хранилищу разрешен, открываем камеру
+                    // доступ к хранилищу разрешен, начинаем загрузку
                     performAsyncLoadOfPoster()
                 }
                 !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
@@ -66,8 +70,10 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         //Получаем фильм и тип фрагмента (из которого вызван фрагмент) из переданного бандла
-        viewModel.setFilm(arguments?.get(BUNDLE_KEY_FILM) as FilmDomainModel)
+        val film = arguments?.get(BUNDLE_KEY_FILM) as FilmDomainModel
         type = arguments?.get(BUNDLE_KEY_TYPE) as FragmentsType
+        viewModel.setFilm(film)
+
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,11 +83,18 @@ class DetailsFragment : Fragment() {
 
         //Приостанавливаем воспроизведение Transition до загрузки данных
         postponeEnterTransition()
+
         observeFilmLocalState()
         setBackground()
         initIcons()
+
         //Данные загружены, запускаем анимацию перехода
         startPostponedEnterTransition()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
     }
 
     override fun onDestroy() {
@@ -90,19 +103,28 @@ class DetailsFragment : Fragment() {
     }
 
     private fun observeFilmLocalState() {
-        viewModel.filmLocalStateLiveData.observe(viewLifecycleOwner) {
-            setFavoritesIcon(it.isFavorite)
-            setWatchLaterIcon(it.isWatchLater)
-            // формируем сообщение, которое будет использоваться при share
-            message = resources.getString(R.string.details_share_message) + it.title
-            //Устанавливаем заголовок
-            binding.detailsToolbar.title = it.title
-            // Устанавливаем постер фильма (большой)
-            binding.detailsPoster.loadImage(it.posterDetails)
-            //Устанавливаем описание
-            binding.detailsDescription.text = it.description
-            //Устанавливаем рейтинг
-            binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
+        scope = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                viewModel.filmLocalState.collect {
+                    withContext(Dispatchers.Main) {
+                        setFavoritesIcon(it.isFavorite)
+                        setWatchLaterIcon(it.isWatchLater)
+                        // формируем сообщение, которое будет использоваться при share
+                        message = resources.getString(R.string.details_share_message) + it.title
+                        //Устанавливаем заголовок
+                        binding.detailsToolbar.title = it.title
+                        // Устанавливаем постер фильма (большой)
+                        binding.detailsPoster.loadImage(it.posterDetails)
+                        //Устанавливаем описание
+                        binding.detailsDescription.text = it.description
+                        //Устанавливаем рейтинг
+                        binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
+                    }
+                    // проверяем находится фильм в хотя бы в одном списке, если нет то сохраняем его в бд
+                    if (!it.isFavorite && !it.isWatchLater)
+                        viewModel.changeFilmLocalState(it)
+                }
+            }
         }
     }
 
@@ -143,12 +165,14 @@ class DetailsFragment : Fragment() {
     private fun initIcons() {
         binding.detailsFabFavorites.setOnClickListener {
             viewModel.changeFavoritesField()
-            setFavoritesIcon(viewModel.filmLocalStateLiveData.value?.isFavorite ?: false)
+            setFavoritesIcon(viewModel.filmLocalState.value.isFavorite)
         }
+
         binding.detailsFabWatchLater.setOnClickListener {
             viewModel.changeWatchLaterField()
-            setWatchLaterIcon(viewModel.filmLocalStateLiveData.value?.isWatchLater ?: false)
+            setWatchLaterIcon(viewModel.filmLocalState.value.isWatchLater)
         }
+
         binding.detailsFabDownloadPoster.setOnClickListener {
             // если Андройд 10+ то сразу запускаем скачивание, иначе запрашиваем разрешение
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -162,6 +186,7 @@ class DetailsFragment : Fragment() {
                 singlePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }
+
         binding.detailsFabShare.setOnClickListener {
             //Создаем интент
             val intent = Intent()
@@ -187,12 +212,14 @@ class DetailsFragment : Fragment() {
         MainScope().launch {
             //Включаем Прогресс-бар
             binding.detailsProgressBar.isVisible = true
-            //Создаем через async, так как нам нужен результат от работы, то есть Bitmap
-            val job = scope.async {
-                viewModel.loadWallpaper(viewModel.filmLocalStateLiveData.value!!.posterDetails)
+            withContext(Dispatchers.IO) {
+                //Создаем через async, так как нам нужен результат от работы, то есть Bitmap
+                val job = scope.async {
+                    viewModel.loadWallpaper(viewModel.filmLocalState.value.posterDetails)
+                }
+                //Сохраняем в галерею, как только файл загрузится
+                saveToGallery(job.await())
             }
-            //Сохраняем в галерею, как только файл загрузится
-            saveToGallery(job.await())
             //Выводим снекбар с кнопкой перейти в галерею
             Snackbar.make(
                 binding.root,
@@ -221,11 +248,11 @@ class DetailsFragment : Fragment() {
                 //Составляем информацию для файла (имя, тип, дата создания, куда сохранять и т.д.)
                 put(
                     MediaStore.Images.Media.TITLE,
-                    viewModel.filmLocalStateLiveData.value!!.title.handleSingleQuote()
+                    viewModel.filmLocalState.value.title.handleSingleQuote()
                 )
                 put(
                     MediaStore.Images.Media.DISPLAY_NAME,
-                    viewModel.filmLocalStateLiveData.value!!.title.handleSingleQuote()
+                    viewModel.filmLocalState.value.title.handleSingleQuote()
                 )
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                 put(
@@ -253,8 +280,8 @@ class DetailsFragment : Fragment() {
             MediaStore.Images.Media.insertImage(
                 requireActivity().contentResolver,
                 bitmap,
-                viewModel.filmLocalStateLiveData.value!!.title.handleSingleQuote(),
-                viewModel.filmLocalStateLiveData.value!!.description.handleSingleQuote()
+                viewModel.filmLocalState.value.title.handleSingleQuote(),
+                viewModel.filmLocalState.value.description.handleSingleQuote()
             )
         }
     }

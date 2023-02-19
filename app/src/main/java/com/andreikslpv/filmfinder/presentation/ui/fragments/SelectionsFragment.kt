@@ -18,7 +18,7 @@ import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.ChangeNetworkAvailabilityUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.ChangeApiAvailabilityUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -44,7 +44,7 @@ class SelectionsFragment : Fragment() {
     private lateinit var adapter: FilmPagingAdapter
 
     @Inject
-    lateinit var changeNetworkAvailabilityUseCase: ChangeNetworkAvailabilityUseCase
+    lateinit var changeApiAvailabilityUseCase: ChangeApiAvailabilityUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,11 +223,10 @@ class SelectionsFragment : Fragment() {
         if (viewModel.isNewError) {
             "${getString(R.string.error_failed_download)} $message"
                 .makeToast(requireContext())
-            changeNetworkAvailabilityUseCase.execute(false)
+            changeApiAvailabilityUseCase.execute(false)
             adapter.refresh()
             viewModel.isNewError = false
-            getString(R.string.error_load_from_cache)
-                .makeToast(requireContext())
+            (activity as MainActivity).updateMessageBoard(getString(R.string.error_load_from_cache))
         }
     }
 

@@ -1,6 +1,5 @@
 package com.andreikslpv.filmfinder.domain
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
@@ -24,13 +23,13 @@ interface FilmsRepository {
 
     fun deleteAllCachedFilms()
 
-    fun changeNetworkAvailability(newStatus: Boolean)
+    fun changeApiAvailability(newStatus: Boolean)
 
-    fun getWatchLaterFilms(): LiveData<List<FilmDomainModel>>
+    fun getWatchLaterFilms(): Flow<List<FilmDomainModel>>
 
-    fun getFavoritesFilms(): LiveData<List<FilmDomainModel>>
+    fun getFavoritesFilms(): Flow<List<FilmDomainModel>>
 
-    fun getFilmLocalState(filmId: String): LiveData<FilmDomainModel>
+    fun getFilmLocalState(filmId: String): Flow<FilmDomainModel>
 
     fun saveFilmToLocal(film: FilmDomainModel)
 

@@ -7,8 +7,8 @@ import androidx.paging.cachedIn
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.GetCurrentApiDataSourceUseCase
-import com.andreikslpv.filmfinder.domain.usecase.GetPagedSearchResultUseCase
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetCurrentApiDataSourceUseCase
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetPagedSearchResultUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*

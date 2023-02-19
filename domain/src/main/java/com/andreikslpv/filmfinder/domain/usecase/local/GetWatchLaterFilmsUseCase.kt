@@ -1,11 +1,11 @@
 package com.andreikslpv.filmfinder.domain.usecase.local
 
-import androidx.lifecycle.LiveData
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import kotlinx.coroutines.flow.Flow
 
 class GetWatchLaterFilmsUseCase(private val filmsRepository: FilmsRepository) {
-    fun execute(): LiveData<List<FilmDomainModel>> {
+    fun execute(): Flow<List<FilmDomainModel>> {
         return filmsRepository.getWatchLaterFilms()
     }
 }
