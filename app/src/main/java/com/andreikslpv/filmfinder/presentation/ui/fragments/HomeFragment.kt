@@ -10,16 +10,17 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.ChangeApiAvailabilityUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
@@ -44,6 +45,9 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: FilmPagingAdapter
     private val viewModel: HomeFragmentViewModel by viewModels()
 
+    @Inject
+    lateinit var changeApiAvailabilityUseCase: ChangeApiAvailabilityUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.instance.dagger.inject(this)
@@ -62,17 +66,12 @@ class HomeFragment : Fragment() {
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 1)
 
+        setCollectors()
+
         initSearchView()
         initFilmListRecycler()
-        observeFilmFlowStatus()
         setupSwipeToRefresh()
-        observeApiType()
         initSettingsButton()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.setApiType()
     }
 
     override fun onPause() {
@@ -86,10 +85,34 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 
-    private fun observeFilmFlowStatus() {
-        viewModel.filmsFlowInitStatus.observe(viewLifecycleOwner) {
-            if (it)
-                observeFilms()
+    private fun setCollectors() {
+        this.lifecycleScope.launch {
+            // Suspend the coroutine until the lifecycle is DESTROYED.
+            // repeatOnLifecycle launches the block in a new coroutine every time the
+            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                // Safely collect from source when the lifecycle is STARTED
+                // and stop collecting when the lifecycle is STOPPED
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.filmsFlow
+                        .collectLatest(adapter::submitData)
+                }
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.currentApiFlow
+                        .collect {
+                            when (it) {
+                                ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                                ValuesType.IMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                                else -> {}
+                            }
+                            if (viewModel.isNewApi(it)) {
+                                adapter.refresh()
+                            }
+                        }
+                }
+            }
+            // Note: at this point, the lifecycle is DESTROYED!
         }
     }
 
@@ -121,14 +144,6 @@ class HomeFragment : Fragment() {
         handleScrollingToTopWhenSearching()
     }
 
-    private fun observeFilms() {
-        this.lifecycleScope.launch {
-            viewModel.filmsFlow.collectLatest { pagedData ->
-                adapter.submitData(pagedData)
-            }
-        }
-    }
-
     private fun initLoadStateListening() {
         this.lifecycleScope.launch {
             adapter.loadStateFlow.collect {
@@ -136,19 +151,30 @@ class HomeFragment : Fragment() {
                     binding.homeProgressBar.visible(true)
                 }
                 if (it.source.prepend is LoadState.Error) {
-                    (it.source.prepend as LoadState.Error).error.message?.makeToast(requireContext())
+                    catchError((it.source.prepend as LoadState.Error).error.message ?: "")
                 }
                 if (it.source.append is LoadState.Error) {
-                    (it.source.append as LoadState.Error).error.message?.makeToast(requireContext())
+                    catchError((it.source.append as LoadState.Error).error.message ?: "")
                 }
                 if (it.source.refresh is LoadState.NotLoading) {
                     binding.homeProgressBar.visible(false)
                 }
                 if (it.source.refresh is LoadState.Error) {
                     binding.homeProgressBar.visible(false)
-                    (it.source.refresh as LoadState.Error).error.message?.makeToast(requireContext())
+                    catchError((it.source.refresh as LoadState.Error).error.message ?: "")
                 }
             }
+        }
+    }
+
+    private fun catchError(message: String) {
+        if (viewModel.isNewError && !binding.homeSearchView.query.isNullOrBlank()) {
+            "${getString(R.string.error_failed_download)} $message"
+                .makeToast(requireContext())
+            changeApiAvailabilityUseCase.execute(false)
+            adapter.refresh()
+            viewModel.isNewError = false
+            (activity as MainActivity).updateMessageBoard(getString(R.string.error_search_from_cache))
         }
     }
 
@@ -167,19 +193,6 @@ class HomeFragment : Fragment() {
     private fun getRefreshLoadStateFlow(): Flow<LoadState> {
         return adapter.loadStateFlow
             .map { it.refresh }
-    }
-
-    private fun observeApiType() {
-        viewModel.apiLiveData.observe(viewLifecycleOwner) {
-            this.lifecycleScope.launch {
-                refreshHomeFilmList()
-            }
-            when (it) {
-                ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
-                ValuesType.IMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
-                else -> {}
-            }
-        }
     }
 
     private fun initSearchView() {
@@ -213,16 +226,10 @@ class HomeFragment : Fragment() {
 
     private fun setupSwipeToRefresh() {
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
-            this.lifecycleScope.launch {
-                refreshHomeFilmList()
-                binding.homeSwipeRefreshLayout.isRefreshing = false
-            }
+            viewModel.isNewError = true
+            adapter.refresh()
+            binding.homeSwipeRefreshLayout.isRefreshing = false
         }
-    }
-
-    private suspend fun refreshHomeFilmList() {
-        adapter.submitData(PagingData.empty())
-        viewModel.refresh()
     }
 
     private fun initSettingsButton() {

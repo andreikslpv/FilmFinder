@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.domain.usecase
+package com.andreikslpv.filmfinder.domain.usecase.apicache
 
 import androidx.paging.PagingData
 import com.andreikslpv.filmfinder.domain.types.CategoryType

@@ -1,15 +1,15 @@
 package com.andreikslpv.filmfinder.data.datasource.local
 
-import androidx.lifecycle.LiveData
 import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import kotlinx.coroutines.flow.Flow
 
 interface FilmsLocalDataSource {
 
-    fun getFavoritesFilms(): LiveData<List<FilmLocalModel>>
+    fun getFavoritesFilms(): Flow<List<FilmLocalModel>>
 
-    fun getWatchLaterFilms(): LiveData<List<FilmLocalModel>>
+    fun getWatchLaterFilms(): Flow<List<FilmLocalModel>>
 
-    fun getFilmLocalState(filmId: String): LiveData<FilmLocalModel>
+    fun getFilmLocalState(filmId: String): Flow<FilmLocalModel>
 
     fun saveFilm(film: FilmLocalModel)
 }

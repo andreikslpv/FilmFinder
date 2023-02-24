@@ -39,7 +39,7 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -58,7 +58,7 @@ dependencies {
     //OkHttpClient
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
     // Jetpack Paging 3
-    implementation "androidx.paging:paging-runtime:3.2.0-alpha03"
+    implementation "androidx.paging:paging-runtime:3.2.0-alpha04"
     // Kotlin extensions for 'fragment' artifact
     implementation "androidx.fragment:fragment-ktx:1.5.5"
     //Coroutines

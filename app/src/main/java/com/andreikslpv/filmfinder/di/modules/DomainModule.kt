@@ -3,10 +3,12 @@ package com.andreikslpv.filmfinder.di.modules
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.SettingsRepository
 import com.andreikslpv.filmfinder.domain.usecase.*
+import com.andreikslpv.filmfinder.domain.usecase.apicache.*
 import com.andreikslpv.filmfinder.domain.usecase.local.ChangeFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.domain.usecase.local.GetFavoritesFilmsUseCase
 import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.domain.usecase.local.GetWatchLaterFilmsUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -77,8 +79,8 @@ class DomainModule {
     // usecase для задания состояния (filmsRepository)
     @Provides
     @Singleton
-    fun provideChangeNetworkAvailabilityUseCase(filmsRepository: FilmsRepository): ChangeNetworkAvailabilityUseCase {
-        return ChangeNetworkAvailabilityUseCase(filmsRepository)
+    fun provideChangeNetworkAvailabilityUseCase(filmsRepository: FilmsRepository): ChangeApiAvailabilityUseCase {
+        return ChangeApiAvailabilityUseCase(filmsRepository)
     }
 
     // usecase для работы с кешем (filmsRepository)
@@ -97,8 +99,11 @@ class DomainModule {
     // usecase для работы с репозиторием настроек
     @Provides
     @Singleton
-    fun provideGetAllSettingValue(settingsRepository: SettingsRepository): GetAllSettingValueUseCase {
-        return GetAllSettingValueUseCase(settingsRepository)
+    fun provideGetAllSettingValue(
+        settingsRepository: SettingsRepository,
+        filmsRepository: FilmsRepository
+    ): InitApplicationSettingsUseCase {
+        return InitApplicationSettingsUseCase(settingsRepository, filmsRepository)
     }
 
     @Provides

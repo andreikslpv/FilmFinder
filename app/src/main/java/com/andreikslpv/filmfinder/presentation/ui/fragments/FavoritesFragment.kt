@@ -23,12 +23,14 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration.TopSp
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
 import com.andreikslpv.filmfinder.presentation.vm.FavoritesFragmentViewModel
+import kotlinx.coroutines.*
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding
         get() = _binding!!
 
+    private lateinit var scope: CoroutineScope
     private lateinit var filmsAdapter: FilmRecyclerAdapter
     private val viewModel: FavoritesFragmentViewModel by viewModels()
 
@@ -52,10 +54,7 @@ class FavoritesFragment : Fragment() {
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 2)
 
         initFilmListRecycler()
-        viewModel.filmsListLiveData.observe(viewLifecycleOwner) {
-            filmsAdapter.changeItems(it)
-            filmsAdapter.notifyDataSetChanged()
-        }
+        observeFilmList()
         initSettingsButton()
     }
 
@@ -63,6 +62,11 @@ class FavoritesFragment : Fragment() {
         super.onPause()
         // меняем background MainActivity на background фрагмента
         (activity as MainActivity).setBackground(binding.favoritesFragmentRoot.background)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
     }
 
     override fun onDestroy() {
@@ -99,6 +103,20 @@ class FavoritesFragment : Fragment() {
             val callback = FilmTouchHelperCallback(adapter as FilmRecyclerAdapter)
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(this)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun observeFilmList() {
+        scope = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                viewModel.filmsList.collect {
+                    withContext(Dispatchers.Main) {
+                        filmsAdapter.changeItems(it)
+                        filmsAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
         }
     }
 

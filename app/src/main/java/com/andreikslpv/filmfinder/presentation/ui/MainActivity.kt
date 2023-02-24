@@ -19,7 +19,10 @@ import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.SettingsType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.*
+import com.andreikslpv.filmfinder.domain.usecase.apicache.SetApiDataSourceUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.GetSettingValueUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.InitApplicationSettingsUseCase
+import com.andreikslpv.filmfinder.domain.usecase.management.SetCacheModeUseCase
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
     @Inject
-    lateinit var getAllSettingValueUseCase: GetAllSettingValueUseCase
+    lateinit var initApplicationSettingsUseCase: InitApplicationSettingsUseCase
 
     @Inject
     lateinit var getSettingValueUseCase: GetSettingValueUseCase
@@ -58,9 +61,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var setCacheModeUseCase: SetCacheModeUseCase
-
-    @Inject
-    lateinit var changeNetworkAvailabilityUseCase: ChangeNetworkAvailabilityUseCase
 
     init {
         App.instance.dagger.inject(this)
@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity() {
         observeCurrentFragment()
         initBottomNavigationMenu()
         observeMessage()
-        observeNetworkAvailability()
 
         // если первый, то запускаем фрагмент Home
         if (savedInstanceState == null)
@@ -97,13 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initApplicationSettings() {
         // устанавливаем сохраненные настройки приложения
-        val settingsMap = getAllSettingValueUseCase.execute()
-        for (entity in settingsMap)
-            when (entity.key) {
-                SettingsType.API_TYPE -> setApiDataSourceUseCase.execute(entity.value)
-                SettingsType.CACHE_MODE -> setCacheModeUseCase.execute(entity.value)
-                else -> {}
-            }
+        initApplicationSettingsUseCase.execute()
         updateMessageBoard()
     }
 
@@ -276,32 +269,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeNetworkAvailability() {
-        viewModel.connectionLiveData.observe(this) {
-            changeNetworkAvailabilityUseCase.execute(it)
-            updateMessageBoard()
-        }
-    }
-
     fun updateMessageBoard(_cacheMode: ValuesType? = null) {
         var result = ""
-        val isNetworkAvailable = viewModel.connectionLiveData.value
-        if (isNetworkAvailable == false)
-            result = "${getString(R.string.main_message_offline)} "
         val currentFragment = viewModel.currentFragmentLiveData.value
         val cacheMode = _cacheMode ?: getSettingValueUseCase.execute(SettingsType.CACHE_MODE)
-        when (currentFragment) {
-            FragmentsType.HOME -> {
-                if ((isNetworkAvailable == false && cacheMode == ValuesType.AUTO) || cacheMode == ValuesType.ALWAYS)
-                    result += getString(R.string.main_message_search_cache)
-            }
-            FragmentsType.SELECTIONS, FragmentsType.DETAILS, FragmentsType.SETTINGS -> {
-                if ((isNetworkAvailable == false && cacheMode == ValuesType.AUTO) || cacheMode == ValuesType.ALWAYS)
-                    result += getString(R.string.main_message_cache)
-            }
-           else -> {}
+
+        if (cacheMode == ValuesType.ALWAYS) {
+            if (currentFragment == FragmentsType.HOME)
+                result = getString(R.string.main_message_search_cache)
+            if (currentFragment == FragmentsType.SELECTIONS)
+                result = getString(R.string.main_message_cache)
         }
+
         viewModel.setMessage(result)
+    }
+
+    fun updateMessageBoard(message: String) {
+        viewModel.setMessage(message)
     }
 
     fun setBackground(newBackground: Drawable?) {

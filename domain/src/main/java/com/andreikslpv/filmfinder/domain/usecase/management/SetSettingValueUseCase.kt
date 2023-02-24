@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.domain.usecase
+package com.andreikslpv.filmfinder.domain.usecase.management
 
 import com.andreikslpv.filmfinder.domain.SettingsRepository
 import com.andreikslpv.filmfinder.domain.types.SettingsType
