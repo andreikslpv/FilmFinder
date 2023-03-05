@@ -23,11 +23,11 @@ import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_DURATION
-import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
-import com.andreikslpv.filmfinder.presentation.ui.utils.loadImage
-import com.andreikslpv.filmfinder.presentation.ui.utils.makeToast
+import com.andreikslpv.filmfinder.presentation.ui.utils.*
 import com.andreikslpv.filmfinder.presentation.vm.DetailsFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 
 class DetailsFragment : Fragment() {
@@ -36,11 +36,10 @@ class DetailsFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: DetailsFragmentViewModel by viewModels()
+    private val autoDisposable = AutoDisposable()
 
     private var message: String = ""
     private lateinit var type: FragmentsType
-
-    private lateinit var scope: CoroutineScope
 
     private val singlePermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -63,6 +62,12 @@ class DetailsFragment : Fragment() {
     init {
         enterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
         returnTransition = Fade(Fade.OUT).apply { duration = TRANSITION_DURATION }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // привязываемся к ЖЦ компонента
+        autoDisposable.bindTo(lifecycle)
     }
 
     override fun onCreateView(
@@ -92,9 +97,9 @@ class DetailsFragment : Fragment() {
         startPostponedEnterTransition()
     }
 
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
+    override fun onPause() {
+        super.onPause()
+        viewModel.clearPrevFilm()
     }
 
     override fun onDestroy() {
@@ -103,29 +108,28 @@ class DetailsFragment : Fragment() {
     }
 
     private fun observeFilmLocalState() {
-        scope = CoroutineScope(Dispatchers.IO).also { scope ->
-            scope.launch {
-                viewModel.filmLocalState.collect {
-                    withContext(Dispatchers.Main) {
-                        setFavoritesIcon(it.isFavorite)
-                        setWatchLaterIcon(it.isWatchLater)
-                        // формируем сообщение, которое будет использоваться при share
-                        message = resources.getString(R.string.details_share_message) + it.title
-                        //Устанавливаем заголовок
-                        binding.detailsToolbar.title = it.title
-                        // Устанавливаем постер фильма (большой)
-                        binding.detailsPoster.loadImage(it.posterDetails)
-                        //Устанавливаем описание
-                        binding.detailsDescription.text = it.description
-                        //Устанавливаем рейтинг
-                        binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
-                    }
-                    // проверяем находится фильм в хотя бы в одном списке, если нет то сохраняем его в бд
+        viewModel.filmLocalState
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                setFavoritesIcon(it.isFavorite)
+                setWatchLaterIcon(it.isWatchLater)
+                if (viewModel.isNewFilm(it) ) {
+                    // формируем сообщение, которое будет использоваться при share
+                    message = resources.getString(R.string.details_share_message) + it.title
+                    //Устанавливаем заголовок
+                    binding.detailsToolbar.title = it.title
+                    // Устанавливаем постер фильма (большой)
+                    binding.detailsPoster.loadImage(it.posterDetails)
+                    //Устанавливаем описание
+                    binding.detailsDescription.text = it.description
+                    //Устанавливаем рейтинг
+                    binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
                     if (!it.isFavorite && !it.isWatchLater)
                         viewModel.changeFilmLocalState(it)
                 }
             }
-        }
+            .addTo(autoDisposable)
     }
 
     private fun setBackground() {
@@ -165,12 +169,12 @@ class DetailsFragment : Fragment() {
     private fun initIcons() {
         binding.detailsFabFavorites.setOnClickListener {
             viewModel.changeFavoritesField()
-            setFavoritesIcon(viewModel.filmLocalState.value.isFavorite)
+            //setFavoritesIcon(viewModel.filmLocalState.value.isFavorite)
         }
 
         binding.detailsFabWatchLater.setOnClickListener {
             viewModel.changeWatchLaterField()
-            setWatchLaterIcon(viewModel.filmLocalState.value.isWatchLater)
+            //setWatchLaterIcon(viewModel.filmLocalState.value.isWatchLater)
         }
 
         binding.detailsFabDownloadPoster.setOnClickListener {
@@ -208,82 +212,82 @@ class DetailsFragment : Fragment() {
 
     // ------------- сохранение постера
     private fun performAsyncLoadOfPoster() {
-        //Создаем родительский скоуп с диспатчером Main потока, так как будем взаимодействовать с UI
-        MainScope().launch {
-            //Включаем Прогресс-бар
-            binding.detailsProgressBar.isVisible = true
-            withContext(Dispatchers.IO) {
-                //Создаем через async, так как нам нужен результат от работы, то есть Bitmap
-                val job = scope.async {
-                    viewModel.loadWallpaper(viewModel.filmLocalState.value.posterDetails)
-                }
-                //Сохраняем в галерею, как только файл загрузится
-                saveToGallery(job.await())
-            }
-            //Выводим снекбар с кнопкой перейти в галерею
-            Snackbar.make(
-                binding.root,
-                R.string.details_downloaded_to_gallery,
-                Snackbar.LENGTH_LONG
-            )
-                .setAction(R.string.details_open) {
-                    val intent = Intent()
-                    intent.action = Intent.ACTION_VIEW
-                    intent.type = "image/*"
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                }
-                .show()
-
-            //Отключаем Прогресс-бар
-            binding.detailsProgressBar.isVisible = false
-        }
+//        //Создаем родительский скоуп с диспатчером Main потока, так как будем взаимодействовать с UI
+//        MainScope().launch {
+//            //Включаем Прогресс-бар
+//            binding.detailsProgressBar.isVisible = true
+//            withContext(Dispatchers.IO) {
+//                //Создаем через async, так как нам нужен результат от работы, то есть Bitmap
+//                val job = scope.async {
+//                    viewModel.loadWallpaper(viewModel.filmLocalState.value.posterDetails)
+//                }
+//                //Сохраняем в галерею, как только файл загрузится
+//                saveToGallery(job.await())
+//            }
+//            //Выводим снекбар с кнопкой перейти в галерею
+//            Snackbar.make(
+//                binding.root,
+//                R.string.details_downloaded_to_gallery,
+//                Snackbar.LENGTH_LONG
+//            )
+//                .setAction(R.string.details_open) {
+//                    val intent = Intent()
+//                    intent.action = Intent.ACTION_VIEW
+//                    intent.type = "image/*"
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                    startActivity(intent)
+//                }
+//                .show()
+//
+//            //Отключаем Прогресс-бар
+//            binding.detailsProgressBar.isVisible = false
+//        }
     }
 
     private fun saveToGallery(bitmap: Bitmap) {
-        //Проверяем версию системы
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            //Создаем объект для передачи данных
-            val contentValues = ContentValues().apply {
-                //Составляем информацию для файла (имя, тип, дата создания, куда сохранять и т.д.)
-                put(
-                    MediaStore.Images.Media.TITLE,
-                    viewModel.filmLocalState.value.title.handleSingleQuote()
-                )
-                put(
-                    MediaStore.Images.Media.DISPLAY_NAME,
-                    viewModel.filmLocalState.value.title.handleSingleQuote()
-                )
-                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                put(
-                    MediaStore.Images.Media.DATE_ADDED,
-                    System.currentTimeMillis() / 1000
-                )
-                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/FilmsSearchApp")
-            }
-            //Получаем ссылку на объект Content resolver, который помогает передавать информацию из приложения вовне
-            val contentResolver = requireActivity().contentResolver
-            val uri = contentResolver.insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
-            //Открываем канал для записи на диск
-            val outputStream = contentResolver.openOutputStream(uri!!)
-            //Передаем нашу картинку, может сделать компрессию
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            //Закрываем поток
-            outputStream?.close()
-        } else {
-            //То же, но для более старых версий ОС
-            @Suppress("DEPRECATION")
-            MediaStore.Images.Media.insertImage(
-                requireActivity().contentResolver,
-                bitmap,
-                viewModel.filmLocalState.value.title.handleSingleQuote(),
-                viewModel.filmLocalState.value.description.handleSingleQuote()
-            )
-        }
+//        //Проверяем версию системы
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            //Создаем объект для передачи данных
+//            val contentValues = ContentValues().apply {
+//                //Составляем информацию для файла (имя, тип, дата создания, куда сохранять и т.д.)
+//                put(
+//                    MediaStore.Images.Media.TITLE,
+//                    viewModel.filmLocalState.value.title.handleSingleQuote()
+//                )
+//                put(
+//                    MediaStore.Images.Media.DISPLAY_NAME,
+//                    viewModel.filmLocalState.value.title.handleSingleQuote()
+//                )
+//                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+//                put(
+//                    MediaStore.Images.Media.DATE_ADDED,
+//                    System.currentTimeMillis() / 1000
+//                )
+//                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+//                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/FilmsSearchApp")
+//            }
+//            //Получаем ссылку на объект Content resolver, который помогает передавать информацию из приложения вовне
+//            val contentResolver = requireActivity().contentResolver
+//            val uri = contentResolver.insert(
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                contentValues
+//            )
+//            //Открываем канал для записи на диск
+//            val outputStream = contentResolver.openOutputStream(uri!!)
+//            //Передаем нашу картинку, может сделать компрессию
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+//            //Закрываем поток
+//            outputStream?.close()
+//        } else {
+//            //То же, но для более старых версий ОС
+//            @Suppress("DEPRECATION")
+//            MediaStore.Images.Media.insertImage(
+//                requireActivity().contentResolver,
+//                bitmap,
+//                viewModel.filmLocalState.value.title.handleSingleQuote(),
+//                viewModel.filmLocalState.value.description.handleSingleQuote()
+//            )
+//        }
     }
 
     private fun String.handleSingleQuote(): String {

@@ -93,6 +93,12 @@ class SettingsFragment : Fragment() {
 
     private fun initClearCacheButton() {
         binding.settingsCacheClear.setOnClickListener {
+//            Completable.fromSingle<FilmDomainModel> {
+//                changeFilmLocalStateUseCase.execute(newFilm)
+//            }
+//                .subscribeOn(Schedulers.io())
+//                .subscribe()
+
             deleteAllCachedFilmsUseCase.execute()
         }
     }

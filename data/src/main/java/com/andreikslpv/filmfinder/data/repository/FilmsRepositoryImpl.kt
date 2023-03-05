@@ -17,10 +17,10 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import dagger.Lazy
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -166,17 +166,17 @@ class FilmsRepositoryImpl @Inject constructor(
 
     // --------------- work with local
 
-    override fun getWatchLaterFilms(): Flow<List<FilmDomainModel>> {
+    override fun getWatchLaterFilms(): Observable<List<FilmDomainModel>> {
         return localDataSource.getWatchLaterFilms()
             .map { LocalToDomainListMapper.map(it) }
     }
 
-    override fun getFavoritesFilms(): Flow<List<FilmDomainModel>> {
+    override fun getFavoritesFilms(): Observable<List<FilmDomainModel>> {
         return localDataSource.getFavoritesFilms()
             .map { LocalToDomainListMapper.map(it) }
     }
 
-    override fun getFilmLocalState(filmId: String): Flow<FilmDomainModel> {
+    override fun getFilmLocalState(filmId: String): Observable<FilmDomainModel> {
         return localDataSource.getFilmLocalState(filmId)
             .map { LocalToDomainMapper.map(it) }
     }
