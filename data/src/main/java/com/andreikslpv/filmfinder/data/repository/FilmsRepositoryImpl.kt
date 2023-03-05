@@ -17,7 +17,9 @@ import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import dagger.Lazy
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,12 +65,16 @@ class FilmsRepositoryImpl @Inject constructor(
                             currentIndex: Int
                         ) {
                             if (isApiAvailable) {
-                                cacheDataSource.putCategoryToCache(
-                                    apiDataSource.getApiType(),
-                                    category,
-                                    films,
-                                    currentIndex,
-                                )
+                                Completable.fromSingle<Nothing> {
+                                    cacheDataSource.putCategoryToCache(
+                                        apiDataSource.getApiType(),
+                                        category,
+                                        films,
+                                        currentIndex,
+                                    )
+                                }
+                                    .subscribeOn(Schedulers.io())
+                                    .subscribe()
                             }
                         }
 

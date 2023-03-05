@@ -46,7 +46,6 @@ class DetailsFragmentViewModel : ViewModel() {
             try {
                 changeFilmLocalStateUseCase.execute(newFilm, replace)
             } catch (e: Exception) {
-                println("I/o ${e.message}")
             }
         }
             .subscribeOn(Schedulers.io())
@@ -54,7 +53,6 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
     fun changeWatchLaterField() {
-        println("I/o changeWatchLaterField ${prevFilm.title}")
         val newFilm: FilmDomainModel = prevFilm
         newFilm.isWatchLater = !prevFilm.isWatchLater
         changeFilmLocalState(newFilm, true)
