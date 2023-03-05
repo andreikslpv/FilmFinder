@@ -19,7 +19,10 @@ class RoomLocalDataSource @Inject constructor(private val filmDao: FilmDao) : Fi
         return filmDao.getFilmById(filmId)
     }
 
-    override fun saveFilm(film: FilmLocalModel) {
-        filmDao.insertFilm(film)
+    override fun saveFilm(film: FilmLocalModel, replace: Boolean) {
+        if (replace)
+            filmDao.updateFilm(film)
+        else
+            filmDao.insertFilm(film)
     }
 }

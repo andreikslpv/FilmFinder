@@ -11,14 +11,12 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.URL
-import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class DetailsFragmentViewModel : ViewModel() {
     lateinit var filmLocalState: Observable<FilmDomainModel>
-    private var prevFilm = FilmDomainModel()
+    var prevFilm = FilmDomainModel()
+        private set
 
     @Inject
     lateinit var changeFilmLocalStateUseCase: ChangeFilmLocalStateUseCase
@@ -31,17 +29,11 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
     fun setFilm(newFilm: FilmDomainModel) {
+        // пробуем добавить фильм в БД, если уже есть в БД, то не добавляем
+        changeFilmLocalState(newFilm, false)
         // получаем статус фильма в локальной бд
         filmLocalState = getFilmLocalStateUseCase.execute(newFilm.id)
-    }
-
-    fun isNewFilm(newFilm: FilmDomainModel): Boolean {
-        return if (newFilm.id != prevFilm.id) {
-            prevFilm = newFilm
-            true
-        } else {
-            false
-        }
+        prevFilm = newFilm
     }
 
     fun clearPrevFilm() {
@@ -49,33 +41,35 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
 
-    fun changeFilmLocalState(newFilm: FilmDomainModel) {
+    private fun changeFilmLocalState(newFilm: FilmDomainModel, replace: Boolean) {
         Completable.fromSingle<FilmDomainModel> {
-            changeFilmLocalStateUseCase.execute(newFilm)
+            try {
+                changeFilmLocalStateUseCase.execute(newFilm, replace)
+            } catch (e: Exception) {
+                println("I/o ${e.message}")
+            }
         }
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
 
     fun changeWatchLaterField() {
+        println("I/o changeWatchLaterField ${prevFilm.title}")
         val newFilm: FilmDomainModel = prevFilm
         newFilm.isWatchLater = !prevFilm.isWatchLater
-        changeFilmLocalState(newFilm)
+        changeFilmLocalState(newFilm, true)
     }
 
     fun changeFavoritesField() {
         val newFilm: FilmDomainModel = prevFilm
         newFilm.isFavorite = !prevFilm.isFavorite
-        changeFilmLocalState(newFilm)
+        changeFilmLocalState(newFilm, true)
     }
 
-    suspend fun loadWallpaper(url: String): Bitmap {
-        return suspendCoroutine {
-            Executors.newSingleThreadExecutor().execute {
-                val bitmap = BitmapFactory.decodeStream(URL(url).openConnection().getInputStream())
-                it.resume(bitmap)
-            }
-        }
+    fun loadWallpaper(url: String): Bitmap {
+        return BitmapFactory.decodeStream(
+            URL(url).openConnection().getInputStream()
+        )
     }
 
 }

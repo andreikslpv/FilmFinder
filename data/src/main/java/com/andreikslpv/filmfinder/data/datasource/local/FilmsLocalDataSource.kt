@@ -11,5 +11,5 @@ interface FilmsLocalDataSource {
 
     fun getFilmLocalState(filmId: String): Observable<FilmLocalModel>
 
-    fun saveFilm(film: FilmLocalModel)
+    fun saveFilm(film: FilmLocalModel, replace: Boolean)
 }

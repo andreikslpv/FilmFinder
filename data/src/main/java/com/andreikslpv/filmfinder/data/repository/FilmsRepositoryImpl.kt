@@ -181,8 +181,8 @@ class FilmsRepositoryImpl @Inject constructor(
             .map { LocalToDomainMapper.map(it) }
     }
 
-    override fun saveFilmToLocal(film: FilmDomainModel) {
-        localDataSource.saveFilm(DomainToLocalMapper.map(film))
+    override fun saveFilmToLocal(film: FilmDomainModel, replace: Boolean) {
+        localDataSource.saveFilm(DomainToLocalMapper.map(film), replace)
     }
 
 }

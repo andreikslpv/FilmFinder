@@ -32,7 +32,7 @@ interface FilmsRepository {
 
     fun getFilmLocalState(filmId: String): Observable<FilmDomainModel>
 
-    fun saveFilmToLocal(film: FilmDomainModel)
+    fun saveFilmToLocal(film: FilmDomainModel, replace: Boolean)
 
 
 }

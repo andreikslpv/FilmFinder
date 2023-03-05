@@ -24,6 +24,9 @@ interface FilmDao {
     fun getFilmById(id: String): Observable<FilmLocalModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun updateFilm(film: FilmLocalModel)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     fun insertFilm(film: FilmLocalModel)
 
 }
