@@ -22,8 +22,11 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmRecyclerAdapter
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.itemDecoration.TopSpacingItemDecoration
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.touchHelper.FilmTouchHelperCallback
 import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
+import com.andreikslpv.filmfinder.presentation.ui.utils.AutoDisposable
+import com.andreikslpv.filmfinder.presentation.ui.utils.addTo
 import com.andreikslpv.filmfinder.presentation.vm.WatchLaterFragmentViewModel
-import kotlinx.coroutines.*
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class WatchLaterFragment : Fragment() {
@@ -31,13 +34,15 @@ class WatchLaterFragment : Fragment() {
     private val binding
         get() = _binding!!
 
-    private lateinit var scope: CoroutineScope
     private lateinit var filmsAdapter: FilmRecyclerAdapter
     private val viewModel: WatchLaterFragmentViewModel by viewModels()
+    private val autoDisposable = AutoDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.instance.dagger.inject(this)
+        // привязываемся к ЖЦ компонента
+        autoDisposable.bindTo(lifecycle)
     }
 
     override fun onCreateView(
@@ -62,11 +67,6 @@ class WatchLaterFragment : Fragment() {
         super.onPause()
         // меняем background MainActivity на background фрагмента
         (activity as MainActivity).setBackground(binding.watchLaterFragmentRoot.background)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
     }
 
     override fun onDestroy() {
@@ -108,16 +108,14 @@ class WatchLaterFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun observeFilmList() {
-        scope = CoroutineScope(Dispatchers.IO).also { scope ->
-            scope.launch {
-                viewModel.filmsList.collect {
-                    withContext(Dispatchers.Main) {
-                        filmsAdapter.changeItems(it)
-                        filmsAdapter.notifyDataSetChanged()
-                    }
-                }
+        viewModel.filmsList
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                filmsAdapter.changeItems(it)
+                filmsAdapter.notifyDataSetChanged()
             }
-        }
+            .addTo(autoDisposable)
     }
 
     private fun initSettingsButton() {

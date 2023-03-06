@@ -3,24 +3,20 @@ package com.andreikslpv.filmfinder.presentation.vm
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.local.ChangeFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.URL
-import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class DetailsFragmentViewModel : ViewModel() {
-    lateinit var filmLocalState: StateFlow<FilmDomainModel>
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    lateinit var filmLocalState: Observable<FilmDomainModel>
+    var prevFilm = FilmDomainModel()
+        private set
 
     @Inject
     lateinit var changeFilmLocalStateUseCase: ChangeFilmLocalStateUseCase
@@ -33,40 +29,45 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
     fun setFilm(newFilm: FilmDomainModel) {
+        // пробуем добавить фильм в БД, если уже есть в БД, то не добавляем
+        changeFilmLocalState(newFilm, false)
         // получаем статус фильма в локальной бд
         filmLocalState = getFilmLocalStateUseCase.execute(newFilm.id)
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                FilmDomainModel()
-            )
+        prevFilm = newFilm
     }
 
-    fun changeFilmLocalState(newFilm: FilmDomainModel) {
-        scope.launch {
-            changeFilmLocalStateUseCase.execute(newFilm)
+    fun clearPrevFilm() {
+        prevFilm = FilmDomainModel()
+    }
+
+
+    private fun changeFilmLocalState(newFilm: FilmDomainModel, replace: Boolean) {
+        Completable.fromSingle<FilmDomainModel> {
+            try {
+                changeFilmLocalStateUseCase.execute(newFilm, replace)
+            } catch (e: Exception) {
+            }
         }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     fun changeWatchLaterField() {
-        val newFilm: FilmDomainModel = filmLocalState.value
-        newFilm.isWatchLater = !newFilm.isWatchLater
-        changeFilmLocalState(newFilm)
+        val newFilm: FilmDomainModel = prevFilm
+        newFilm.isWatchLater = !prevFilm.isWatchLater
+        changeFilmLocalState(newFilm, true)
     }
 
     fun changeFavoritesField() {
-        val newFilm: FilmDomainModel = filmLocalState.value
-        newFilm.isFavorite = !newFilm.isFavorite
-        changeFilmLocalState(newFilm)
+        val newFilm: FilmDomainModel = prevFilm
+        newFilm.isFavorite = !prevFilm.isFavorite
+        changeFilmLocalState(newFilm, true)
     }
 
-    suspend fun loadWallpaper(url: String): Bitmap {
-        return suspendCoroutine {
-            Executors.newSingleThreadExecutor().execute {
-                val bitmap = BitmapFactory.decodeStream(URL(url).openConnection().getInputStream())
-                it.resume(bitmap)
-            }
-        }
+    fun loadWallpaper(url: String): Bitmap {
+        return BitmapFactory.decodeStream(
+            URL(url).openConnection().getInputStream()
+        )
     }
 
 }

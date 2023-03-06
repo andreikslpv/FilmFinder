@@ -29,7 +29,7 @@ class DomainModule {
     }
 
     @Provides
-    @Singleton
+//    @Singleton
     fun provideGetFilmLocalStateUseCase(filmsRepository: FilmsRepository): GetFilmLocalStateUseCase {
         return GetFilmLocalStateUseCase(filmsRepository)
     }

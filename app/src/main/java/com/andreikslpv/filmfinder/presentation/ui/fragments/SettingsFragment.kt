@@ -16,6 +16,8 @@ import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
 import com.andreikslpv.filmfinder.presentation.vm.SettingsFragmentViewModel
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class SettingsFragment : Fragment() {
@@ -93,7 +95,11 @@ class SettingsFragment : Fragment() {
 
     private fun initClearCacheButton() {
         binding.settingsCacheClear.setOnClickListener {
-            deleteAllCachedFilmsUseCase.execute()
+            Completable.fromSingle<Nothing> {
+                deleteAllCachedFilmsUseCase.execute()
+            }
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         }
     }
 
