@@ -10,9 +10,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
@@ -79,9 +77,7 @@ class HomeFragment : Fragment() {
 
         initSearchView()
         initFilmListRecycler()
-
         setCollectors()
-
         setupSwipeToRefresh()
         initSettingsButton()
     }
@@ -98,30 +94,20 @@ class HomeFragment : Fragment() {
     }
 
     private fun setCollectors() {
-        this.lifecycleScope.launch {
-            // Suspend the coroutine until the lifecycle is DESTROYED.
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                // Safely collect from source when the lifecycle is STARTED
-                // and stop collecting when the lifecycle is STOPPED
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.currentApiFlow
-                        .collect {
-                            when (it) {
-                                ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
-                                ValuesType.IMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
-                                else -> {}
-                            }
-                            if (viewModel.isNewApi(it)) {
-                                adapter.refresh()
-                            }
-                        }
+        viewModel.currentApi
+            .subscribeBy(
+                onError = {
+                    println("I/o onError")
+                },
+                onNext = {
+                    when (it) {
+                        ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                        ValuesType.IMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                        else -> {}
+                    }
                 }
-            }
-            // Note: at this point, the lifecycle is DESTROYED!
-        }
+            )
+            .addTo(autoDisposable)
     }
 
     private fun initFilmListRecycler() {

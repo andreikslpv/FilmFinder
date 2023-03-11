@@ -19,7 +19,7 @@ interface FilmsRepository {
 
     fun setApiDataSource(api: ValuesType)
 
-    fun getCurrentApiDataSource(): MutableStateFlow<ValuesType>
+    fun getCurrentApiDataSource(): Observable<ValuesType>
 
     fun setCacheMode(mode: ValuesType)
 

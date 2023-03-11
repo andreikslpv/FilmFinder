@@ -11,12 +11,14 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.domain.usecase.apicache.GetAvailableCategoriesUseCase
 import com.andreikslpv.filmfinder.domain.usecase.apicache.GetCurrentApiDataSourceUseCase
 import com.andreikslpv.filmfinder.domain.usecase.apicache.GetPagedFilmsByCategoryUseCase
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SelectionsFragmentViewModel : ViewModel() {
+    val currentApi: Observable<ValuesType>
     @Inject
     lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
 
@@ -33,15 +35,11 @@ class SelectionsFragmentViewModel : ViewModel() {
 
     val filmsFlow: Flow<PagingData<FilmDomainModel>>
 
-    private var previousApi = ValuesType.NONE
-    val currentApiFlow: StateFlow<ValuesType> by lazy {
-        getCurrentApiDataSourceUseCase.execute().asStateFlow()
-    }
-
     var isNewError = true
 
     init {
         App.instance.dagger.inject(this)
+        currentApi = getCurrentApiDataSourceUseCase.execute()
 
         viewModelScope.launch {
             getAvailableCategoriesUseCase.execute().asStateFlow().collect {
@@ -64,12 +62,4 @@ class SelectionsFragmentViewModel : ViewModel() {
         }
     }
 
-    fun isNewApi(api: ValuesType): Boolean {
-        return if (api != previousApi) {
-            previousApi = api
-            true
-        } else {
-            false
-        }
-    }
 }
