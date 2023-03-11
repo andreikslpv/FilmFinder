@@ -1,34 +1,22 @@
 package com.andreikslpv.filmfinder.data.datasource.cache
 
-import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.paging.rxjava3.RxPagingSource
+import com.andreikslpv.filmfinder.data.datasource.api.imdb.ImdbConstants
 import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainListMapper
 import com.andreikslpv.filmfinder.data.datasource.local.dao.FilmDao
+import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class RoomPagingSourceSearchResult(
     private val filmDao: FilmDao,
     private val function: (string: String) -> Boolean,
     private val query: String,
-) : PagingSource<Int, FilmDomainModel>() {
+) : RxPagingSource<Int, FilmDomainModel>() {
     private val step = 1
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
-        return try {
-            val filmsLocal = filmDao.searchFilmByName("%$query%").filter {
-                function(it.id)
-            }
-            val films = LocalToDomainListMapper.map(filmsLocal)
-//            println("!!! query_$films")
-            LoadResult.Page(
-                data = films,
-                prevKey = null,
-                nextKey = null
-            )
-        } catch (e: Exception) {
-            LoadResult.Error(e)
-        }
-    }
 
     override fun getRefreshKey(state: PagingState<Int, FilmDomainModel>): Int? {
         // Самый последний доступный индекс в списке
@@ -37,5 +25,31 @@ class RoomPagingSourceSearchResult(
         val page = state.closestPageToPosition(anchorPosition) ?: return null
         // page не имеет значения "текущее", поэтому вычисляем сами
         return page.prevKey?.plus(step) ?: page.nextKey?.minus(step)
+    }
+
+    override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FilmDomainModel>> {
+        val pageNumber = params.key ?: ImdbConstants.START_PAGE
+
+        return Single.fromCallable {
+            filmDao.searchFilmByName("%$query%").filter {
+                function(it.id)
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .map { toLoadResult(it, pageNumber) }
+            .onErrorReturn { LoadResult.Error(it) }
+    }
+
+    private fun toLoadResult(
+        data: List<FilmLocalModel>,
+        pageNumber: Int
+    ): LoadResult<Int, FilmDomainModel> {
+        val totalPages: Int = data.size / PAGE_SIZE
+
+        return LoadResult.Page(
+            data = LocalToDomainListMapper.map(data),
+            prevKey = if (pageNumber > ImdbConstants.START_PAGE) pageNumber - step else null,
+            nextKey = if (pageNumber < totalPages) pageNumber + step else null
+        )
     }
 }

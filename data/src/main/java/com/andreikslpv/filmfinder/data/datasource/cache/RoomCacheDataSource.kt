@@ -1,6 +1,7 @@
 package com.andreikslpv.filmfinder.data.datasource.cache
 
 import androidx.paging.PagingSource
+import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.datasource.local.DomainToLocalListMapper
 import com.andreikslpv.filmfinder.data.datasource.local.dao.CategoryDao
 import com.andreikslpv.filmfinder.data.datasource.local.dao.CategoryFilmDao
@@ -44,7 +45,7 @@ class RoomCacheDataSource @Inject constructor(
     override fun getSearchResultPagingSource(
         function: (string: String) -> Boolean,
         query: String
-    ): PagingSource<Int, FilmDomainModel> {
+    ): RxPagingSource<Int, FilmDomainModel> {
         return RoomPagingSourceSearchResult(filmDao, function, query)
     }
 }

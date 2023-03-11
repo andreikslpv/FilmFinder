@@ -20,21 +20,25 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentHomeBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetPagedSearchResultUseCase
 import com.andreikslpv.filmfinder.domain.usecase.management.ChangeApiAvailabilityUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
-import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
-import com.andreikslpv.filmfinder.presentation.ui.utils.makeToast
-import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
-import com.andreikslpv.filmfinder.presentation.ui.utils.visible
+import com.andreikslpv.filmfinder.presentation.ui.utils.*
 import com.andreikslpv.filmfinder.presentation.vm.HomeFragmentViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeFragment : Fragment() {
@@ -42,15 +46,22 @@ class HomeFragment : Fragment() {
     private val binding
         get() = _binding!!
 
+    private val autoDisposable = AutoDisposable()
+
     private lateinit var adapter: FilmPagingAdapter
     private val viewModel: HomeFragmentViewModel by viewModels()
 
     @Inject
     lateinit var changeApiAvailabilityUseCase: ChangeApiAvailabilityUseCase
 
+    @Inject
+    lateinit var getPagedSearchResultUseCase: GetPagedSearchResultUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.instance.dagger.inject(this)
+        // привязываемся к ЖЦ компонента
+        autoDisposable.bindTo(lifecycle)
     }
 
     override fun onCreateView(
@@ -66,10 +77,11 @@ class HomeFragment : Fragment() {
 
         AnimationHelper.performFragmentCircularRevealAnimation(requireView(), requireActivity(), 1)
 
-        setCollectors()
-
         initSearchView()
         initFilmListRecycler()
+
+        setCollectors()
+
         setupSwipeToRefresh()
         initSettingsButton()
     }
@@ -93,10 +105,6 @@ class HomeFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 // Safely collect from source when the lifecycle is STARTED
                 // and stop collecting when the lifecycle is STOPPED
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.filmsFlow
-                        .collectLatest(adapter::submitData)
-                }
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.currentApiFlow
@@ -168,12 +176,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun catchError(message: String) {
-        if (viewModel.isNewError && !binding.homeSearchView.query.isNullOrBlank()) {
+        if (!binding.homeSearchView.query.isNullOrBlank()) {
             "${getString(R.string.error_failed_download)} $message"
                 .makeToast(requireContext())
             changeApiAvailabilityUseCase.execute(false)
             adapter.refresh()
-            viewModel.isNewError = false
             (activity as MainActivity).updateMessageBoard(getString(R.string.error_search_from_cache))
         }
     }
@@ -200,33 +207,61 @@ class HomeFragment : Fragment() {
             binding.homeSearchView.isIconified = false
         }
 
-        //Подключаем слушателя изменений введенного текста в поиска
-        binding.homeSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            //Этот метод отрабатывает на каждое изменения текста
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (newText.isNotBlank()) {
-                    binding.homeRecycler.isInvisible = false
-                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
-                    viewModel.setQuery(newText)
-                    return true
-                } else {
-                    binding.homeRecycler.isInvisible = true
-                    binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
+        Observable.create { subscriber ->
+            //Вешаем слушатель на клавиатуру
+            binding.homeSearchView.setOnQueryTextListener(object :
+            //Вызывается на ввод символов
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (newText.isNotBlank()) {
+                        setRecyclerVisibility(true)
+                        subscriber.onNext(newText)
+                    } else {
+                        setRecyclerVisibility(false)
+                    }
+                    return false
                 }
 
-                return true
+                //Вызывается по нажатию кнопки "Поиск"
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    if (query.isNotBlank()) {
+                        setRecyclerVisibility(true)
+                        subscriber.onNext(query)
+                    } else {
+                        setRecyclerVisibility(false)
+                    }
+                    return false
+                }
+            })
+        }
+            .subscribeOn(Schedulers.io())
+            .map {
+                it.lowercase(Locale.getDefault()).trim()
             }
-        })
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .flatMap {
+                getPagedSearchResultUseCase.execute(it).toObservable()
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onError = {
+                    println("I/o onError")
+                },
+                onNext = {
+                    adapter.submitData(lifecycle, it)
+                }
+            )
+            .addTo(autoDisposable)
+    }
+
+    private fun setRecyclerVisibility(visible: Boolean) {
+        binding.homeRecycler.isInvisible = !visible
+        binding.loadStateView.isInvisible = !binding.homeRecycler.isInvisible
     }
 
     private fun setupSwipeToRefresh() {
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
-            viewModel.isNewError = true
             adapter.refresh()
             binding.homeSwipeRefreshLayout.isRefreshing = false
         }

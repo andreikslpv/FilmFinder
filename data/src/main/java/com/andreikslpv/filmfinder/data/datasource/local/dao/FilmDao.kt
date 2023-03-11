@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.core.Observable
 interface FilmDao {
 
     @Query("SELECT * FROM ${RoomConstants.TABLE_CACHED_FILMS} WHERE ${RoomConstants.COLUMN_TITLE} LIKE :query")
-    suspend fun searchFilmByName(query: String): List<FilmLocalModel>
+    fun searchFilmByName(query: String): List<FilmLocalModel>
 
     @Query("SELECT * FROM ${RoomConstants.TABLE_CACHED_FILMS} WHERE ${RoomConstants.COLUMN_IS_FAVORITE} = 1")
     fun getFavoritesFilms(): Observable<List<FilmLocalModel>>

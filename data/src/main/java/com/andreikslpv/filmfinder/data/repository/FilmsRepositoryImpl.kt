@@ -3,6 +3,7 @@ package com.andreikslpv.filmfinder.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.rxjava3.flowable
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.data.datasource.api.imdb.ImdbDataSource
@@ -18,6 +19,7 @@ import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import dagger.Lazy
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -93,7 +95,7 @@ class FilmsRepositoryImpl @Inject constructor(
             }).flow
     }
 
-    override fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>> {
+    override fun getPagedSearchResult(query: String): Flowable<PagingData<FilmDomainModel>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -111,7 +113,7 @@ class FilmsRepositoryImpl @Inject constructor(
                         query
                     )
                 }
-            }).flow
+            }).flowable
     }
 
     private fun getResultOfChoiceSource(): Boolean {

@@ -1,16 +1,17 @@
 package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
-import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import retrofit2.HttpException
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class ImdbPagingSourceSearchResult(
     private val categoryService: ImdbServiceSearchResult,
     private val language: String,
     private val query: String
-) : PagingSource<Int, FilmDomainModel>() {
+) : RxPagingSource<Int, FilmDomainModel>() {
     private val step = 1
 
     override fun getRefreshKey(state: PagingState<Int, FilmDomainModel>): Int? {
@@ -22,32 +23,27 @@ class ImdbPagingSourceSearchResult(
         return page.prevKey?.plus(step) ?: page.nextKey?.minus(step)
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
-        try {
-            val pageNumber = params.key ?: ImdbConstants.START_PAGE
-            val response = categoryService.getFilms(
-                language = language,
-                query = query
-            )
+    override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FilmDomainModel>> {
+        val pageNumber = params.key ?: ImdbConstants.START_PAGE
+        return categoryService.getFilms(
+            language = language,
+            query = query
+        )
+            .subscribeOn(Schedulers.io())
+            .map { toLoadResult(it, pageNumber) }
+            .onErrorReturn { LoadResult.Error(it) }
+    }
 
-            return if (response.isSuccessful) {
-                if (response.body()!!.errorMessage.isNullOrEmpty()) {
-                    val totalPages: Int = response.body()!!.results!!.size / PAGE_SIZE
-                    LoadResult.Page(
-                        data = ImdbSearchItemToDomainModel.map(response.body()!!.results),
-                        prevKey = if (pageNumber > ImdbConstants.START_PAGE) pageNumber - step else null,
-                        nextKey = if (pageNumber < totalPages) pageNumber + step else null
-                    )
-                } else {
-                    LoadResult.Error(ImdbError.getError(response.body()!!.errorMessage))
-                }
-            } else {
-                LoadResult.Error(HttpException(response))
-            }
-        } catch (e: HttpException) {
-            return LoadResult.Error(e)
-        } catch (e: Exception) {
-            return LoadResult.Error(e)
-        }
+    private fun toLoadResult(
+        data: ImdbDtoSearchResults,
+        pageNumber: Int
+    ): LoadResult<Int, FilmDomainModel> {
+        val totalPages: Int = data.results!!.size / PAGE_SIZE
+
+        return if (data.errorMessage.isNullOrEmpty()) LoadResult.Page(
+            data = ImdbSearchItemToDomainModel.map(data.results),
+            prevKey = if (pageNumber > ImdbConstants.START_PAGE) pageNumber - step else null,
+            nextKey = if (pageNumber < totalPages) pageNumber + step else null
+        ) else LoadResult.Error(Exception(data.errorMessage))
     }
 }

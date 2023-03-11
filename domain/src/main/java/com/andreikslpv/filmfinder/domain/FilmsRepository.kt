@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,7 @@ interface FilmsRepository {
 
     fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>>
 
-    fun getPagedSearchResult(query: String): Flow<PagingData<FilmDomainModel>>
+    fun getPagedSearchResult(query: String): Flowable<PagingData<FilmDomainModel>>
 
     fun getAvailableCategories(): MutableStateFlow<List<CategoryType>>
 
