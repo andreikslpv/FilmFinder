@@ -87,9 +87,7 @@ class SelectionsFragment : Fragment() {
     private fun setCollectors() {
         viewModel.currentApi
             .subscribeBy(
-                onError = {
-                    println("I/o onError")
-                },
+                onError = { },
                 onNext = {
                     when (it) {
                         ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)

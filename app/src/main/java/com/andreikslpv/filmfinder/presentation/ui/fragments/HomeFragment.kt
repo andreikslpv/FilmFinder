@@ -44,6 +44,7 @@ class HomeFragment : Fragment() {
     private val binding
         get() = _binding!!
 
+    private val searchTimeout = 500L
     private val autoDisposable = AutoDisposable()
 
     private lateinit var adapter: FilmPagingAdapter
@@ -96,9 +97,7 @@ class HomeFragment : Fragment() {
     private fun setCollectors() {
         viewModel.currentApi
             .subscribeBy(
-                onError = {
-                    println("I/o onError")
-                },
+                onError = { },
                 onNext = {
                     when (it) {
                         ValuesType.TMDB -> binding.homeToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
@@ -221,22 +220,14 @@ class HomeFragment : Fragment() {
             })
         }
             .subscribeOn(Schedulers.io())
-            .map {
-                it.lowercase(Locale.getDefault()).trim()
-            }
-            .debounce(500, TimeUnit.MILLISECONDS)
-            .flatMap {
-                getPagedSearchResultUseCase.execute(it).toObservable()
-            }
+            .map { it.lowercase(Locale.getDefault()).trim() }
+            .debounce(searchTimeout, TimeUnit.MILLISECONDS)
+            .flatMap { getPagedSearchResultUseCase.execute(it).toObservable() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onError = {
-                    println("I/o onError")
-                },
-                onNext = {
-                    adapter.submitData(lifecycle, it)
-                }
+                onError = { },
+                onNext = { adapter.submitData(lifecycle, it) }
             )
             .addTo(autoDisposable)
     }

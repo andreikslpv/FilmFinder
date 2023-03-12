@@ -38,7 +38,6 @@ class FilmsRepositoryImpl @Inject constructor(
     private val cacheDataSource: FilmsCacheDataSource,
 ) : FilmsRepository {
     private var currentApi = ValuesType.NONE
-    private val _currentApi = MutableStateFlow(ValuesType.NONE)
     private val _currentCategoryList = MutableStateFlow(emptyList<CategoryType>())
 
     private var isApiAvailable = true
@@ -147,9 +146,6 @@ class FilmsRepositoryImpl @Inject constructor(
 
     private fun emitWhenApiChanged() {
         currentApi = apiDataSource.getApiType()
-        CoroutineScope(EmptyCoroutineContext).launch {
-            _currentApi.tryEmit(apiDataSource.getApiType())
-        }
         CoroutineScope(EmptyCoroutineContext).launch {
             _currentCategoryList.tryEmit(apiDataSource.getAvailableCategories())
         }
