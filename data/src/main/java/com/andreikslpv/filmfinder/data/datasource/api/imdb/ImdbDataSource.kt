@@ -2,12 +2,14 @@ package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
 import android.content.Context
 import androidx.paging.PagingSource
+import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -34,6 +36,7 @@ class ImdbDataSource @Inject constructor(
         .baseUrl(ImdbConstants.BASE_URL)
         //Добавляем конвертер
         .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         //Добавляем кастомный клиент
         .client(okHttpClient)
         .build()
@@ -50,7 +53,7 @@ class ImdbDataSource @Inject constructor(
         )
     }
 
-    override fun getSearchResultPagingSource(query: String): PagingSource<Int, FilmDomainModel> {
+    override fun getSearchResultPagingSource(query: String): RxPagingSource<Int, FilmDomainModel> {
         return ImdbPagingSourceSearchResult(
             retrofit.create(ImdbServiceSearchResult::class.java),
             context.getString(R.string.imdb_language),

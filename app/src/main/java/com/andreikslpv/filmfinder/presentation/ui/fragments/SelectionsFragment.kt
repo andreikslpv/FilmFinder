@@ -24,11 +24,9 @@ import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmLoadStateAdapter
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListener
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
-import com.andreikslpv.filmfinder.presentation.ui.utils.AnimationHelper
-import com.andreikslpv.filmfinder.presentation.ui.utils.makeToast
-import com.andreikslpv.filmfinder.presentation.ui.utils.simpleScan
-import com.andreikslpv.filmfinder.presentation.ui.utils.visible
+import com.andreikslpv.filmfinder.presentation.ui.utils.*
 import com.andreikslpv.filmfinder.presentation.vm.SelectionsFragmentViewModel
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -40,6 +38,8 @@ class SelectionsFragment : Fragment() {
     private val binding
         get() = _binding!!
 
+    private val autoDisposable = AutoDisposable()
+
     private val viewModel: SelectionsFragmentViewModel by viewModels()
     private lateinit var adapter: FilmPagingAdapter
 
@@ -49,6 +49,8 @@ class SelectionsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.instance.dagger.inject(this)
+        // привязываемся к ЖЦ компонента
+        autoDisposable.bindTo(lifecycle)
     }
 
     override fun onCreateView(
@@ -83,6 +85,21 @@ class SelectionsFragment : Fragment() {
     }
 
     private fun setCollectors() {
+        viewModel.currentApi
+            .subscribeBy(
+                onError = { },
+                onNext = {
+                    when (it) {
+                        ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
+                        ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
+                        else -> {}
+                    }
+                    initSpinner()
+                    adapter.refresh()
+                }
+            )
+            .addTo(autoDisposable)
+
         this.lifecycleScope.launch {
             // Suspend the coroutine until the lifecycle is DESTROYED.
             // repeatOnLifecycle launches the block in a new coroutine every time the
@@ -93,21 +110,6 @@ class SelectionsFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.filmsFlow
                         .collectLatest(adapter::submitData)
-                }
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.currentApiFlow
-                        .collect {
-                            when (it) {
-                                ValuesType.TMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_tmdb)
-                                ValuesType.IMDB -> binding.selectionsToolbar.setNavigationIcon(R.drawable.ic_logo_imdb)
-                                else -> {}
-                            }
-                            if (viewModel.isNewApi(it)) {
-                                initSpinner()
-                                adapter.refresh()
-                            }
-                        }
                 }
             }
             // Note: at this point, the lifecycle is DESTROYED!

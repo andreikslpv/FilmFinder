@@ -1,42 +1,17 @@
 package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 
-import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
-import retrofit2.HttpException
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class TmdbPagingSourceSearchResult(
     private val categoryService: TmdbServiceSearchResult,
     private val language: String,
     private val query: String
-) : PagingSource<Int, FilmDomainModel>() {
+) : RxPagingSource<Int, FilmDomainModel>() {
     private val step = 1
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FilmDomainModel> {
-        try {
-            var pageNumber = params.key ?: TmdbConstants.START_PAGE
-            if (pageNumber == 0) pageNumber = TmdbConstants.START_PAGE
-            val response = categoryService.getFilms(
-                query = query,
-                language = language,
-                page = pageNumber
-            )
-
-            return if (response.isSuccessful) {
-                LoadResult.Page(
-                    data = TmdbToDomainModel.map(response.body()!!.results),
-                    prevKey = if (pageNumber > TmdbConstants.START_PAGE) pageNumber - step else null,
-                    nextKey = if (pageNumber < response.body()!!.totalPages) pageNumber + step else null
-                )
-            } else {
-                LoadResult.Error(HttpException(response))
-            }
-        } catch (e: HttpException) {
-            return LoadResult.Error(e)
-        } catch (e: Exception) {
-            return LoadResult.Error(e)
-        }
-    }
 
     override fun getRefreshKey(state: PagingState<Int, FilmDomainModel>): Int? {
         // Самый последний доступный индекс в списке
@@ -46,4 +21,29 @@ class TmdbPagingSourceSearchResult(
         // page не имеет значения "текущее", поэтому вычисляем сами
         return page.prevKey?.plus(step) ?: page.nextKey?.minus(step)
     }
+
+    override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FilmDomainModel>> {
+        var pageNumber = params.key ?: TmdbConstants.START_PAGE
+        if (pageNumber == 0) pageNumber = TmdbConstants.START_PAGE
+        return categoryService.getFilms(
+            query = query,
+            language = language,
+            page = pageNumber
+        )
+            .subscribeOn(Schedulers.io())
+            .map { toLoadResult(it, pageNumber) }
+            .onErrorReturn { LoadResult.Error(it) }
+    }
+
+    private fun toLoadResult(
+        data: TmdbDtoResults,
+        pageNumber: Int
+    ): LoadResult<Int, FilmDomainModel> {
+        return LoadResult.Page(
+            data = TmdbToDomainModel.map(data.results),
+            prevKey = if (pageNumber > TmdbConstants.START_PAGE) pageNumber - step else null,
+            nextKey = if (pageNumber < data.totalPages) pageNumber + step else null
+        )
+    }
+
 }
