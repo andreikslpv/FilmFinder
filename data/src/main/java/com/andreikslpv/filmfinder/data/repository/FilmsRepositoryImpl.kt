@@ -23,7 +23,6 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +50,7 @@ class FilmsRepositoryImpl @Inject constructor(
     lateinit var tmdbDataSource: Lazy<TmdbDataSource>
 
 
-    override fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>> {
+    override fun getPagedFilmsByCategory(category: CategoryType): Flowable<PagingData<FilmDomainModel>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -92,7 +91,7 @@ class FilmsRepositoryImpl @Inject constructor(
                         category
                     )
                 }
-            }).flow
+            }).flowable
     }
 
     override fun getPagedSearchResult(query: String): Flowable<PagingData<FilmDomainModel>> {

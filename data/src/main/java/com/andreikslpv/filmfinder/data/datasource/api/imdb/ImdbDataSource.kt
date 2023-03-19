@@ -1,7 +1,6 @@
 package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
 import android.content.Context
-import androidx.paging.PagingSource
 import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
@@ -44,7 +43,7 @@ class ImdbDataSource @Inject constructor(
     override fun getFilmsByCategoryPagingSource(
         category: CategoryType,
         callback: ApiCallback
-    ): PagingSource<Int, FilmDomainModel> {
+    ): RxPagingSource<Int, FilmDomainModel> {
         return ImdbPagingSourceFilmsByCategory(
             retrofit.create(ImdbServiceFilmsByCategory::class.java),
             context.getString(R.string.imdb_language),

@@ -1,6 +1,5 @@
 package com.andreikslpv.filmfinder.data.datasource.cache
 
-import androidx.paging.PagingSource
 import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
@@ -20,7 +19,7 @@ interface FilmsCacheDataSource {
     fun getFilmsByCategoryPagingSource(
         api: ValuesType,
         category: CategoryType
-    ): PagingSource<Int, FilmDomainModel>
+    ): RxPagingSource<Int, FilmDomainModel>
 
     fun getSearchResultPagingSource(
         function: (string: String) -> Boolean,

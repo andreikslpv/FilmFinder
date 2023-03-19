@@ -14,5 +14,5 @@ interface CategoryDao {
                 + " WHERE ${RoomConstants.COLUMN_API} = :api AND ${RoomConstants.COLUMN_CATEGORY} = :category"
                 + " ORDER BY ${RoomConstants.COLUMN_RANK}"
     )
-    suspend fun getCategoryWithFilms(api: String, category: String): List<CategoryAndFilmModel>
+    fun getCategoryWithFilms(api: String, category: String): List<CategoryAndFilmModel>
 }

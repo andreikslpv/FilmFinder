@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreikslpv.filmfinder.App
@@ -18,6 +16,7 @@ import com.andreikslpv.filmfinder.databinding.FragmentSelectionsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.domain.usecase.apicache.GetPagedFilmsByCategoryUseCase
 import com.andreikslpv.filmfinder.domain.usecase.management.ChangeApiAvailabilityUseCase
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
@@ -26,7 +25,10 @@ import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmOnItemClickListe
 import com.andreikslpv.filmfinder.presentation.ui.recyclers.FilmPagingAdapter
 import com.andreikslpv.filmfinder.presentation.ui.utils.*
 import com.andreikslpv.filmfinder.presentation.vm.SelectionsFragmentViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -45,6 +47,9 @@ class SelectionsFragment : Fragment() {
 
     @Inject
     lateinit var changeApiAvailabilityUseCase: ChangeApiAvailabilityUseCase
+
+    @Inject
+    lateinit var getPagedFilmsByCategoryUseCase: GetPagedFilmsByCategoryUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,21 +104,6 @@ class SelectionsFragment : Fragment() {
                 }
             )
             .addTo(autoDisposable)
-
-        this.lifecycleScope.launch {
-            // Suspend the coroutine until the lifecycle is DESTROYED.
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                // Safely collect from source when the lifecycle is STARTED
-                // and stop collecting when the lifecycle is STOPPED
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.filmsFlow
-                        .collectLatest(adapter::submitData)
-                }
-            }
-            // Note: at this point, the lifecycle is DESTROYED!
-        }
     }
 
     private fun initSpinner() {
@@ -128,21 +118,35 @@ class SelectionsFragment : Fragment() {
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.selectionsSpinner.adapter = spinnerAdapter
 
-        binding.selectionsSpinner.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (p2 >= 0 && p2 < viewModel.categoryList.size) {
-                    viewModel.setCategory(viewModel.categoryList[p2])
-                } else {
-                    Toast.makeText(requireContext(), R.string.error_category, Toast.LENGTH_SHORT)
-                        .show()
-                    viewModel.setCategory(CategoryType.NONE)
+        Observable.create { subscriber ->
+            binding.selectionsSpinner.onItemSelectedListener = object :
+                AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    if (p2 >= 0 && p2 < viewModel.categoryList.size) {
+                        subscriber.onNext(viewModel.categoryList[p2])
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.error_category,
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
                 }
             }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-            }
         }
+            .subscribeOn(Schedulers.io())
+            .flatMap { getPagedFilmsByCategoryUseCase.execute(it).toObservable() }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onError = { },
+                onNext = { adapter.submitData(lifecycle, it) }
+            )
+            .addTo(autoDisposable)
     }
 
     private fun convertCategoryListToSpinnerList(inputList: List<CategoryType>): List<String> {
