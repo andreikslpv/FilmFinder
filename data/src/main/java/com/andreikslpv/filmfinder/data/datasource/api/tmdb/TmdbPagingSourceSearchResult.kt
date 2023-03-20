@@ -3,11 +3,15 @@ package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbDtoResults
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbServiceSearchResult
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbToDomainModel
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
-class TmdbPagingSourceSearchResult(
-    private val categoryService: TmdbServiceSearchResult,
+class TmdbPagingSourceSearchResult @Inject constructor(
+    private val service: TmdbServiceSearchResult,
     private val language: String,
     private val query: String
 ) : RxPagingSource<Int, FilmDomainModel>() {
@@ -25,7 +29,7 @@ class TmdbPagingSourceSearchResult(
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FilmDomainModel>> {
         var pageNumber = params.key ?: TmdbConstants.START_PAGE
         if (pageNumber == 0) pageNumber = TmdbConstants.START_PAGE
-        return categoryService.getFilms(
+        return service.getFilms(
             query = query,
             language = language,
             page = pageNumber

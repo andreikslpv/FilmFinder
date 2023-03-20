@@ -1,5 +1,6 @@
-package com.andreikslpv.filmfinder.di.modules
+package com.andreikslpv.filmfinder.data.di
 
+import android.content.Context
 import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.cache.RoomCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 
 
 @Module
-abstract class DataModule {
+abstract class DataModule(val context: Context) {
 
     @Binds
     @Singleton

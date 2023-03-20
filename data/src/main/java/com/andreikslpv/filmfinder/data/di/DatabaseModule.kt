@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.di.modules
+package com.andreikslpv.filmfinder.data.di
 
 import android.content.Context
 import androidx.room.Room
@@ -9,7 +9,10 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class DatabaseModule {
+class DatabaseModule(val context: Context) {
+
+    @Provides
+    fun provideContext() = context
 
     @Singleton
     @Provides

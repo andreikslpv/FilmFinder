@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.datasource.api.imdb
+package com.andreikslpv.filmfinder.remote_module.imdb
 
 object ImdbError {
     private val errorMap = mapOf(

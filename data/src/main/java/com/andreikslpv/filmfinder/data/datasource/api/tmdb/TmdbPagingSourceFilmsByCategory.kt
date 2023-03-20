@@ -4,11 +4,14 @@ import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbDtoResults
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbServiceFilmsByCategory
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbToDomainModel
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class TmdbPagingSourceFilmsByCategory(
-    private val categoryService: TmdbServiceFilmsByCategory,
+    private val service: TmdbServiceFilmsByCategory,
     private val language: String,
     private val category: String,
     private val callback: ApiCallback,
@@ -28,7 +31,7 @@ class TmdbPagingSourceFilmsByCategory(
         var pageNumber = params.key ?: TmdbConstants.START_PAGE
         if (pageNumber == 0) pageNumber = TmdbConstants.START_PAGE
 
-        return categoryService.getFilms(
+        return service.getFilms(
             path2 = category,
             language = language,
             page = pageNumber

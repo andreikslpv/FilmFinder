@@ -5,11 +5,14 @@ import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbCategoryItemToDomainModel
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbDtoCategoryResults
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbServiceFilmsByCategory
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class ImdbPagingSourceFilmsByCategory(
-    private val categoryService: ImdbServiceFilmsByCategory,
+    private val service: ImdbServiceFilmsByCategory,
     private val language: String,
     private val category: String,
     private val callback: ApiCallback,
@@ -27,7 +30,7 @@ class ImdbPagingSourceFilmsByCategory(
 
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FilmDomainModel>> {
         val pageNumber = params.key ?: ImdbConstants.START_PAGE
-        return categoryService.getFilms(
+        return service.getFilms(
             language = language,
             category = category
         )

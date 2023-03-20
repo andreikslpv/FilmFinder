@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.datasource.api.imdb
+package com.andreikslpv.filmfinder.remote_module.imdb
 
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
