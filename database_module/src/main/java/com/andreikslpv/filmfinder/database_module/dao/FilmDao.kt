@@ -1,11 +1,11 @@
-package com.andreikslpv.filmfinder.data.datasource.local.dao
+package com.andreikslpv.filmfinder.database_module.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants
-import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import com.andreikslpv.filmfinder.database_module.db.RoomConstants
+import com.andreikslpv.filmfinder.database_module.models.FilmLocalModel
 import io.reactivex.rxjava3.core.Observable
 
 @Dao

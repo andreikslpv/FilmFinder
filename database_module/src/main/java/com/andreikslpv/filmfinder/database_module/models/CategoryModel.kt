@@ -1,7 +1,7 @@
-package com.andreikslpv.filmfinder.data.datasource.local.models
+package com.andreikslpv.filmfinder.database_module.models
 
 import androidx.room.*
-import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants
+import com.andreikslpv.filmfinder.database_module.db.RoomConstants
 
 @Entity(
     tableName = RoomConstants.TABLE_CACHED_CATEGORY,

@@ -17,14 +17,6 @@ import javax.inject.Singleton
 )
 interface AppComponent {
 
-//    @Component.Factory
-//    interface Factory {
-//        fun create(
-//            @BindsInstance context: Context,
-//            //dataProvider: DataProvider
-//        ): AppComponent
-//    }
-
     //методы для того, чтобы появилась возможность внедрять зависимости в требуемые классы
     fun inject(homeFragmentViewModel: HomeFragmentViewModel)
     fun inject(favoritesFragmentViewModel: FavoritesFragmentViewModel)

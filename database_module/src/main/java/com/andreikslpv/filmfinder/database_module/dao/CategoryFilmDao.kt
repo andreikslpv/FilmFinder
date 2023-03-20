@@ -1,10 +1,10 @@
-package com.andreikslpv.filmfinder.data.datasource.local.dao
+package com.andreikslpv.filmfinder.database_module.dao
 
 import androidx.room.*
-import com.andreikslpv.filmfinder.data.datasource.local.LocalToCategoryMapper
-import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants
-import com.andreikslpv.filmfinder.data.datasource.local.models.CategoryModel
-import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import com.andreikslpv.filmfinder.database_module.db.RoomConstants
+import com.andreikslpv.filmfinder.database_module.models.CategoryModel
+import com.andreikslpv.filmfinder.database_module.models.FilmLocalModel
+import com.andreikslpv.filmfinder.database_module.models.LocalToCategoryMapper
 
 @Dao
 abstract class CategoryFilmDao {

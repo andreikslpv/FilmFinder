@@ -1,4 +1,4 @@
-package com.andreikslpv.filmfinder.data.datasource.local.db
+package com.andreikslpv.filmfinder.database_module.db
 
 object RoomConstants {
 

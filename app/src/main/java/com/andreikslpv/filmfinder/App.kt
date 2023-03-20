@@ -2,7 +2,9 @@ package com.andreikslpv.filmfinder
 
 import android.app.Application
 import com.andreikslpv.filmfinder.data.di.DaggerDataComponent
-import com.andreikslpv.filmfinder.data.di.DatabaseModule
+import com.andreikslpv.filmfinder.data.di.DataModule
+import com.andreikslpv.filmfinder.database_module.DaggerDatabaseComponent
+import com.andreikslpv.filmfinder.database_module.DatabaseModule
 import com.andreikslpv.filmfinder.di.AppComponent
 import com.andreikslpv.filmfinder.di.DaggerAppComponent
 import com.andreikslpv.filmfinder.di.modules.AppModule
@@ -17,13 +19,19 @@ class App : Application() {
 
         //Инициализируем экземпляр App, через который будем получать доступ к остальным переменным
         instance = this
-        //Создаем компонент
-        //dagger = DaggerAppComponent.factory().create(this)
+        //Создаем dagger компоненты
         val remoteProvider = DaggerRemoteComponent.create()
-        val dataProvider = DaggerDataComponent.builder()
+
+        val databaseProvider = DaggerDatabaseComponent.builder()
             .databaseModule(DatabaseModule(this))
+            .build()
+
+        val dataProvider = DaggerDataComponent.builder()
+            .dataModule(DataModule(this))
+            .databaseProvider(databaseProvider)
             .remoteProvider(remoteProvider)
             .build()
+
         dagger = DaggerAppComponent.builder()
             .domainModule(DomainModule())
             .dataProvider(dataProvider)

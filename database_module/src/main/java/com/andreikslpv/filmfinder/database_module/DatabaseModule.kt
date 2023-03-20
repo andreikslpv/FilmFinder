@@ -1,9 +1,9 @@
-package com.andreikslpv.filmfinder.data.di
+package com.andreikslpv.filmfinder.database_module
 
 import android.content.Context
 import androidx.room.Room
-import com.andreikslpv.filmfinder.data.datasource.local.db.AppDatabase
-import com.andreikslpv.filmfinder.data.datasource.local.db.RoomConstants
+import com.andreikslpv.filmfinder.database_module.db.AppDatabase
+import com.andreikslpv.filmfinder.database_module.db.RoomConstants
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

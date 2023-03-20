@@ -1,10 +1,8 @@
 package com.andreikslpv.filmfinder.data.di
 
-import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
-import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
-import com.andreikslpv.filmfinder.data.datasource.local.dao.CategoryDao
-import com.andreikslpv.filmfinder.data.datasource.local.dao.CategoryFilmDao
-import com.andreikslpv.filmfinder.data.datasource.local.dao.FilmDao
+import com.andreikslpv.filmfinder.database_module.dao.CategoryDao
+import com.andreikslpv.filmfinder.database_module.dao.CategoryFilmDao
+import com.andreikslpv.filmfinder.database_module.dao.FilmDao
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.SettingsRepository
 import com.andreikslpv.filmfinder.remote_module.imdb.ImdbServiceFilmsByCategory
@@ -21,9 +19,6 @@ interface DataProvider {
     fun provideImdbServiceSearchResult(): ImdbServiceSearchResult
     fun provideTmdbServiceFilmsByCategory(): TmdbServiceFilmsByCategory
     fun provideTmdbServiceSearchResult(): TmdbServiceSearchResult
-
-    fun provideFilmsLocalDataSource(): FilmsLocalDataSource
-    fun provideFilmsCacheDataSource(): FilmsCacheDataSource
 
     fun provideFilmDao(): FilmDao
     fun provideCategoryDao(): CategoryDao
