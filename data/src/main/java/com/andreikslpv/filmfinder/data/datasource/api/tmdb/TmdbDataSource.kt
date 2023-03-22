@@ -1,7 +1,6 @@
 package com.andreikslpv.filmfinder.data.datasource.api.tmdb
 
 import android.content.Context
-import androidx.paging.PagingSource
 import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
@@ -9,17 +8,16 @@ import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbServiceFilmsByCategory
+import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbServiceSearchResult
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TmdbDataSource @Inject constructor(
     private val context: Context,
-    okHttpClient: OkHttpClient,
+    private val serviceCategory: TmdbServiceFilmsByCategory,
+    private val serviceSearch: TmdbServiceSearchResult,
 ) : FilmsApiDataSource {
 
     private val categoryMap = mapOf(
@@ -28,33 +26,24 @@ class TmdbDataSource @Inject constructor(
         Pair(CategoryType.NOW_PLAYING, TmdbConstants.CATEGORY_NOW_PLAYING),
         Pair(CategoryType.UPCOMING, TmdbConstants.CATEGORY_UPCOMING),
     )
-    private val retrofit: Retrofit = Retrofit.Builder()
-        //Указываем базовый URL из констант
-        .baseUrl(TmdbConstants.BASE_URL)
-        //Добавляем конвертер
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        //Добавляем кастомный клиент
-        .client(okHttpClient)
-        .build()
 
     override fun getFilmsByCategoryPagingSource(
         category: CategoryType,
         callback: ApiCallback
-    ): PagingSource<Int, FilmDomainModel> {
+    ): RxPagingSource<Int, FilmDomainModel> {
         return TmdbPagingSourceFilmsByCategory(
-            retrofit.create(TmdbServiceFilmsByCategory::class.java),
-            context.getString(R.string.tmdb_language),
-            getPathFromCategory(category),
-            callback,
+            service = serviceCategory,
+            language = context.getString(R.string.tmdb_language),
+            category = getPathFromCategory(category),
+            callback = callback,
         )
     }
 
     override fun getSearchResultPagingSource(query: String): RxPagingSource<Int, FilmDomainModel> {
         return TmdbPagingSourceSearchResult(
-            retrofit.create(TmdbServiceSearchResult::class.java),
-            context.getString(R.string.tmdb_language),
-            query
+            service = serviceSearch,
+            language = context.getString(R.string.tmdb_language),
+            query = query
         )
     }
 

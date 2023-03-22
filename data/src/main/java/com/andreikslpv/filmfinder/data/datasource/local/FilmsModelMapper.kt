@@ -1,8 +1,8 @@
 package com.andreikslpv.filmfinder.data.datasource.local
 
-import com.andreikslpv.filmfinder.data.datasource.local.models.CategoryAndFilmModel
-import com.andreikslpv.filmfinder.data.datasource.local.models.CategoryModel
-import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import com.andreikslpv.filmfinder.database_module.models.CategoryAndFilmModel
+import com.andreikslpv.filmfinder.database_module.models.CategoryModel
+import com.andreikslpv.filmfinder.database_module.models.FilmLocalModel
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.BaseMapper
 
@@ -67,30 +67,6 @@ object LocalToDomainMapper : BaseMapper<FilmLocalModel, FilmDomainModel> {
             isFavorite = type?.isFavorite ?: false,
             isWatchLater = type?.isWatchLater ?: false
         )
-    }
-}
-
-object LocalToCategoryMapper {
-    fun map(
-        api: String,
-        category: String,
-        input: List<FilmLocalModel>,
-        currentIndex: Int
-    ): List<CategoryModel> {
-        val result = mutableListOf<CategoryModel>()
-        var i = currentIndex
-        for (entity in input) {
-            result.add(
-                CategoryModel(
-                    api = api,
-                    category = category,
-                    rank = i,
-                    filmId = entity.id
-                )
-            )
-            i++
-        }
-        return result
     }
 }
 

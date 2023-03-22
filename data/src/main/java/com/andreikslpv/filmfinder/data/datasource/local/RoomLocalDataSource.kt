@@ -1,7 +1,7 @@
 package com.andreikslpv.filmfinder.data.datasource.local
 
-import com.andreikslpv.filmfinder.data.datasource.local.dao.FilmDao
-import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import com.andreikslpv.filmfinder.database_module.dao.FilmDao
+import com.andreikslpv.filmfinder.database_module.models.FilmLocalModel
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 

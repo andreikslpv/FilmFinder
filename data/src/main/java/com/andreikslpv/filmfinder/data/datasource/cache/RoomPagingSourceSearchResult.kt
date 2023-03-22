@@ -2,10 +2,10 @@ package com.andreikslpv.filmfinder.data.datasource.cache
 
 import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
-import com.andreikslpv.filmfinder.data.datasource.api.imdb.ImdbConstants
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbConstants
 import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainListMapper
-import com.andreikslpv.filmfinder.data.datasource.local.dao.FilmDao
-import com.andreikslpv.filmfinder.data.datasource.local.models.FilmLocalModel
+import com.andreikslpv.filmfinder.database_module.dao.FilmDao
+import com.andreikslpv.filmfinder.database_module.models.FilmLocalModel
 import com.andreikslpv.filmfinder.data.repository.PAGE_SIZE
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import io.reactivex.rxjava3.core.Single

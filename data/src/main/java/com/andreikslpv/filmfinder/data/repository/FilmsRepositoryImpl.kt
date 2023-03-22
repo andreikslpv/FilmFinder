@@ -6,24 +6,22 @@ import androidx.paging.PagingData
 import androidx.paging.rxjava3.flowable
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
 import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
-import com.andreikslpv.filmfinder.data.datasource.api.imdb.ImdbDataSource
-import com.andreikslpv.filmfinder.data.datasource.api.tmdb.TmdbDataSource
 import com.andreikslpv.filmfinder.data.datasource.cache.FilmsCacheDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.DomainToLocalMapper
 import com.andreikslpv.filmfinder.data.datasource.local.FilmsLocalDataSource
 import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainListMapper
 import com.andreikslpv.filmfinder.data.datasource.local.LocalToDomainMapper
+import com.andreikslpv.filmfinder.data.di.ImdbSourceQualifier
+import com.andreikslpv.filmfinder.data.di.TmdbSourceQualifier
 import com.andreikslpv.filmfinder.domain.FilmsRepository
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import dagger.Lazy
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,6 +34,8 @@ const val PAGE_SIZE = 10
 class FilmsRepositoryImpl @Inject constructor(
     private val localDataSource: FilmsLocalDataSource,
     private val cacheDataSource: FilmsCacheDataSource,
+    @ImdbSourceQualifier private val imdbDataSource: FilmsApiDataSource,
+    @TmdbSourceQualifier private val tmdbDataSource: FilmsApiDataSource,
 ) : FilmsRepository {
     private var currentApi = ValuesType.NONE
     private val _currentCategoryList = MutableStateFlow(emptyList<CategoryType>())
@@ -44,14 +44,7 @@ class FilmsRepositoryImpl @Inject constructor(
     private var currentCacheMode = ValuesType.AUTO
     private lateinit var apiDataSource: FilmsApiDataSource
 
-    @Inject
-    lateinit var imdbDataSource: Lazy<ImdbDataSource>
-
-    @Inject
-    lateinit var tmdbDataSource: Lazy<TmdbDataSource>
-
-
-    override fun getPagedFilmsByCategory(category: CategoryType): Flow<PagingData<FilmDomainModel>> {
+    override fun getPagedFilmsByCategory(category: CategoryType): Flowable<PagingData<FilmDomainModel>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -92,7 +85,7 @@ class FilmsRepositoryImpl @Inject constructor(
                         category
                     )
                 }
-            }).flow
+            }).flowable
     }
 
     override fun getPagedSearchResult(query: String): Flowable<PagingData<FilmDomainModel>> {
@@ -133,11 +126,11 @@ class FilmsRepositoryImpl @Inject constructor(
     override fun setApiDataSource(api: ValuesType) {
         when (api) {
             ValuesType.TMDB -> {
-                apiDataSource = tmdbDataSource.get()
+                apiDataSource = tmdbDataSource
                 emitWhenApiChanged()
             }
             ValuesType.IMDB -> {
-                apiDataSource = imdbDataSource.get()
+                apiDataSource = imdbDataSource
                 emitWhenApiChanged()
             }
             else -> {}

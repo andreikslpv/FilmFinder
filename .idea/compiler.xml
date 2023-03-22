@@ -4,6 +4,8 @@
     <bytecodeTargetLevel target="1.8">
       <module name="FilmFinder.app" target="11" />
       <module name="FilmFinder.data" target="11" />
+      <module name="FilmFinder.database_module" target="11" />
+      <module name="FilmFinder.remote_module" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

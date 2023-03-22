@@ -16,3 +16,5 @@ rootProject.name = "FilmFinder"
 include ':app'
 include ':data'
 include ':domain'
+include ':remote_module'
+include ':database_module'

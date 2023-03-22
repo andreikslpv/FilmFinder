@@ -1,7 +1,6 @@
 package com.andreikslpv.filmfinder.data.datasource.api.imdb
 
 import android.content.Context
-import androidx.paging.PagingSource
 import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.data.R
 import com.andreikslpv.filmfinder.data.datasource.api.ApiCallback
@@ -9,17 +8,16 @@ import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbServiceFilmsByCategory
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbServiceSearchResult
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ImdbDataSource @Inject constructor(
     private val context: Context,
-    okHttpClient: OkHttpClient,
+    private val serviceCategory: ImdbServiceFilmsByCategory,
+    private val serviceSearch: ImdbServiceSearchResult,
 ) : FilmsApiDataSource {
 
     private val categoryMap = mapOf(
@@ -31,33 +29,23 @@ class ImdbDataSource @Inject constructor(
         Pair(CategoryType.BOXOFFICE_ALLTIME, ImdbConstants.CATEGORY_BOXOFFICE_ALLTIME),
     )
 
-    private val retrofit: Retrofit = Retrofit.Builder()
-        //Указываем базовый URL из констант
-        .baseUrl(ImdbConstants.BASE_URL)
-        //Добавляем конвертер
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        //Добавляем кастомный клиент
-        .client(okHttpClient)
-        .build()
-
     override fun getFilmsByCategoryPagingSource(
         category: CategoryType,
         callback: ApiCallback
-    ): PagingSource<Int, FilmDomainModel> {
+    ): RxPagingSource<Int, FilmDomainModel> {
         return ImdbPagingSourceFilmsByCategory(
-            retrofit.create(ImdbServiceFilmsByCategory::class.java),
-            context.getString(R.string.imdb_language),
-            getPathFromCategory(category),
-            callback
+            service = serviceCategory,
+            language = context.getString(R.string.imdb_language),
+            category = getPathFromCategory(category),
+            callback = callback
         )
     }
 
     override fun getSearchResultPagingSource(query: String): RxPagingSource<Int, FilmDomainModel> {
         return ImdbPagingSourceSearchResult(
-            retrofit.create(ImdbServiceSearchResult::class.java),
-            context.getString(R.string.imdb_language),
-            query
+            service = serviceSearch,
+            language = context.getString(R.string.imdb_language),
+            query = query
         )
     }
 
