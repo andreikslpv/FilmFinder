@@ -1,5 +1,8 @@
 package com.andreikslpv.filmfinder.presentation.ui
 
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.transition.ChangeBounds
@@ -23,6 +26,7 @@ import com.andreikslpv.filmfinder.domain.usecase.apicache.SetApiDataSourceUseCas
 import com.andreikslpv.filmfinder.domain.usecase.management.GetSettingValueUseCase
 import com.andreikslpv.filmfinder.domain.usecase.management.InitApplicationSettingsUseCase
 import com.andreikslpv.filmfinder.domain.usecase.management.SetCacheModeUseCase
+import com.andreikslpv.filmfinder.presentation.receivers.ChargeChecker
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
@@ -43,6 +47,8 @@ const val BUNDLE_KEY_TYPE = "type"
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
+
+    private lateinit var receiver: BroadcastReceiver
 
     private val detailsFragment = DetailsFragment()
 
@@ -85,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
 
         initApplicationSettings()
+        initReceiver()
         observeCurrentFragment()
         initBottomNavigationMenu()
         observeMessage()
@@ -94,10 +101,26 @@ class MainActivity : AppCompatActivity() {
             changeFragment(HomeFragment(), FragmentsType.HOME)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
+    }
+
     private fun initApplicationSettings() {
         // устанавливаем сохраненные настройки приложения
         initApplicationSettingsUseCase.execute()
         updateMessageBoard()
+    }
+
+    private fun initReceiver() {
+        receiver = ChargeChecker()
+        // создаем фильтры для того, чтобы слушать нужные action
+        val filters = IntentFilter().apply {
+            addAction(Intent.ACTION_POWER_CONNECTED)
+            addAction(Intent.ACTION_BATTERY_LOW)
+        }
+        // регистрируем ресивер
+        registerReceiver(receiver, filters)
     }
 
     private fun initBottomNavigationMenu() {
