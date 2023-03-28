@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">FilmFinder</string>
+    <string name="app_notification_title">Не забудьте посмотреть!</string>
 
     <string name="main.menu_home_title">Главная</string>
     <string name="main.menu_favourites_title">Избранное</string>
@@ -38,6 +39,6 @@
     <string name="settings_cache_always">всегда</string>
     <string name="settings_cache_never">никогда</string>
     <string name="settings_cache_clear">Очистить кеш</string>
-    <string name="details_allow_later_in_settings">"Доступ к фотографиям, мультимедиа и файлам на вашем устройстве для приложения запрещен. Для возможности сохранения постера на устройство включите доступ в настройках для приложения "</string>
-
+    <string name="details_allow_later_write_external_storage">"Доступ к фотографиям, мультимедиа и файлам на вашем устройстве для приложения запрещен. Для возможности сохранения постера на устройство включите доступ в настройках для приложения "</string>
+    <string name="details_allow_later_post_notifications">На вашем устройстве для приложения запрещены уведомления. Для получения уведомлений включите доступ в настройках для приложения</string>
 </resources>

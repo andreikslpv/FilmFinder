@@ -19,6 +19,7 @@ import androidx.fragment.app.viewModels
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.presentation.notifications.NotificationHelper
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
@@ -41,7 +42,7 @@ class DetailsFragment : Fragment() {
     private var message: String = ""
     private lateinit var type: FragmentsType
 
-    private val singlePermission =
+    private val singlePermissionWriteExternalStorage =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             when {
                 granted -> {
@@ -51,10 +52,34 @@ class DetailsFragment : Fragment() {
                 !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
                     // доступ к хранилищу запрещен, пользователь поставил галочку Don't ask again.
                     // сообщаем пользователю, что он может в дальнейшем разрешить доступ
-                    getString(R.string.details_allow_later_in_settings).makeToast(requireContext())
+                    getString(R.string.details_allow_later_write_external_storage).makeToast(
+                        requireContext()
+                    )
                 }
                 else -> {
                     // доступ к хранилищу запрещен, пользователь отклонил запрос
+                }
+            }
+        }
+
+    private val singlePermissionPostNotifications =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                when {
+                    granted -> {
+                        // уведомления разрешены
+                        NotificationHelper.createNotification(requireContext(), viewModel.prevFilm)
+                    }
+                    !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                        // уведомления запрещены, пользователь поставил галочку Don't ask again.
+                        // сообщаем пользователю, что он может в дальнейшем разрешить уведомления
+                        getString(R.string.details_allow_later_post_notifications).makeToast(
+                            requireContext()
+                        )
+                    }
+                    else -> {
+                        // уведомления запрещены, пользователь отклонил запрос
+                    }
                 }
             }
         }
@@ -170,6 +195,19 @@ class DetailsFragment : Fragment() {
         }
 
         binding.detailsFabWatchLater.setOnClickListener {
+            if (!viewModel.prevFilm.isWatchLater)
+                // если Андройд 13+ то запрашиваем разрешение на показ уведомлений
+                if (Build.VERSION.SDK_INT >= 33) {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        // уведомления запрещены, нужно объяснить зачем нам требуется разрешение
+                        singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                } else {
+                    NotificationHelper.createNotification(requireContext(), viewModel.prevFilm)
+                }
+
             viewModel.changeWatchLaterField()
         }
 
@@ -181,9 +219,9 @@ class DetailsFragment : Fragment() {
             }
             if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 // доступ к хранилищу запрещен, нужно объяснить зачем нам требуется разрешение
-                singlePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                singlePermissionWriteExternalStorage.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             } else {
-                singlePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                singlePermissionWriteExternalStorage.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }
 
