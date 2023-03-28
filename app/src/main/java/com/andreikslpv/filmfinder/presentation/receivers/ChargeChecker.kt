@@ -9,20 +9,20 @@ import com.andreikslpv.filmfinder.presentation.ui.utils.makeToast
 
 class ChargeChecker : BroadcastReceiver() {
 
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(context: Context, intent: Intent?) {
         //Если интента нет, то выходим из метода
         if (intent == null) return
         //Проверяем, какой пришел action
         when (intent.action) {
             //Если пришел низкий заряд батарее
             Intent.ACTION_BATTERY_LOW -> {
-                context!!.getString(R.string.main_message_battery_low)
+                context.getString(R.string.main_message_battery_low)
                     .makeToast(context)
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
             //Если пришло подключение к зарядке
             Intent.ACTION_POWER_CONNECTED -> {
-                context!!.getString(R.string.main_message_power_connected)
+                context.getString(R.string.main_message_power_connected)
                     .makeToast(context)
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
