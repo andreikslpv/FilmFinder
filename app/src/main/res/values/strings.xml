@@ -10,6 +10,8 @@
     <string name="main_message_offline">Интернет недоступен.</string>
     <string name="main_message_cache">Данные загружаются из кеша</string>
     <string name="main_message_search_cache">Поиск ведется среди кэшированных фильмов</string>
+    <string name="main_message_battery_low">Батарея разряжена</string>
+    <string name="main_message_power_connected">Зарядка подключена</string>
     <string name="details_share_message">"Посмотри этот фильм: "</string>
     <string name="details_share_title">"Поделиться:"</string>
     <string name="details_permission_storage">Нет разрешения. Пожалуйста, предоставьте разрешение</string>
