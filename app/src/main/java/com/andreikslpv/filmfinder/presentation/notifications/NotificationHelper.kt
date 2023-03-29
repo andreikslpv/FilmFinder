@@ -13,6 +13,7 @@ import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.NOTIFICATION_ID
 import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.REQUEST_CODE
+import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -22,6 +23,9 @@ object NotificationHelper {
     @SuppressLint("UnspecifiedImmutableFlag")
     fun createNotification(context: Context, film: FilmDomainModel) {
         val intent = Intent(context, MainActivity::class.java)
+        //Кладем переданный фильм в intent
+        intent.putExtra(BUNDLE_KEY_FILM, film)
+
 
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getActivity(
