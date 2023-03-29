@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
@@ -96,9 +97,20 @@ class MainActivity : AppCompatActivity() {
         initBottomNavigationMenu()
         observeMessage()
 
-        // если первый, то запускаем фрагмент Home
-        if (savedInstanceState == null)
+        // определяем какой запускать фрагмент
+        if (savedInstanceState == null) {
+            // запускаем в любом случае, для того чтобы создать бэкстэк
             changeFragment(HomeFragment(), FragmentsType.HOME)
+            // пробуем получить из бандла фильм
+            val film = if (Build.VERSION.SDK_INT >= 33) {
+                intent.getParcelableExtra(BUNDLE_KEY_FILM, FilmDomainModel::class.java)
+            } else {
+                intent.getParcelableExtra(BUNDLE_KEY_FILM)
+            }
+            // если бандл содержит фильм, то запускаем фрагмент Details
+            if (film != null)
+                launchDetailsFragment(film, null, null, null)
+        }
     }
 
     override fun onDestroy() {
@@ -178,9 +190,9 @@ class MainActivity : AppCompatActivity() {
 
     fun launchDetailsFragment(
         film: FilmDomainModel,
-        image: ImageView,
-        text: TextView,
-        rating: RatingDonutView
+        image: ImageView?,
+        text: TextView?,
+        rating: RatingDonutView?
     ) {
         //Создаем "посылку"
         val bundle = Bundle()
@@ -192,15 +204,23 @@ class MainActivity : AppCompatActivity() {
         detailsFragment.arguments = bundle
 
         //Запускаем фрагмент Details
-        supportFragmentManager
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
-            .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
-            .addSharedElement(rating, TRANSITION_NAME_FOR_RATING)
-            .replace(R.id.fragmentPlaceholder, detailsFragment, FragmentsType.DETAILS.tag)
-            .addToBackStack(null)
-            .commit()
+        if (image != null && text != null && rating != null)
+            supportFragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .addSharedElement(image, TRANSITION_NAME_FOR_IMAGE)
+                .addSharedElement(text, TRANSITION_NAME_FOR_TEXT)
+                .addSharedElement(rating, TRANSITION_NAME_FOR_RATING)
+                .replace(R.id.fragmentPlaceholder, detailsFragment, FragmentsType.DETAILS.tag)
+                .addToBackStack(null)
+                .commit()
+        else
+            supportFragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.fragmentPlaceholder, detailsFragment, FragmentsType.DETAILS.tag)
+                .addToBackStack(null)
+                .commit()
         viewModel.setCurrentFragment(FragmentsType.DETAILS)
     }
 
@@ -284,8 +304,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.messageLiveData.observe(this) {
             if (it.isNullOrBlank()) {
                 binding.messageBoard.visible(false)
-            }
-            else {
+            } else {
                 binding.messageBoard.text = it
                 binding.messageBoard.visible(true)
             }
