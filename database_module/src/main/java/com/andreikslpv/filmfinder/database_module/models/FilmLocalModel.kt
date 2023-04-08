@@ -20,4 +20,5 @@ data class FilmLocalModel(
     @ColumnInfo(name = RoomConstants.COLUMN_RATING) var rating: Double = 0.0,
     @ColumnInfo(name = RoomConstants.COLUMN_IS_FAVORITE) var isFavorite: Boolean = false,
     @ColumnInfo(name = RoomConstants.COLUMN_IS_WATCH_LATER) var isWatchLater: Boolean = false,
+    @ColumnInfo(name = RoomConstants.COLUMN_REMINDER_TIME) var reminderTime: Long = 0L,
 )

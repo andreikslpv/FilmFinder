@@ -81,7 +81,8 @@ object NotificationHelper {
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
-    fun notificationSet(context: Context, film: FilmDomainModel) {
+    // возвращает установленное время для вызова уведомления
+    fun notificationSet(context: Context, film: FilmDomainModel, timeCallback: ReminderCallback) {
         val calendar = Calendar.getInstance()
         val currentYear = calendar.get(Calendar.YEAR)
         val currentMonth = calendar.get(Calendar.MONTH)
@@ -106,6 +107,8 @@ object NotificationHelper {
                         val dateTimeInMillis = pickedDateTime.timeInMillis
                         //После того, как получим время, вызываем метод, который создаст Alarm
                         createWatchLaterEvent(context, dateTimeInMillis, film)
+                        // сохраняем время для возвращение в вызывающий метод
+                        timeCallback.onSuccess(dateTimeInMillis)
                     }
 
                 TimePickerDialog(
@@ -124,7 +127,11 @@ object NotificationHelper {
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    private fun createWatchLaterEvent(context: Context, dateTimeInMillis: Long, film: FilmDomainModel) {
+    private fun createWatchLaterEvent(
+        context: Context,
+        dateTimeInMillis: Long,
+        film: FilmDomainModel
+    ) {
         //Получаем доступ к AlarmManager
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

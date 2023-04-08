@@ -43,4 +43,6 @@
     <string name="main_message_battery_low">The battery is low</string>
     <string name="app_notification_title">Don\'t forget to take a look!</string>
     <string name="details_allow_later_post_notifications">Notifications are not allowed on your device for the app. To receive notifications, enable access in the settings for the app</string>
+    <string name="item_reminder_not_null">Remind:\\n %s</string>
+    <string name="item_reminder_null">The reminder time has already passed</string>
 </resources>

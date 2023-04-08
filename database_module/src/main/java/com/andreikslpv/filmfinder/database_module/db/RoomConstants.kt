@@ -14,6 +14,7 @@ object RoomConstants {
     const val COLUMN_RATING = "rating"
     const val COLUMN_IS_FAVORITE = "is_favorite"
     const val COLUMN_IS_WATCH_LATER = "is_watch_later"
+    const val COLUMN_REMINDER_TIME = "reminder_time"
 
     const val TABLE_CACHED_CATEGORY = "cached_category"
     const val COLUMN_API = "api"

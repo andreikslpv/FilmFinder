@@ -13,7 +13,7 @@ class FilmPagingAdapter(private val clickListener: FilmOnItemClickListener) :
     PagingDataAdapter<FilmDomainModel, FilmViewHolder>(FilmItemDiff()) {
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        getItem(position)?.let { holder.bind(it, false) }
         // Обрабатываем нажатие на весь элемент целиком и вызываем метод листенера,
         // который получаем из конструктора адаптера
         holder.binding.itemContainer.setOnClickListener {

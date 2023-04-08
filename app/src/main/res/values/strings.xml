@@ -41,4 +41,6 @@
     <string name="settings_cache_clear">Очистить кеш</string>
     <string name="details_allow_later_write_external_storage">"Доступ к фотографиям, мультимедиа и файлам на вашем устройстве для приложения запрещен. Для возможности сохранения постера на устройство включите доступ в настройках для приложения "</string>
     <string name="details_allow_later_post_notifications">На вашем устройстве для приложения запрещены уведомления. Для получения уведомлений включите доступ в настройках для приложения</string>
+    <string name="item_reminder_not_null">Напомнить:\n %s</string>
+    <string name="item_reminder_null">Время напоминания уже прошло</string>
 </resources>

@@ -11,7 +11,10 @@ import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_NAME_FOR_RATING
 import com.andreikslpv.filmfinder.presentation.ui.TRANSITION_NAME_FOR_TEXT
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
-class FilmRecyclerAdapter(private val clickListener: FilmOnItemClickListener) :
+class FilmRecyclerAdapter(
+    private val clickListener: FilmOnItemClickListener,
+    private val isWatchLaterRecycler: Boolean,
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //Здесь у нас хранится список элементов для RV
     val items = mutableListOf<FilmDomainModel>()
@@ -33,7 +36,7 @@ class FilmRecyclerAdapter(private val clickListener: FilmOnItemClickListener) :
             is FilmViewHolder -> {
                 //Вызываем метод bind(), который мы создали, и передаем туда объект
                 //из нашей базы данных с указанием позиции
-                holder.bind(items[position])
+                holder.bind(items[position], isWatchLaterRecycler)
                 //Обрабатываем нажатие на весь элемент целиком(можно сделать на отдельный элемент
                 //например, картинку) и вызываем метод нашего листенера, который мы получаем из
                 //конструктора адаптера

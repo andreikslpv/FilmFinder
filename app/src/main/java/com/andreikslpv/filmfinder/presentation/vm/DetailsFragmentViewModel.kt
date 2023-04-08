@@ -52,9 +52,10 @@ class DetailsFragmentViewModel : ViewModel() {
             .subscribe()
     }
 
-    fun changeWatchLaterField() {
+    fun changeWatchLaterField(reminderTime: Long) {
         val newFilm: FilmDomainModel = prevFilm
         newFilm.isWatchLater = !prevFilm.isWatchLater
+        newFilm.reminderTime = reminderTime
         changeFilmLocalState(newFilm, true)
     }
 
