@@ -68,7 +68,7 @@ class DetailsFragment : Fragment() {
                 when {
                     granted -> {
                         // уведомления разрешены
-                        NotificationHelper.createNotification(requireContext(), viewModel.prevFilm)
+                        NotificationHelper.notificationSet(requireContext(), viewModel.prevFilm)
                     }
                     !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                         // уведомления запрещены, пользователь поставил галочку Don't ask again.
@@ -205,7 +205,7 @@ class DetailsFragment : Fragment() {
                         singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
                 } else {
-                    NotificationHelper.createNotification(requireContext(), viewModel.prevFilm)
+                    NotificationHelper.notificationSet(requireContext(), viewModel.prevFilm)
                 }
 
             viewModel.changeWatchLaterField()

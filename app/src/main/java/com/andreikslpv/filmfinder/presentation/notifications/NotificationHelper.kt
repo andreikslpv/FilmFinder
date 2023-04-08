@@ -1,23 +1,29 @@
 package com.andreikslpv.filmfinder.presentation.notifications
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.DatePickerDialog
 import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.NOTIFICATION_ID
 import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.REQUEST_CODE
+import com.andreikslpv.filmfinder.presentation.receivers.ReminderBroadcast
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import java.util.*
 
 object NotificationHelper {
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -74,4 +80,90 @@ object NotificationHelper {
         //Отправляем изначальную нотификацю в стандартном исполнении
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
+
+    fun notificationSet(context: Context, film: FilmDomainModel) {
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
+
+        DatePickerDialog(
+            context,
+            { _, dpdYear, dpdMonth, dayOfMonth ->
+                val timeSetListener =
+                    TimePickerDialog.OnTimeSetListener { _, hourOfDay, pickerMinute ->
+                        val pickedDateTime = Calendar.getInstance()
+                        pickedDateTime.set(
+                            dpdYear,
+                            dpdMonth,
+                            dayOfMonth,
+                            hourOfDay,
+                            pickerMinute,
+                            0
+                        )
+                        val dateTimeInMillis = pickedDateTime.timeInMillis
+                        //После того, как получим время, вызываем метод, который создаст Alarm
+                        createWatchLaterEvent(context, dateTimeInMillis, film)
+                    }
+
+                TimePickerDialog(
+                    context,
+                    timeSetListener,
+                    currentHour,
+                    currentMinute,
+                    true
+                ).show()
+
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        ).show()
+    }
+
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private fun createWatchLaterEvent(context: Context, dateTimeInMillis: Long, film: FilmDomainModel) {
+        //Получаем доступ к AlarmManager
+        val alarmManager =
+            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        //Создаем интент для запуска ресивера
+        val intent = Intent(film.title, null, context, ReminderBroadcast()::class.java)
+        //Кладем в него фильм
+        val bundle = Bundle()
+        bundle.putParcelable(BUNDLE_KEY_FILM, film)
+        intent.putExtra(BUNDLE_KEY_FILM, bundle)
+        //Создаем пендинг интент для запуска извне приложения
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                context,
+                REQUEST_CODE,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                context,
+                REQUEST_CODE,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+        //Устанавливаем Alarm
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                dateTimeInMillis,
+                pendingIntent
+            )
+        } else {
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                dateTimeInMillis,
+                pendingIntent
+            )
+        }
+    }
+
 }
