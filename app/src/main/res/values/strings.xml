@@ -43,4 +43,5 @@
     <string name="details_allow_later_post_notifications">На вашем устройстве для приложения запрещены уведомления. Для получения уведомлений включите доступ в настройках для приложения</string>
     <string name="item_reminder_not_null">Напомнить:\n %s</string>
     <string name="item_reminder_null">Время напоминания уже прошло</string>
+    <string name="reminder_default_time">0000.00.00 00:00</string>
 </resources>

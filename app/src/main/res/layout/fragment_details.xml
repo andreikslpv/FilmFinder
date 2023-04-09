@@ -100,12 +100,12 @@
 
     <ProgressBar
         android:id="@+id/detailsProgressBar"
-        android:visibility="invisible"
         android:layout_width="@dimen/rating_donut_dimens_det"
         android:layout_height="@dimen/rating_donut_dimens_det"
         android:translationZ="@dimen/progress_bar_elevation"
+        android:visibility="invisible"
         app:layout_anchor="@id/detailsFabDownloadPoster"
-        app:layout_anchorGravity="center"/>
+        app:layout_anchorGravity="center" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/detailsFabShare"
@@ -120,11 +120,12 @@
         tools:ignore="ContentDescription" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/detailsNested"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/detailsDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,10 +133,28 @@
             android:layout_marginTop="@dimen/margin_of_text_top"
             android:layout_marginEnd="@dimen/margin_of_text"
             android:layout_marginBottom="@dimen/margin_of_text"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:transitionName="text_name"
             tools:text="@tools:sample/lorem/random" />
 
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/detailsFabReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_of_FAB"
+        android:text="@string/reminder_default_time"
+        android:visibility="invisible"
+        app:backgroundTint="?attr/colorPrimary"
+        app:icon="@drawable/ic_baseline_access_alarm"
+        app:iconGravity="textStart"
+        app:layout_anchor="@id/detailsNested"
+        app:layout_anchorGravity="bottom|end"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlayExtended"
+        app:tint="?attr/itemIconTint"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,6 +7,7 @@ import com.andreikslpv.filmfinder.App
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.usecase.local.ChangeFilmLocalStateUseCase
 import com.andreikslpv.filmfinder.domain.usecase.local.GetFilmLocalStateUseCase
+import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.DEFAULT_TIME
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -34,12 +35,17 @@ class DetailsFragmentViewModel : ViewModel() {
         // получаем статус фильма в локальной бд
         filmLocalState = getFilmLocalStateUseCase.execute(newFilm.id)
         prevFilm = newFilm
+        // если время напоменания прошло, то исключаем из списка Смотреть позже
+        if (prevFilm.reminderTime < System.currentTimeMillis()) {
+            prevFilm.isWatchLater = false
+            prevFilm.reminderTime = DEFAULT_TIME
+            changeFilmLocalState(prevFilm, true)
+        }
     }
 
     fun clearPrevFilm() {
         prevFilm = FilmDomainModel()
     }
-
 
     private fun changeFilmLocalState(newFilm: FilmDomainModel, replace: Boolean) {
         Completable.fromSingle<FilmDomainModel> {
@@ -52,9 +58,9 @@ class DetailsFragmentViewModel : ViewModel() {
             .subscribe()
     }
 
-    fun changeWatchLaterField(reminderTime: Long) {
+    fun changeWatchLaterField(isWatchLater: Boolean, reminderTime: Long) {
         val newFilm: FilmDomainModel = prevFilm
-        newFilm.isWatchLater = !prevFilm.isWatchLater
+        newFilm.isWatchLater = isWatchLater
         newFilm.reminderTime = reminderTime
         changeFilmLocalState(newFilm, true)
     }

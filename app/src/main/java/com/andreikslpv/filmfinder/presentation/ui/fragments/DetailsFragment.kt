@@ -147,7 +147,7 @@ class DetailsFragment : Fragment() {
             viewModel.prevFilm,
             object : ReminderCallback {
                 override fun onSuccess(reminderTime: Long) {
-                    viewModel.changeWatchLaterField(reminderTime)
+                    viewModel.changeWatchLaterField(true, reminderTime)
                 }
 
                 override fun onFailure() {
@@ -165,6 +165,8 @@ class DetailsFragment : Fragment() {
             .subscribe {
                 setFavoritesIcon(it.isFavorite)
                 setWatchLaterIcon(it.isWatchLater)
+                //viewModel.setPrevFilm(it)
+
                 // формируем сообщение, которое будет использоваться при share
                 message = resources.getString(R.string.details_share_message) + it.title
                 //Устанавливаем заголовок
@@ -175,6 +177,14 @@ class DetailsFragment : Fragment() {
                 binding.detailsDescription.text = it.description
                 //Устанавливаем рейтинг
                 binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
+                // устанавливаем время напоминания, если оно больше текущего
+                if (it.reminderTime >= System.currentTimeMillis()) {
+                    binding.detailsFabReminder.text = it.reminderTime.toTime(requireContext())
+                    binding.detailsFabReminder.visible(true)
+                } else {
+                    binding.detailsFabReminder.visible(false)
+                }
+
             }
             .addTo(autoDisposable)
     }
@@ -220,20 +230,15 @@ class DetailsFragment : Fragment() {
 
         binding.detailsFabWatchLater.setOnClickListener {
             if (!viewModel.prevFilm.isWatchLater)
-            // если Андройд 13+ то запрашиваем разрешение на показ уведомлений
-                if (Build.VERSION.SDK_INT >= 33) {
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        // уведомления запрещены, нужно объяснить зачем нам требуется разрешение
-                        singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    } else {
-                        singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
-                } else {
-                    setNotification()
-                }
+                getPermissionAndSetNotification()
             else {
-                viewModel.changeWatchLaterField(DEFAULT_TIME)
+                NotificationHelper.cancelNotification(requireContext(), viewModel.prevFilm)
+                viewModel.changeWatchLaterField(false, DEFAULT_TIME)
             }
+        }
+
+        binding.detailsFabReminder.setOnClickListener {
+            getPermissionAndSetNotification()
         }
 
         binding.detailsFabDownloadPoster.setOnClickListener {
@@ -266,6 +271,21 @@ class DetailsFragment : Fragment() {
                     resources.getString(R.string.details_share_title)
                 )
             )
+        }
+    }
+
+
+    private fun getPermissionAndSetNotification() {
+        // если Андройд 13+ то запрашиваем разрешение на показ уведомлений
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // уведомления запрещены, нужно объяснить зачем нам требуется разрешение
+                singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            setNotification()
         }
     }
 

@@ -16,10 +16,10 @@ import androidx.core.app.NotificationManagerCompat
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.NOTIFICATION_ID
-import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.REQUEST_CODE
 import com.andreikslpv.filmfinder.presentation.receivers.ReminderBroadcast
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
+import com.andreikslpv.filmfinder.presentation.ui.utils.getOnlyDigital
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -28,22 +28,22 @@ import java.util.*
 object NotificationHelper {
     @SuppressLint("UnspecifiedImmutableFlag")
     fun createNotification(context: Context, film: FilmDomainModel) {
+        val requestCode = film.id.getOnlyDigital()
         val intent = Intent(context, MainActivity::class.java)
         //Кладем переданный фильм в intent
         intent.putExtra(BUNDLE_KEY_FILM, film)
 
-
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getActivity(
                 context,
-                REQUEST_CODE,
+                requestCode,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
         } else {
             PendingIntent.getActivity(
                 context,
-                REQUEST_CODE,
+                requestCode,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
@@ -106,7 +106,11 @@ object NotificationHelper {
                         )
                         val dateTimeInMillis = pickedDateTime.timeInMillis
                         //После того, как получим время, вызываем метод, который создаст Alarm
-                        createWatchLaterEvent(context, dateTimeInMillis, film)
+                        createWatchLaterEvent(
+                            context,
+                            dateTimeInMillis,
+                            createPendingIntentByFilm(context, film)
+                        )
                         // сохраняем время для возвращение в вызывающий метод
                         timeCallback.onSuccess(dateTimeInMillis)
                     }
@@ -126,37 +130,13 @@ object NotificationHelper {
         ).show()
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
     private fun createWatchLaterEvent(
         context: Context,
         dateTimeInMillis: Long,
-        film: FilmDomainModel
+        pendingIntent: PendingIntent
     ) {
         //Получаем доступ к AlarmManager
-        val alarmManager =
-            context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        //Создаем интент для запуска ресивера
-        val intent = Intent(film.title, null, context, ReminderBroadcast()::class.java)
-        //Кладем в него фильм
-        val bundle = Bundle()
-        bundle.putParcelable(BUNDLE_KEY_FILM, film)
-        intent.putExtra(BUNDLE_KEY_FILM, bundle)
-        //Создаем пендинг интент для запуска извне приложения
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(
-                context,
-                REQUEST_CODE,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                context,
-                REQUEST_CODE,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         //Устанавливаем Alarm
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -169,6 +149,39 @@ object NotificationHelper {
                 AlarmManager.RTC_WAKEUP,
                 dateTimeInMillis,
                 pendingIntent
+            )
+        }
+    }
+
+    fun cancelNotification(context: Context, film: FilmDomainModel) {
+        //Получаем доступ к AlarmManager
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(createPendingIntentByFilm(context, film))
+    }
+
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private fun createPendingIntentByFilm(context: Context, film: FilmDomainModel): PendingIntent {
+        val requestCode = film.id.getOnlyDigital()
+        //Создаем интент для запуска ресивера
+        val intent = Intent(film.title, null, context, ReminderBroadcast()::class.java)
+        //Кладем в него фильм
+        val bundle = Bundle()
+        bundle.putParcelable(BUNDLE_KEY_FILM, film)
+        intent.putExtra(BUNDLE_KEY_FILM, bundle)
+        //Создаем пендинг интент для запуска извне приложения
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
     }
