@@ -13,5 +13,6 @@ data class FilmDomainModel(
     val description: String = "",
     var rating: Double = 0.0,
     var isFavorite: Boolean = false,
-    var isWatchLater: Boolean = false
+    var isWatchLater: Boolean = false,
+    var reminderTime: Long = 0L,
 ) : Parcelable

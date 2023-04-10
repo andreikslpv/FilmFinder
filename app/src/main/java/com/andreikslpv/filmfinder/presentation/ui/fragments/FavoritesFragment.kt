@@ -78,21 +78,24 @@ class FavoritesFragment : Fragment() {
         binding.favoritesRecycler.apply {
             //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
             filmsAdapter =
-                FilmRecyclerAdapter(object : FilmOnItemClickListener {
-                    override fun click(
-                        film: FilmDomainModel,
-                        image: ImageView,
-                        text: TextView,
-                        rating: RatingDonutView
-                    ) {
-                        (requireActivity() as MainActivity).launchDetailsFragment(
-                            film,
-                            image,
-                            text,
-                            rating
-                        )
-                    }
-                })
+                FilmRecyclerAdapter(
+                    object : FilmOnItemClickListener {
+                        override fun click(
+                            film: FilmDomainModel,
+                            image: ImageView,
+                            text: TextView,
+                            rating: RatingDonutView
+                        ) {
+                            (requireActivity() as MainActivity).launchDetailsFragment(
+                                film,
+                                image,
+                                text,
+                                rating
+                            )
+                        }
+                    },
+                    false
+                )
             //Присваиваем адаптер
             adapter = filmsAdapter
             //Присвои layoutManager

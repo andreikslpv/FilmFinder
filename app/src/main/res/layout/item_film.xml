@@ -39,26 +39,27 @@
                 tools:ignore="ContentDescription"
                 tools:src="@tools:sample/avatars" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/item_padding"
+                android:maxLines="2"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                 app:layout_constraintLeft_toRightOf="@+id/poster"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Title" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/description"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:ellipsize="end"
                 android:maxLines="5"
                 android:padding="@dimen/item_padding"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/poster"
                 app:layout_constraintRight_toRightOf="parent"

@@ -11,6 +11,7 @@ import android.transition.Fade
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -19,7 +20,9 @@ import androidx.fragment.app.viewModels
 import com.andreikslpv.filmfinder.R
 import com.andreikslpv.filmfinder.databinding.FragmentDetailsBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
+import com.andreikslpv.filmfinder.presentation.notifications.NotificationConstants.DEFAULT_TIME
 import com.andreikslpv.filmfinder.presentation.notifications.NotificationHelper
+import com.andreikslpv.filmfinder.presentation.notifications.ReminderCallback
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_FILM
 import com.andreikslpv.filmfinder.presentation.ui.BUNDLE_KEY_TYPE
 import com.andreikslpv.filmfinder.presentation.ui.MainActivity
@@ -42,47 +45,8 @@ class DetailsFragment : Fragment() {
     private var message: String = ""
     private lateinit var type: FragmentsType
 
-    private val singlePermissionWriteExternalStorage =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            when {
-                granted -> {
-                    // доступ к хранилищу разрешен, начинаем загрузку
-                    performAsyncLoadOfPoster()
-                }
-                !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
-                    // доступ к хранилищу запрещен, пользователь поставил галочку Don't ask again.
-                    // сообщаем пользователю, что он может в дальнейшем разрешить доступ
-                    getString(R.string.details_allow_later_write_external_storage).makeToast(
-                        requireContext()
-                    )
-                }
-                else -> {
-                    // доступ к хранилищу запрещен, пользователь отклонил запрос
-                }
-            }
-        }
-
-    private val singlePermissionPostNotifications =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                when {
-                    granted -> {
-                        // уведомления разрешены
-                        NotificationHelper.createNotification(requireContext(), viewModel.prevFilm)
-                    }
-                    !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
-                        // уведомления запрещены, пользователь поставил галочку Don't ask again.
-                        // сообщаем пользователю, что он может в дальнейшем разрешить уведомления
-                        getString(R.string.details_allow_later_post_notifications).makeToast(
-                            requireContext()
-                        )
-                    }
-                    else -> {
-                        // уведомления запрещены, пользователь отклонил запрос
-                    }
-                }
-            }
-        }
+    private lateinit var singlePermissionPostNotifications: ActivityResultLauncher<String>
+    private lateinit var singlePermissionWriteExternalStorage: ActivityResultLauncher<String>
 
     init {
         enterTransition = Fade(Fade.IN).apply { duration = TRANSITION_DURATION }
@@ -114,6 +78,7 @@ class DetailsFragment : Fragment() {
         //Приостанавливаем воспроизведение Transition до загрузки данных
         postponeEnterTransition()
 
+        initRegisterForActivityResult()
         observeFilmLocalState()
         setBackground()
         initIcons()
@@ -132,6 +97,65 @@ class DetailsFragment : Fragment() {
         _binding = null
     }
 
+    private fun initRegisterForActivityResult() {
+        singlePermissionPostNotifications =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    when {
+                        granted -> {
+                            // уведомления разрешены
+                            setNotification()
+                        }
+                        !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                            // уведомления запрещены, пользователь поставил галочку Don't ask again.
+                            // сообщаем пользователю, что он может в дальнейшем разрешить уведомления
+                            getString(R.string.details_allow_later_post_notifications).makeToast(
+                                requireContext()
+                            )
+                        }
+                        else -> {
+                            // уведомления запрещены, пользователь отклонил запрос
+                        }
+                    }
+                }
+            }
+
+        singlePermissionWriteExternalStorage =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                when {
+                    granted -> {
+                        // доступ к хранилищу разрешен, начинаем загрузку
+                        performAsyncLoadOfPoster()
+                    }
+                    !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
+                        // доступ к хранилищу запрещен, пользователь поставил галочку Don't ask again.
+                        // сообщаем пользователю, что он может в дальнейшем разрешить доступ
+                        getString(R.string.details_allow_later_write_external_storage).makeToast(
+                            requireContext()
+                        )
+                    }
+                    else -> {
+                        // доступ к хранилищу запрещен, пользователь отклонил запрос
+                    }
+                }
+            }
+    }
+
+    private fun setNotification() {
+        NotificationHelper.notificationSet(
+            requireContext(),
+            viewModel.prevFilm,
+            object : ReminderCallback {
+                override fun onSuccess(reminderTime: Long) {
+                    viewModel.changeWatchLaterField(true, reminderTime)
+                }
+
+                override fun onFailure() {
+                }
+            })
+
+    }
+
     private fun observeFilmLocalState() {
         viewModel.filmLocalState.filter {
             it.id == viewModel.prevFilm.id
@@ -141,6 +165,8 @@ class DetailsFragment : Fragment() {
             .subscribe {
                 setFavoritesIcon(it.isFavorite)
                 setWatchLaterIcon(it.isWatchLater)
+                //viewModel.setPrevFilm(it)
+
                 // формируем сообщение, которое будет использоваться при share
                 message = resources.getString(R.string.details_share_message) + it.title
                 //Устанавливаем заголовок
@@ -151,6 +177,14 @@ class DetailsFragment : Fragment() {
                 binding.detailsDescription.text = it.description
                 //Устанавливаем рейтинг
                 binding.detailsRatingDonut.progress = (it.rating * 10).toInt()
+                // устанавливаем время напоминания, если оно больше текущего
+                if (it.reminderTime >= System.currentTimeMillis()) {
+                    binding.detailsFabReminder.text = it.reminderTime.toTime(requireContext())
+                    binding.detailsFabReminder.visible(true)
+                } else {
+                    binding.detailsFabReminder.visible(false)
+                }
+
             }
             .addTo(autoDisposable)
     }
@@ -196,19 +230,15 @@ class DetailsFragment : Fragment() {
 
         binding.detailsFabWatchLater.setOnClickListener {
             if (!viewModel.prevFilm.isWatchLater)
-                // если Андройд 13+ то запрашиваем разрешение на показ уведомлений
-                if (Build.VERSION.SDK_INT >= 33) {
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        // уведомления запрещены, нужно объяснить зачем нам требуется разрешение
-                        singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    } else {
-                        singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
-                } else {
-                    NotificationHelper.createNotification(requireContext(), viewModel.prevFilm)
-                }
+                getPermissionAndSetNotification()
+            else {
+                NotificationHelper.cancelNotification(requireContext(), viewModel.prevFilm)
+                viewModel.changeWatchLaterField(false, DEFAULT_TIME)
+            }
+        }
 
-            viewModel.changeWatchLaterField()
+        binding.detailsFabReminder.setOnClickListener {
+            getPermissionAndSetNotification()
         }
 
         binding.detailsFabDownloadPoster.setOnClickListener {
@@ -241,6 +271,21 @@ class DetailsFragment : Fragment() {
                     resources.getString(R.string.details_share_title)
                 )
             )
+        }
+    }
+
+
+    private fun getPermissionAndSetNotification() {
+        // если Андройд 13+ то запрашиваем разрешение на показ уведомлений
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // уведомления запрещены, нужно объяснить зачем нам требуется разрешение
+                singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                singlePermissionPostNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            setNotification()
         }
     }
 

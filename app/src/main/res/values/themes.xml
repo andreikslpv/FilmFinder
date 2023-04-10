@@ -16,11 +16,18 @@
         <item name="itemTextColor">@color/white</item>
     </style>
 
-    <!-- Splash Screen Theme (API >= 31) -->
+    <!-- Splash Screen Theme -->
     <style name="Theme.FilmFinder.Starting" parent="Theme.SplashScreen">
         <!-- The splash screen background, animated icon, and animation duration -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo</item>
         <item name="windowSplashScreenAnimationDuration">0</item>
         <item name="postSplashScreenTheme">@style/Theme.FilmFinder</item>
     </style>
+
+    <!-- Тема для ExtendedFAB Reminder -->
+    <style name="ShapeAppearanceOverlayExtended" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">90dp</item>
+    </style>
+
 </resources>
