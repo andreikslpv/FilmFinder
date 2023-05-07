@@ -23,10 +23,8 @@ import com.andreikslpv.filmfinder.databinding.ActivityMainBinding
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.SettingsType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
-import com.andreikslpv.filmfinder.domain.usecase.apicache.SetApiDataSourceUseCase
 import com.andreikslpv.filmfinder.domain.usecase.management.GetSettingValueUseCase
 import com.andreikslpv.filmfinder.domain.usecase.management.InitApplicationSettingsUseCase
-import com.andreikslpv.filmfinder.domain.usecase.management.SetCacheModeUseCase
 import com.andreikslpv.filmfinder.presentation.receivers.ChargeChecker
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
@@ -62,12 +60,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var getSettingValueUseCase: GetSettingValueUseCase
-
-    @Inject
-    lateinit var setApiDataSourceUseCase: SetApiDataSourceUseCase
-
-    @Inject
-    lateinit var setCacheModeUseCase: SetCacheModeUseCase
 
     init {
         App.instance.dagger.inject(this)

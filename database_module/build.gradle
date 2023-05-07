@@ -35,7 +35,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
 
     implementation project(path: ':domain')
 
@@ -43,10 +43,10 @@ dependencies {
     implementation dagger
     kapt daggerCompiler
     //Room
-    implementation "androidx.room:room-runtime:2.5.0"
-    implementation "androidx.room:room-rxjava3:2.5.0"
+    implementation "androidx.room:room-runtime:2.5.1"
+    implementation "androidx.room:room-rxjava3:2.5.1"
     //implementation "androidx.room:room-ktx:2.5.0"
-    kapt "androidx.room:room-compiler:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.1"
     // RxJava
     implementation 'io.reactivex.rxjava3:rxjava:3.0.10'
     // Tests
