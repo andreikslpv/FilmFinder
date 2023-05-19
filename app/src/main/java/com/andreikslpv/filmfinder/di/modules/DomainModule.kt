@@ -42,6 +42,12 @@ class DomainModule {
 
     @Provides
     @Singleton
+    fun provideGetFilmByIdFromApiUseCase(filmsRepository: FilmsRepository): GetFilmByIdFromApiUseCase {
+        return GetFilmByIdFromApiUseCase(filmsRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideGetSearchResultUseCase(): GetSearchResultUseCase {
         return GetSearchResultUseCase()
     }

@@ -8,8 +8,11 @@ import com.andreikslpv.filmfinder.data.datasource.api.FilmsApiDataSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import com.andreikslpv.filmfinder.remote_module.imdb.ImdbSearchItemToDomainModel
 import com.andreikslpv.filmfinder.remote_module.imdb.ImdbServiceFilmsByCategory
 import com.andreikslpv.filmfinder.remote_module.imdb.ImdbServiceSearchResult
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -63,6 +66,16 @@ class ImdbDataSource @Inject constructor(
 
     override fun checkComplianceApi(filmId: String): Boolean {
         return filmId.startsWith("tt",true)
+    }
+
+    override fun getFilmByIdFromApi(filmId: String): Single<List<FilmDomainModel>> {
+        return serviceSearch.getFilms(
+            language = context.getString(R.string.imdb_language),
+            query = filmId
+        )
+            .subscribeOn(Schedulers.io())
+            .map { ImdbSearchItemToDomainModel.map(it.results) }
+            .onErrorReturn { emptyList() }
     }
 
 }

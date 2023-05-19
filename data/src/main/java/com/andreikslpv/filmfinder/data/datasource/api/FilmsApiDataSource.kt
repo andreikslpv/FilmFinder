@@ -4,6 +4,7 @@ import androidx.paging.rxjava3.RxPagingSource
 import com.andreikslpv.filmfinder.domain.models.FilmDomainModel
 import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
+import io.reactivex.rxjava3.core.Single
 
 interface FilmsApiDataSource {
 
@@ -16,5 +17,7 @@ interface FilmsApiDataSource {
     fun getApiType(): ValuesType
 
     fun checkComplianceApi(filmId: String): Boolean
+
+    fun getFilmByIdFromApi(filmId: String): Single<List<FilmDomainModel>>
 
 }
