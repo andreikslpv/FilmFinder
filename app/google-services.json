@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "731643156205",
+    "project_id": "filmfinder-376ca",
+    "storage_bucket": "filmfinder-376ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731643156205:android:0e5b3a637af645352fdee4",
+        "android_client_info": {
+          "package_name": "com.andreikslpv.filmfinder.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731643156205-ps9sav56eh9umlh31nd67um98sp9skfl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWpNa7vNIyJK50V_rpqxp0cslMHwp9h-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731643156205-ps9sav56eh9umlh31nd67um98sp9skfl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

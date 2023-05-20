@@ -47,10 +47,14 @@ const val BUNDLE_KEY_TYPE = "type"
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
+    private val promoAnimDuration = 1500L
+    private val promoAnimAlfa = 1f
 
     private lateinit var receiver: BroadcastReceiver
 
     private val detailsFragment = DetailsFragment()
+
+    private val autoDisposable = AutoDisposable()
 
     @Inject
     lateinit var viewModelFactory: MainActivityViewModelFactory
@@ -84,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
 
+        autoDisposable.bindTo(lifecycle)
+
         initApplicationSettings()
         initReceiver()
         observeCurrentFragment()
@@ -104,6 +110,8 @@ class MainActivity : AppCompatActivity() {
             if (film != null)
                 launchDetailsFragment(film, null, null, null)
         }
+
+        observePromo()
     }
 
     override fun onDestroy() {
@@ -320,6 +328,45 @@ class MainActivity : AppCompatActivity() {
     fun setBackground(newBackground: Drawable?) {
         if (newBackground != null) {
             binding.mainLayout.background = newBackground
+        }
+    }
+
+    private fun observePromo() {
+        viewModel.promo
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    if (it.isNotEmpty())
+                        enablePromo(it[0])
+                },
+                {
+                    it.message?.makeToast(this)
+                }
+            )
+            .addTo(autoDisposable)
+    }
+
+    private fun enablePromo(film: FilmDomainModel) {
+        //Включаем промо верстку
+        binding.promo.apply {
+            //Делаем видимой
+            visibility = View.VISIBLE
+            //Анимируем появление
+            animate()
+                .setDuration(promoAnimDuration)
+                .alpha(promoAnimAlfa)
+                .start()
+            //Вызываем метод, который загрузит постер в ImageView
+            setLinkForPoster(film.posterDetails)
+            //Кнопка, по нажатии на которую промо уберется
+            closeButton.setOnClickListener {
+                visibility = View.GONE
+            }
+            poster.setOnClickListener {
+                launchDetailsFragment(film, null, null, null)
+                visibility = View.GONE
+            }
         }
     }
 }

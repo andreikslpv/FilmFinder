@@ -45,4 +45,5 @@
     <string name="item_reminder_null">Время напоминания уже прошло</string>
     <string name="reminder_default_time">0000.00.00 00:00</string>
     <string name="message_pro">Доступно в Pro версии</string>
+    <string name="promo_title">Рекомендуем посмотреть</string>
 </resources>

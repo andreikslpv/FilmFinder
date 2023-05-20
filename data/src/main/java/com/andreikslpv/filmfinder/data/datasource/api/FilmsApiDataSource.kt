@@ -8,7 +8,10 @@ import io.reactivex.rxjava3.core.Single
 
 interface FilmsApiDataSource {
 
-    fun getFilmsByCategoryPagingSource(category: CategoryType, callback: ApiCallback): RxPagingSource<Int, FilmDomainModel>
+    fun getFilmsByCategoryPagingSource(
+        category: CategoryType,
+        callback: ApiCallback
+    ): RxPagingSource<Int, FilmDomainModel>
 
     fun getSearchResultPagingSource(query: String): RxPagingSource<Int, FilmDomainModel>
 
