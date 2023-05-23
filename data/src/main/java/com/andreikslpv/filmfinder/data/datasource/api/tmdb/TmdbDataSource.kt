@@ -10,6 +10,7 @@ import com.andreikslpv.filmfinder.domain.types.CategoryType
 import com.andreikslpv.filmfinder.domain.types.ValuesType
 import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbServiceFilmsByCategory
 import com.andreikslpv.filmfinder.remote_module.tmdb.TmdbServiceSearchResult
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -61,6 +62,10 @@ class TmdbDataSource @Inject constructor(
 
     override fun checkComplianceApi(filmId: String): Boolean {
         return filmId.toDoubleOrNull() != null
+    }
+
+    override fun getFilmByIdFromApi(filmId: String): Single<List<FilmDomainModel>> {
+        TODO("Not yet implemented")
     }
 
 }

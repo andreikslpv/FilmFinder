@@ -47,4 +47,5 @@
     <string name="item_reminder_null">The reminder time has already passed</string>
     <string name="reminder_default_time">0000.00.00 00:00</string>
     <string name="message_pro">Available in the Pro version</string>
+    <string name="promo_title">We recommend watching</string>
 </resources>

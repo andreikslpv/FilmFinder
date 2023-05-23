@@ -10,6 +10,7 @@ import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -28,10 +29,15 @@ import com.andreikslpv.filmfinder.domain.usecase.management.InitApplicationSetti
 import com.andreikslpv.filmfinder.presentation.receivers.ChargeChecker
 import com.andreikslpv.filmfinder.presentation.ui.customviews.RatingDonutView
 import com.andreikslpv.filmfinder.presentation.ui.fragments.*
+import com.andreikslpv.filmfinder.presentation.ui.utils.AutoDisposable
 import com.andreikslpv.filmfinder.presentation.ui.utils.FragmentsType
+import com.andreikslpv.filmfinder.presentation.ui.utils.addTo
+import com.andreikslpv.filmfinder.presentation.ui.utils.makeToast
 import com.andreikslpv.filmfinder.presentation.ui.utils.visible
 import com.andreikslpv.filmfinder.presentation.vm.MainActivityViewModel
 import com.andreikslpv.filmfinder.presentation.vm.MainActivityViewModelFactory
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -46,10 +52,14 @@ const val BUNDLE_KEY_TYPE = "type"
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
+    private val promoAnimDuration = 1500L
+    private val promoAnimAlfa = 1f
 
     private lateinit var receiver: BroadcastReceiver
 
     private val detailsFragment = DetailsFragment()
+
+    private val autoDisposable = AutoDisposable()
 
     @Inject
     lateinit var viewModelFactory: MainActivityViewModelFactory
@@ -83,6 +93,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
 
+        autoDisposable.bindTo(lifecycle)
+
         initApplicationSettings()
         initReceiver()
         observeCurrentFragment()
@@ -103,6 +115,8 @@ class MainActivity : AppCompatActivity() {
             if (film != null)
                 launchDetailsFragment(film, null, null, null)
         }
+
+        observePromo()
     }
 
     override fun onDestroy() {
@@ -141,6 +155,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
+
                 R.id.favorites -> {
                     if (currentFragment !is FavoritesFragment) {
                         val fragment = checkFragmentExistence(FragmentsType.FAVORITES)
@@ -148,6 +163,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
+
                 R.id.watch_later -> {
                     if (currentFragment !is WatchLaterFragment) {
                         val fragment = checkFragmentExistence(FragmentsType.WATCH_LATER)
@@ -155,6 +171,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
+
                 R.id.selections -> {
                     if (currentFragment !is SelectionsFragment) {
                         val fragment = checkFragmentExistence(FragmentsType.SELECTIONS)
@@ -162,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
+
                 else -> false
             }
         }
@@ -239,6 +257,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 backPressed = System.currentTimeMillis()
             }
+
             else -> {
                 super.onBackPressed()
                 viewModel.setCurrentFragmentFromPrevious()
@@ -265,24 +284,28 @@ class MainActivity : AppCompatActivity() {
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
                 selections.setIcon(R.drawable.ic_baseline_selections_border)
             }
+
             FragmentsType.FAVORITES -> {
                 home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
                 selections.setIcon(R.drawable.ic_baseline_selections_border)
             }
+
             FragmentsType.WATCH_LATER -> {
                 home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later)
                 selections.setIcon(R.drawable.ic_baseline_selections_border)
             }
+
             FragmentsType.SELECTIONS -> {
                 home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
                 watchLater.setIcon(R.drawable.ic_baseline_watch_later_border)
                 selections.setIcon(R.drawable.ic_baseline_selections)
             }
+
             else -> {
                 home.setIcon(R.drawable.ic_baseline_home_border)
                 favorites.setIcon(R.drawable.ic_baseline_favorite_border)
@@ -325,6 +348,46 @@ class MainActivity : AppCompatActivity() {
     fun setBackground(newBackground: Drawable?) {
         if (newBackground != null) {
             binding.mainLayout.background = newBackground
+        }
+    }
+
+
+    private fun observePromo() {
+        viewModel.promo
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    if (it.isNotEmpty())
+                        enablePromo(it[0])
+                },
+                {
+                    it.message?.makeToast(this)
+                }
+            )
+            .addTo(autoDisposable)
+    }
+
+    private fun enablePromo(film: FilmDomainModel) {
+        //Включаем промо верстку
+        binding.promo.apply {
+            //Делаем видимой
+            visibility = View.VISIBLE
+            //Анимируем появление
+            animate()
+                .setDuration(promoAnimDuration)
+                .alpha(promoAnimAlfa)
+                .start()
+            //Вызываем метод, который загрузит постер в ImageView
+            setLinkForPoster(film.posterDetails)
+            //Кнопка, по нажатии на которую промо уберется
+            closeButton.setOnClickListener {
+                visibility = View.GONE
+            }
+            poster.setOnClickListener {
+                launchDetailsFragment(film, null, null, null)
+                visibility = View.GONE
+            }
         }
     }
 }

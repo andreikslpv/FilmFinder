@@ -36,4 +36,13 @@
     <!-- settings -->
     <dimen name="margin_of_elements">8dp</dimen>
 
+    <!-- promo -->
+    <dimen name="promo_padding">16dp</dimen>
+    <dimen name="promo_margin_text">32dp</dimen>
+    <dimen name="promo_close_button_margin">8dp</dimen>
+    <dimen name="promo_elevation">12dp</dimen>
+    <dimen name="promo_close_button_dimen">24dp</dimen>
+    <dimen name="promo_corner_radius">55</dimen>
+
+
 </resources>

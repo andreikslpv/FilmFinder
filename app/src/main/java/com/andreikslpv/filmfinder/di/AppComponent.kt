@@ -24,6 +24,7 @@ interface AppComponent {
     fun inject(selectionsFragmentViewModel: SelectionsFragmentViewModel)
     fun inject(detailsFragmentViewModel: DetailsFragmentViewModel)
     fun inject(settingsFragmentViewModel: SettingsFragmentViewModel)
+    fun inject(mainActivityViewModel: MainActivityViewModel)
     fun inject(mainActivity: MainActivity)
     fun inject(homeFragment: HomeFragment)
     fun inject(favoritesFragment: FavoritesFragment)

@@ -20,6 +20,7 @@ import com.andreikslpv.filmfinder.domain.types.ValuesType
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,6 +108,10 @@ class FilmsRepositoryImpl @Inject constructor(
                     )
                 }
             }).flowable
+    }
+
+    override fun getFilmByIdFromApi(filmId: String): Single<List<FilmDomainModel>> {
+        return imdbDataSource.getFilmByIdFromApi(filmId)
     }
 
     private fun getResultOfChoiceSource(): Boolean {

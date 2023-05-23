@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <ImageView
+        android:id="@+id/poster"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/promo_padding"
+        tools:ignore="ContentDescription"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginHorizontal="@dimen/promo_padding"
+        android:layout_marginTop="@dimen/promo_margin_text"
+        android:background="@color/promo_text_background"
+        android:gravity="center"
+        android:text="@string/promo_title"
+        android:textColor="@android:color/white" />
+
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="@dimen/promo_close_button_dimen"
+        android:layout_height="@dimen/promo_close_button_dimen"
+        android:layout_gravity="end|top"
+        android:layout_marginTop="@dimen/promo_close_button_margin"
+        android:layout_marginEnd="@dimen/promo_close_button_margin"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/baseline_close_24"
+        tools:ignore="ContentDescription" />
+</merge>
